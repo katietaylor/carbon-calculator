@@ -7,19 +7,8 @@ db = SQLAlchemy()
 # Database Model Classes
 
 
-class User(db.Model):
-    """User of carbon diary."""
-
-    __tablename__ = "users"
-
-    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.Unicode(256), nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    name = db.Column(db.Unicode(256), nullable=False)
-    username = db.Column(db.Unicode(256), nullable=False)
-
-
 class Region(db.Model):
+    """Electric grid regions for the United States."""
 
     __tablename__ = 'regions'
 
@@ -29,6 +18,7 @@ class Region(db.Model):
 
 
 class Zipcode(db.Model):
+    """The grid region for every zipcode in the United States."""
 
     __tablename__ = 'zipcodes'
 
@@ -37,6 +27,9 @@ class Zipcode(db.Model):
 
 
 class Car(db.Model):
+    """Every car by make, model and year in the EPA fuel economy registry.
+    Include CO2 and MPG data."""
+
     __tablename__ = 'cars'
 
     car_id = db.Column(db.Integer, primary_key=True)
@@ -50,7 +43,20 @@ class Car(db.Model):
     mpg_combo = db.Column(db.Integer, nullable=True)
 
 
+class User(db.Model):
+    """User of carbon footprint calculator."""
+
+    __tablename__ = "users"
+
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    email = db.Column(db.Unicode(256), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.Unicode(256), nullable=False)
+    username = db.Column(db.Unicode(256), nullable=False)
+
+
 class UserCar(db.Model):
+    """Car profiles for users. Users may have multiple cars."""
 
     __tablename__ = 'user_cars'
 
@@ -60,19 +66,8 @@ class UserCar(db.Model):
     is_default = db.Column(db.Boolean, nullable=True)
 
 
-class Residences(db.Model):
-
-    __tablename__ = 'residences'
-
-    residence_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('User.user_id'), nullable=False)
-    zipcode_id = db.Column(db.Integer, db.ForeignKey('Zipcode.zipcode_id'), nullable=False)
-    address = db.Column(db.Unicode(256), nullable=False)
-    is_default = db.Column(db.Boolean, nullable=True)
-    number_of_residents = db.Column(db.Integer, nullable=True)
-
-
 class TransitType(db.Model):
+    """Mode of transportation with default carbon value for each."""
 
     __tablename__ = 'transportation_type'
 
@@ -82,6 +77,7 @@ class TransitType(db.Model):
 
 
 class TransitLog(db.Model):
+    """Log of all user trips."""
 
     __tablename__ = 'transit_log'
 
@@ -94,7 +90,21 @@ class TransitLog(db.Model):
     number_of_passengers = db.Column(db.Integer, nullable=True)
 
 
+class Residences(db.Model):
+    """Residence profiles for users. Users may have many residences."""
+
+    __tablename__ = 'residences'
+
+    residence_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('User.user_id'), nullable=False)
+    zipcode_id = db.Column(db.Integer, db.ForeignKey('Zipcode.zipcode_id'), nullable=False)
+    address = db.Column(db.Unicode(256), nullable=False)
+    is_default = db.Column(db.Boolean, nullable=True)
+    number_of_residents = db.Column(db.Integer, nullable=True)
+
+
 class ElectricityLog(db.Model):
+    """Log of user electricity usage."""
 
     __tablename__ = 'electricity_log'
 
@@ -105,7 +115,8 @@ class ElectricityLog(db.Model):
     end_date = db.Column(db.Date, nullable=False)
 
 
-class NG_Log(db.Model):
+class NGLog(db.Model):
+    """Log of user natural gas usage."""
 
     __tablename__ = 'ng_log'
 
@@ -117,6 +128,7 @@ class NG_Log(db.Model):
 
 ##############################################################################
 # Helper functions
+
 
 def init_app():
     # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
@@ -131,7 +143,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///cars'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///carbon_calc'
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app

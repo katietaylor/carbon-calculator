@@ -50,7 +50,7 @@ class Car(db.Model):
     mpg_combo = db.Column(db.Integer, nullable=True)
 
 
-class User_Car(db.Model):
+class UserCar(db.Model):
 
     __tablename__ = 'user_cars'
 
@@ -69,22 +69,51 @@ class Residences(db.Model):
     zipcode_id = db.Column(db.Integer, db.ForeignKey('Zipcode.zipcode_id'), nullable=False)
     address = db.Column(db.Unicode(256), nullable=False)
     is_default = db.Column(db.Boolean, nullable=True)
+    number_of_residents = db.Column(db.Integer, nullable=True)
 
 
-class Transit_Log(db.Model):
+class TransitType(db.Model):
+
+    __tablename__ = 'transportation_type'
+
+    transit_type_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    transit_type = db.Column(db.Unicode(64), nullable=False)
+    grams_CO2_mile = db.Column(db.Integer, nullable=True)
+
+
+class TransitLog(db.Model):
+
     __tablename__ = 'transit_log'
 
+    transit_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('User.user_id'), nullable=False)
+    car_id = db.Column(db.Integer, db.ForeignKey('Car.car_id'), nullable=True)
+    transportation_type = db.Column(db.Integer, db.ForeignKey('TransitType.transit_type_id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    miles = db.Column(db.Float, nullable=False)
+    number_of_passengers = db.Column(db.Integer, nullable=True)
 
-class Transportation_Type(db.Model):
-    __tablename__ = 'transportation_type'
-    
 
-class Electricity_Log(db.Model):
+class ElectricityLog(db.Model):
+
     __tablename__ = 'electricity_log'
-   
+
+    elect_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    residence_id = db.Column(db.Integer, db.ForeignKey('Residence.residence_id'), nullable=False)
+    kwh = db.Column(db.Float, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+
 
 class NG_Log(db.Model):
+
     __tablename__ = 'ng_log'
+
+    ng_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    residence_id = db.Column(db.Integer, db.ForeignKey('Residence.residence_id'), nullable=False)
+    therms = db.Column(db.Float, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
 
 ##############################################################################
 # Helper functions

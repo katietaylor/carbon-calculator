@@ -1,0 +1,28 @@
+region_id,name,CO2e lb/MWh
+AKGD,ASCC Alaska Grid,953.9
+AKMS,ASCC Miscellaneous,685
+AZNM,WECC Southwest,882.8
+CAMX,WECC California,621.9
+ERCT,ERCOT All,1107.5
+FRCC,FRCC All,1094.3
+HIMS,HICC Miscellaneous,953.4
+HIOA,HICC Oahu,1629.2
+MROE,MRO East,1277.5
+MROW,MRO West,1258.1
+NEWE,NPCC New England,584.2
+NWPP,WECC Northwest,922.3
+NYCW,NPCC NYC/Westchester,700.9
+NYLI,NPCC Long Island,1237.3
+NYUP,NPCC Upstate NY,379.2
+RFCE,RFC East,858.1
+RFCM,RFC Michigan,1565.1
+RFCW,RFC West,1507.8
+RMPA,WECC Rockies,1786.2
+SPNO,SPP North,1469.2
+SPSO,SPP South,1596.3
+SRMV,SERC Mississippi Valley,1165.9
+SRMW,SERC Midwest,1619.2
+SRSO,SERC South,1151.6
+SRTV,SERC Tennessee Valley,1377.4
+SRVC,SERC Virginia/Carolina,868.8
+USA,United States,1150.3

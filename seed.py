@@ -2,9 +2,8 @@
 
 from sqlalchemy import func
 from model import Region, Zipcode, Car
-
 from model import connect_to_db, db
-# from server import app
+from server import app
 
 
 def load_regions():
@@ -42,7 +41,7 @@ def load_cars():
 
 
 if __name__ == "__main__":
-    # connect_to_db(app)
+    connect_to_db(app)
 
     # Call functions to import the
     load_regions()

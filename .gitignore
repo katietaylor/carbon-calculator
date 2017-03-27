@@ -2,3 +2,4 @@ env
 *pyc
 *secret*
 *todo*
+.DS_Store

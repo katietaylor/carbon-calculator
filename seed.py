@@ -63,12 +63,12 @@ def load_cars():
     with open('seed-data/vehicles.csv') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            car = Car(car_id=row["id"],  # vehicle
+            car = Car(car_id=row["id"],  # vehicle id
                       make=row["make"],  # manufacturer
                       model=row["model"],  # carline
                       fuel_type=row["fuelType1"],  # primary fuel
                       year=row["year"],  # model year
-                      grams_CO2_mile=row["co2TailpipeGpm"],  # tailpipe CO2 in grams/mile
+                      grams_CO2_mile=row["co2TailpipeGpm"],  # tailpipe CO2
                       mpg_street=row["city08"],  # city MPG for fuelType1
                       mpg_hw=row["highway08"],  # highway MPG for fuelType1
                       mpg_combo=row["comb08"],  # combined MPG for fuelType1

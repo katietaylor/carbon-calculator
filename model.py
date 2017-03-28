@@ -70,6 +70,15 @@ class User(db.Model):
     def __repr__(self):
         return "<User Id=%s, Name=%s>" % (self.user_id, self.name)
 
+    @classmethod
+    def add_user(cls, email, password, name, username):
+        """Add new users to the database."""
+
+        user = User(email=email, password=password, name=name, username=username)
+        db.session.add(user)
+
+    db.session.commit()
+
 
 class UserCar(db.Model):
     """Car profiles for users. Users may have multiple cars."""

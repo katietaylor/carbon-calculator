@@ -16,6 +16,10 @@ class Region(db.Model):
     name = db.Column(db.String(256), nullable=False)
     lb_CO2e_MWh = db.Column(db.Float, nullable=False)
 
+    def __repr__(self):
+        return "<Region Id=%s, Region=%s, CO2e/MWH=%s>" % \
+            (self.region_id, self.name, self.lb_CO2e_MWh)
+
 
 class Zipcode(db.Model):
     """The grid region for every zipcode in the United States."""
@@ -25,6 +29,10 @@ class Zipcode(db.Model):
     zipcode_id = db.Column(db.String(16), primary_key=True)
     region_id = db.Column(db.String(9), db.ForeignKey('regions.region_id'),
                           nullable=False)
+
+    def __repr__(self):
+        return "<Zipcode=%s, Region Id=%s>" % \
+            (self.zipcode_id, self.region_id)
 
 
 class Car(db.Model):
@@ -43,6 +51,10 @@ class Car(db.Model):
     mpg_hw = db.Column(db.Integer, nullable=True)
     mpg_combo = db.Column(db.Integer, nullable=True)
 
+    def __repr__(self):
+        return "<Car Id=%s, Make=%s, Model=%s, Year=%s>" % \
+            (self.car_id, self.make, self.model, self.year)
+
 
 class User(db.Model):
     """User of carbon footprint calculator."""
@@ -54,6 +66,9 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.Unicode(256), nullable=False)
     username = db.Column(db.Unicode(256), nullable=False)
+
+    def __repr__(self):
+        return "<User Id=%s, Name=%s>" % (self.user_id, self.name)
 
 
 class UserCar(db.Model):
@@ -67,6 +82,10 @@ class UserCar(db.Model):
     car_id = db.Column(db.Integer, db.ForeignKey('cars.car_id'), nullable=False)
     is_default = db.Column(db.Boolean, nullable=True)
 
+    def __repr__(self):
+        return "<User Car=%s, User Id=%s, Car Id=%s>" % \
+            (self.user_car_id, self.user_id, self.car_id)
+
 
 class TransitType(db.Model):
     """Mode of transportation with default carbon value for each."""
@@ -77,6 +96,10 @@ class TransitType(db.Model):
                                 primary_key=True)
     transit_type = db.Column(db.Unicode(64), nullable=False)
     grams_CO2_mile = db.Column(db.Integer, nullable=True)
+
+    def __repr__(self):
+        return "<ID=%s, Transit Type=%s>" % (self.transit_type_id,
+                                             self.transit_type)
 
 
 class TransitLog(db.Model):
@@ -95,6 +118,11 @@ class TransitLog(db.Model):
     miles = db.Column(db.Float, nullable=False)
     number_of_passengers = db.Column(db.Integer, nullable=True)
 
+    def __repr__(self):
+        return "<ID=%s, User=%s, Car=%s, Type=%s, Miles=%s, Date=%s>" % \
+            (self.transit_id, self.user_id, self.car_id,
+             self.transportation_type, self.miles, self.date)
+
 
 class Residences(db.Model):
     """Residence profiles for users. Users may have many residences."""
@@ -110,6 +138,10 @@ class Residences(db.Model):
     is_default = db.Column(db.Boolean, nullable=True)
     number_of_residents = db.Column(db.Integer, nullable=True)
 
+    def __repr__(self):
+        return "<Residence Id=%s, user=%s, zipcode=%s>" % \
+            (self.residence_id, self.user_id, self.zipcode)
+
 
 class ElectricityLog(db.Model):
     """Log of user electricity usage."""
@@ -123,6 +155,11 @@ class ElectricityLog(db.Model):
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
 
+    def __repr__(self):
+        return "<Id= %s, Residence= %s, kwh= %s, date= %s to %s>" % \
+            (self.elect_id, self.residence_id, self.kwh, self.start_date,
+             self.end_date)
+
 
 class NGLog(db.Model):
     """Log of user natural gas usage."""
@@ -135,6 +172,11 @@ class NGLog(db.Model):
     therms = db.Column(db.Float, nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return "<Id= %s, Residence= %s, therms= %s, date= %s to %s>" % \
+            (self.ng_id, self.residence_id, self.therms, self.start_date,
+             self.end_date)
 
 ##############################################################################
 # Helper functions

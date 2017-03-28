@@ -13,7 +13,7 @@ class Region(db.Model):
     __tablename__ = 'regions'
 
     region_id = db.Column(db.String(9), primary_key=True)
-    name = db.Column(db.Unicode(256), nullable=False)
+    name = db.Column(db.String(256), nullable=False)
     lb_CO2e_MWh = db.Column(db.Float, nullable=False)
 
 

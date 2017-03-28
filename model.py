@@ -46,10 +46,10 @@ class Car(db.Model):
     model = db.Column(db.Unicode(100), nullable=False)
     fuel_type = db.Column(db.Unicode(100), nullable=True)
     year = db.Column(db.Integer, nullable=False)
-    grams_CO2_mile = db.Column(db.Integer, nullable=True)
-    mpg_street = db.Column(db.Integer, nullable=True)
-    mpg_hw = db.Column(db.Integer, nullable=True)
-    mpg_combo = db.Column(db.Integer, nullable=True)
+    grams_CO2_mile = db.Column(db.Float, nullable=True)
+    mpg_street = db.Column(db.Float, nullable=True)
+    mpg_hw = db.Column(db.Float, nullable=True)
+    mpg_combo = db.Column(db.Float, nullable=True)
 
     def __repr__(self):
         return "<Car Id=%s, Make=%s, Model=%s, Year=%s>" % \

@@ -4,6 +4,7 @@ from sqlalchemy import func
 from model import Region, Zipcode, Car
 from model import connect_to_db, db
 from server import app
+import csv
 
 
 def load_regions():
@@ -36,7 +37,7 @@ def load_zipcodes():
     # Delete all rows in table, to avoid duplicates
     Zipcode.query.delete()
 
-    # Read region file and insert data
+    # Read zipcode file and insert data
     for row in open("seed-data/zipcode-regions.csv"):
         row = row.rstrip()
         zipcode_id, state, region_id, secondary_region_id, tertiary_region_id \
@@ -54,8 +55,30 @@ def load_zipcodes():
 def load_cars():
     """Load cars into database."""
 
-    pass
+    print "\n Load Cars \n"
 
+    # Delete all rows in table, to avoid duplicates
+    Car.query.delete()
+
+    with open('seed-data/vehicles.csv') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            car = Car(car_id=row["id"],  # vehicle
+                      make=row["make"],  # manufacturer
+                      model=row["model"],  # carline
+                      fuel_type=row["fuelType1"],  # primary fuel
+                      year=row["year"],  # model year
+                      grams_CO2_mile=row["co2TailpipeGpm"],  # tailpipe CO2 in grams/mile
+                      mpg_street=row["city08"],  # city MPG for fuelType1
+                      mpg_hw=row["highway08"],  # highway MPG for fuelType1
+                      mpg_combo=row["comb08"],  # combined MPG for fuelType1
+                      )
+
+            # Add to the session so the data will be stored
+            db.session.add(car)
+
+    # Commit the changes to the database
+    db.session.commit()
 
 if __name__ == "__main__":
     connect_to_db(app)
@@ -63,3 +86,4 @@ if __name__ == "__main__":
     # Call functions to import the
     load_regions()
     load_zipcodes()
+    load_cars()

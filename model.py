@@ -132,7 +132,7 @@ class TransitLog(db.Model):
              self.transportation_type, self.miles, self.date)
 
 
-class Residences(db.Model):
+class Residence(db.Model):
     """Residence profiles for users. Users may have many residences."""
 
     __tablename__ = 'residences'

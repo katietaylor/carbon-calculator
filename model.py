@@ -65,7 +65,6 @@ class User(db.Model):
     email = db.Column(db.Unicode(256), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.Unicode(256), nullable=False)
-    username = db.Column(db.Unicode(256), nullable=False)
 
     def __repr__(self):
         return "<User Id=%s, Name=%s>" % (self.user_id, self.name)
@@ -74,10 +73,10 @@ class User(db.Model):
     def add_user(cls, email, password, name, username):
         """Add new users to the database."""
 
-        user = User(email=email, password=password, name=name, username=username)
+        user = User(email=email, password=password, name=name)
         db.session.add(user)
 
-    db.session.commit()
+        db.session.commit()
 
 
 class UserCar(db.Model):

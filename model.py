@@ -153,6 +153,7 @@ class Residence(db.Model):
             (self.residence_id, self.user_id, self.zipcode_id)
 
     user = db.relationship('User')
+    electricity_logs = db.relationship('ElectricityLog')
 
 
 class ElectricityLog(db.Model):
@@ -171,6 +172,10 @@ class ElectricityLog(db.Model):
         return "<Id= %s, Residence= %s, kwh= %s, date= %s to %s>" % \
             (self.elect_id, self.residence_id, self.kwh, self.start_date,
              self.end_date)
+
+    # Define relationship to residence
+    # residence = db.relationship("Residence", backref="electricity_logs")
+    residence = db.relationship('Residence')
 
 
 class NGLog(db.Model):

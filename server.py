@@ -4,8 +4,9 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
-from model import connect_to_db, db, User, Residence
+from model import connect_to_db, db, User, Residence, ElectricityLog
 import profile
+import carbon_log as cl
 
 app = Flask(__name__)
 
@@ -88,7 +89,7 @@ def view_profile():
 
 @app.route("/add-residence", methods=["POST"])
 def add_residence():
-    """User profile page"""
+    """Add a residence for a profile"""
 
     address = request.form.get("address")
     zipcode = request.form.get("zipcode")
@@ -99,7 +100,6 @@ def add_residence():
     if is_default is None:
         is_default = False
 
-
     profile.add_residence(user_id, zipcode, address, is_default,
                           number_of_residents)
 
@@ -108,17 +108,46 @@ def add_residence():
 
 @app.route("/carbon-log", methods=["GET"])
 def view_carbon_log():
-    """User profile page"""
+    """Carbon data entry page."""
 
     user_id = session.get("user_id")
 
     if user_id:
+
+        electricity_logs = ElectricityLog.query.filter(
+            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+
         residences = Residence.query.filter_by(user_id=user_id).all()
-        return render_template("profile.html", residences=residences)
+
+        return render_template("carbon-log.html",
+                               electricity_logs=electricity_logs,
+                               residences=residences)
 
     # return to homepage when not logged in
     else:
         return redirect("/")
+
+
+@app.route("/add-kwh", methods=["POST"])
+def add_kwh():
+    """User profile page"""
+
+    start_date = request.form.get("start_date")
+    end_date = request.form.get("end_date")
+    kwh = request.form.get("kwh")
+    address = request.form.get("residence")
+    user_id = session.get("user_id")
+
+    residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+    residence_id = residence.residence_id
+
+    new_kwh = ElectricityLog(start_date=start_date, end_date=end_date, kwh=kwh,
+                             residence_id=residence_id)
+
+    db.session.add(new_kwh)
+    db.session.commit()
+
+    return redirect("/carbon-log")
 
 
 if __name__ == "__main__":

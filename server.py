@@ -72,7 +72,7 @@ def register_process():
 
 
 @app.route("/profile", methods=["GET"])
-def profile():
+def view_profile():
     """User profile page"""
 
     if session.get("user_id"):
@@ -91,12 +91,8 @@ def add_residence():
     is_default = request.form.get("default")
     user_id = session.get("user_id")
 
-    new_residence = Residence(user_id=user_id, zipcode_id=zipcode,
-                              address=address, is_default=is_default,
-                              number_of_residents=number_of_residents)
-
-    db.session.add(new_residence)
-    db.session.commit()
+    profile.add_residence(user_id, zipcode, address, is_default,
+                          number_of_residents)
 
     return redirect("/profile")
 

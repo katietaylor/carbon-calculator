@@ -105,6 +105,22 @@ def add_residence():
 
     return redirect("/profile")
 
+
+@app.route("/carbon-log", methods=["GET"])
+def view_carbon_log():
+    """User profile page"""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+        residences = Residence.query.filter_by(user_id=user_id).all()
+        return render_template("profile.html", residences=residences)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension

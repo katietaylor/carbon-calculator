@@ -4,7 +4,8 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
-from model import connect_to_db, db, User
+from model import connect_to_db, db, User, Residence
+import profile
 
 app = Flask(__name__)
 
@@ -69,6 +70,35 @@ def register_process():
 
     return redirect("/")
 
+
+@app.route("/profile", methods=["GET"])
+def profile():
+    """User profile page"""
+
+    if session.get("user_id"):
+        return render_template("profile.html")
+    else:
+        return redirect("/")
+
+
+@app.route("/add-residence", methods=["POST"])
+def add_residence():
+    """User profile page"""
+
+    address = request.form.get("address")
+    zipcode = request.form.get("zipcode")
+    number_of_residents = request.form.get("no_residents")
+    is_default = request.form.get("default")
+    user_id = session.get("user_id")
+
+    new_residence = Residence(user_id=user_id, zipcode_id=zipcode,
+                              address=address, is_default=is_default,
+                              number_of_residents=number_of_residents)
+
+    db.session.add(new_residence)
+    db.session.commit()
+
+    return redirect("/profile")
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

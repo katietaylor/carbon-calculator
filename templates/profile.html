@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<h1>Profile</h1>
+
+<form action="/process-signup" method="POST">
+    name:     <input type="text" name="name"> <br>
+    email:    <input type="text" name="email"> <br>
+    password: <input type="text" name="password"> <br>
+
+    <input type="submit" value="Update">
+</form>
+
+
+<h2>Residences</h2>
+<div>add residence</div>
+
+<form action="/add-residence" method="POST">
+    address: <input type="text" name="address"> <br>
+    zipcode: <input type="text" name="zipcode"> <br>
+    number of residetns? <input type="text" name="no_residents"> <br>
+    set as default?: <input type="checkbox" name="default"> <br>
+
+    <input type="submit" value="Add Residence">
+</form>
+
+
+{% endblock %}

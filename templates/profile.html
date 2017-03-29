@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1>Profile</h1>
+<h1>{{ residences[0].user.name}}'s Profile </h1>
 
 
 
@@ -40,7 +40,7 @@
 <form action="/add-residence" method="POST">
     address: <input type="text" name="address"> <br>
     zipcode: <input type="text" name="zipcode"> <br>
-    number of residetns? <input type="text" name="no_residents"> <br>
+    number of residents? <input type="text" name="no_residents"> <br>
     set as default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Residence">

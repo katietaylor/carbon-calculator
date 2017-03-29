@@ -1,21 +1,40 @@
 {% extends 'base.html' %}
 
-{% block title %} Login {% endblock %}
+{% block title %} Profile {% endblock %}
 
 {% block content %}
 
 <h1>Profile</h1>
 
-<form action="/process-signup" method="POST">
-    name:     <input type="text" name="name"> <br>
-    email:    <input type="text" name="email"> <br>
-    password: <input type="text" name="password"> <br>
 
-    <input type="submit" value="Update">
-</form>
 
 
 <h2>Residences</h2>
+{% if residences %}
+    <table>
+        <tr>
+            <th>Address</th>
+            <th>Zipcode</th> 
+            <th>Residents</th>
+            <th>Default</th>
+        </tr>
+        {% for residence in residences %}
+        <tr>
+            <th>{{ residence.address }}</th>
+            <th>{{ residence.zipcode_id }}</th>
+            <th>{{ residence.number_of_residents }}</th>
+            <th>{{ residence.is_default }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No residences added</h2>
+{% endif %}
+<br>
+      
+
+
+
 <div>add residence</div>
 
 <form action="/add-residence" method="POST">

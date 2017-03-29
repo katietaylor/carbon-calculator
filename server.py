@@ -75,8 +75,13 @@ def register_process():
 def view_profile():
     """User profile page"""
 
-    if session.get("user_id"):
-        return render_template("profile.html")
+    user_id = session.get("user_id")
+
+    if user_id:
+        residences = Residence.query.filter_by(user_id=user_id).all()
+        return render_template("profile.html", residences=residences)
+
+    # return to homepage when not logged in
     else:
         return redirect("/")
 
@@ -88,8 +93,12 @@ def add_residence():
     address = request.form.get("address")
     zipcode = request.form.get("zipcode")
     number_of_residents = request.form.get("no_residents")
-    is_default = request.form.get("default")
     user_id = session.get("user_id")
+    is_default = request.form.get("default")
+
+    if is_default is None:
+        is_default = False
+
 
     profile.add_residence(user_id, zipcode, address, is_default,
                           number_of_residents)

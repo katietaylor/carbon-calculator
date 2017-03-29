@@ -78,6 +78,8 @@ class User(db.Model):
 
         db.session.commit()
 
+    residences = db.relationship('Residence')
+
 
 class UserCar(db.Model):
     """Car profiles for users. Users may have multiple cars."""
@@ -148,7 +150,9 @@ class Residence(db.Model):
 
     def __repr__(self):
         return "<Residence Id=%s, user=%s, zipcode=%s>" % \
-            (self.residence_id, self.user_id, self.zipcode)
+            (self.residence_id, self.user_id, self.zipcode_id)
+
+    user = db.relationship('User')
 
 
 class ElectricityLog(db.Model):

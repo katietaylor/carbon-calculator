@@ -5,8 +5,7 @@ from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, User, Residence, ElectricityLog
-import profile
-import carbon_log as cl
+from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 
@@ -77,10 +76,11 @@ def view_profile():
     """User profile page"""
 
     user_id = session.get("user_id")
+    name = User.query.get(user_id).name
 
     if user_id:
         residences = Residence.query.filter_by(user_id=user_id).all()
-        return render_template("profile.html", residences=residences)
+        return render_template("profile.html", residences=residences, name=name)
 
     # return to homepage when not logged in
     else:
@@ -100,8 +100,8 @@ def add_residence():
     if is_default is None:
         is_default = False
 
-    profile.add_residence(user_id, zipcode, address, is_default,
-                          number_of_residents)
+    Residence.add_residence(user_id, zipcode, address, is_default,
+                            number_of_residents)
 
     return redirect("/profile")
 
@@ -138,7 +138,11 @@ def add_kwh():
     address = request.form.get("residence")
     user_id = session.get("user_id")
 
-    residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+    try:
+        residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+    except NoResultFound:  # one error
+        residence = Residence.query.filter_by(user_id=user_id, address=address).first()
+
     residence_id = residence.residence_id
 
     new_kwh = ElectricityLog(start_date=start_date, end_date=end_date, kwh=kwh,

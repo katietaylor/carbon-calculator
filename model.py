@@ -1,5 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.exc import NoResultFound
 
 db = SQLAlchemy()
 
@@ -191,8 +192,22 @@ class ElectricityLog(db.Model):
              self.end_date)
 
     # Define relationship to residence
-    # residence = db.relationship("Residence", backref="electricity_logs")
     residence = db.relationship('Residence')
+
+    def co2_calc(self, kwh, user_id, address):
+        """Calculate the CO2 emissions for kwh entry."""
+
+        try:
+            residence = Residence.query.filter_by(user_id=user_id,
+                                                  address=address).one()
+        except NoResultFound:
+            residence = Residence.query.filter_by(user_id=user_id,
+                                                  address=address).first()
+        residence_id = residence.residence_id
+        # region_id =
+        lb_CO2e_Mwh = region.lb_CO2e_Mwh
+
+        pass
 
 
 class NGLog(db.Model):

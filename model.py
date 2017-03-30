@@ -155,6 +155,23 @@ class Residence(db.Model):
     user = db.relationship('User')
     electricity_logs = db.relationship('ElectricityLog')
 
+    @classmethod
+    def add_residence(cls, user_id, zipcode_id, address, is_default,
+                      number_of_residents):
+
+        current_residences = cls.query.filter_by(user_id=user_id).all()
+
+        if is_default and current_residences:
+            for residence in current_residences:
+                residence.is_default = False
+
+        new_residence = cls(user_id=user_id, zipcode_id=zipcode_id,
+                            address=address, is_default=is_default,
+                            number_of_residents=number_of_residents)
+
+        db.session.add(new_residence)
+        db.session.commit()
+
 
 class ElectricityLog(db.Model):
     """Log of user electricity usage."""
@@ -230,3 +247,5 @@ if __name__ == "__main__":
 
     connect_to_db(app)
     print "Connected to DB."
+
+    # db.create_all()

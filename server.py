@@ -100,8 +100,8 @@ def add_residence():
     if is_default is None:
         is_default = False
 
-    Residence.add_residence(user_id, zipcode, address, is_default,
-                            number_of_residents)
+    Residence.create(user_id, zipcode, address, is_default,
+                     number_of_residents)
 
     return redirect("/profile")
 

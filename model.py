@@ -70,15 +70,6 @@ class User(db.Model):
     def __repr__(self):
         return "<User Id=%s, Name=%s>" % (self.user_id, self.name)
 
-    @classmethod
-    def add_user(cls, email, password, name, username):
-        """Add new users to the database."""
-
-        user = User(email=email, password=password, name=name)
-        db.session.add(user)
-
-        db.session.commit()
-
     residences = db.relationship('Residence')
 
 
@@ -153,12 +144,17 @@ class Residence(db.Model):
         return "<Residence Id=%s, user=%s, zipcode=%s>" % \
             (self.residence_id, self.user_id, self.zipcode_id)
 
+    # relationships
     user = db.relationship('User')
     electricity_logs = db.relationship('ElectricityLog')
+    region = db.relationship("Region",
+                             secondary="zipcodes",
+                             backref="residences",
+                             uselist=False)
 
     @classmethod
-    def add_residence(cls, user_id, zipcode_id, address, is_default,
-                      number_of_residents):
+    def create(cls, user_id, zipcode_id, address, is_default,
+               number_of_residents):
 
         current_residences = cls.query.filter_by(user_id=user_id).all()
 
@@ -197,17 +193,8 @@ class ElectricityLog(db.Model):
     def co2_calc(self, kwh, user_id, address):
         """Calculate the CO2 emissions for kwh entry."""
 
-        try:
-            residence = Residence.query.filter_by(user_id=user_id,
-                                                  address=address).one()
-        except NoResultFound:
-            residence = Residence.query.filter_by(user_id=user_id,
-                                                  address=address).first()
-        residence_id = residence.residence_id
-        # region_id =
-        lb_CO2e_Mwh = region.lb_CO2e_Mwh
-
-        pass
+        region = self.residence.region
+        lb_CO2e_MWh = region[0].lb_CO2e_MWh
 
 
 class NGLog(db.Model):

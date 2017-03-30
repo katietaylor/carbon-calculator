@@ -25,7 +25,7 @@
         {% endfor %}
     </table>
 {% else %}
-    <h2>No electricy usage added yet</h2>
+    <h2>No electricy data added yet</h2>
 {% endif %}
 
 <br>
@@ -46,6 +46,46 @@
 </form>
 
 <h1>Natural Gas Data</h1>
+
+{% if ng_logs %}
+    <table>
+        <tr>
+            <th>Begin Date</th>
+            <th>End Date</th> 
+            <th>therms</th>
+            <th>address</th>
+            <th>lbs of CO2</th>
+        </tr>
+        {% for log in ng_logs %}
+        <tr>
+            <th>{{ log.start_date }}</th>
+            <th>{{ log.end_date }}</th>
+            <th>{{ log.therms }}</th>
+            <th>{{ log.residence.address }}</th>
+            <th>{{ log.co2_calc() }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No natural gas data added yet</h2>
+{% endif %}
+
+<br>
+<br>
+<form action="/add-ng" method="POST">
+    Begin Date: <input type="date" name="start_date"> <br>
+    End Date: <input type="date" name="end_date"> <br>
+    therms of natural gas <input type="number" name="therms"> <br>
+    
+    Residence <select name="residence">
+    {% for residence in residences %}
+        <option value="{{ residence.address }}">{{ residence.address }}</option>
+    {% endfor %}
+    </select>
+    <br>
+
+    <input type="submit" value="Add ng">
+</form>
 
 
 <h1>Transportation Data</h1>

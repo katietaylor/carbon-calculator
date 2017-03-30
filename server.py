@@ -4,13 +4,16 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
-from model import connect_to_db, db, User, Residence, ElectricityLog
+from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
+                   UserCar)
 from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 
 app.secret_key = "ABC"  # Required to use Flask sessions and the debug toolbar
 app.jinja_env.undefined = StrictUndefined  # Undefined variable in Jinja2 will raise an error.
+
+###  Users, Login, Signup, Logout #############################################
 
 
 @app.route("/", methods=["GET"])
@@ -80,6 +83,9 @@ def logout_process():
     return redirect("/")
 
 
+###  User Profile #############################################################
+
+
 @app.route("/profile", methods=["GET"])
 def view_profile():
     """User profile page"""
@@ -89,7 +95,10 @@ def view_profile():
 
     if user_id:
         residences = Residence.query.filter_by(user_id=user_id).all()
-        return render_template("profile.html", residences=residences, name=name)
+        usercars = UserCar.query.filter_by(user_id=user_id).all()
+
+        return render_template("profile.html", residences=residences, name=name,
+                               usercars=usercars)
 
     # return to homepage when not logged in
     else:
@@ -115,6 +124,30 @@ def add_residence():
     return redirect("/profile")
 
 
+@app.route("/add-car", methods=["POST"])
+def add_car():
+    """Add a residence for a profile"""
+
+    make = request.form.get("make")
+    model = request.form.get("model")
+    year = int(request.form.get("year"))
+    is_default = request.form.get("default")
+    user_id = session.get("user_id")
+
+    if is_default is None:
+        is_default = False
+    else:
+        is_default = True
+
+    print user_id, make, model, year, is_default, type(is_default)
+
+    UserCar.create(user_id, make, model, year, is_default)
+
+    return redirect("/profile")
+
+
+###  kWh, NG, Trans Carbon Log ################################################
+
 @app.route("/carbon-log", methods=["GET"])
 def view_carbon_log():
     """Carbon data entry page."""
@@ -126,11 +159,15 @@ def view_carbon_log():
         electricity_logs = ElectricityLog.query.filter(
             ElectricityLog.residence.has(Residence.user_id == user_id)).all()
 
+        ng_logs = NGLog.query.filter(
+            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+
         residences = Residence.query.filter_by(user_id=user_id).all()
 
         return render_template("carbon-log.html",
                                electricity_logs=electricity_logs,
-                               residences=residences)
+                               residences=residences,
+                               ng_logs=ng_logs)
 
     # return to homepage when not logged in
     else:
@@ -162,6 +199,31 @@ def add_kwh():
 
     return redirect("/carbon-log")
 
+
+@app.route("/add-ng", methods=["POST"])
+def add_ng():
+    """User profile page"""
+
+    start_date = request.form.get("start_date")
+    end_date = request.form.get("end_date")
+    therms = request.form.get("therms")
+    address = request.form.get("residence")
+    user_id = session.get("user_id")
+
+    residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+
+    residence_id = residence.residence_id
+
+    new_therms = NGLog(start_date=start_date, end_date=end_date,
+                       therms=therms, residence_id=residence_id)
+
+    db.session.add(new_therms)
+    db.session.commit()
+
+    return redirect("/carbon-log")
+
+
+###  Helper Functions #########################################################
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

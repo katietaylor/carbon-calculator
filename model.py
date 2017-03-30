@@ -56,6 +56,8 @@ class Car(db.Model):
         return "<Car Id=%s, Make=%s, Model=%s, Year=%s>" % \
             (self.car_id, self.make, self.model, self.year)
 
+    usercars = db.relationship('UserCar')
+
 
 class User(db.Model):
     """User of carbon footprint calculator."""
@@ -87,6 +89,25 @@ class UserCar(db.Model):
     def __repr__(self):
         return "<User Car=%s, User Id=%s, Car Id=%s>" % \
             (self.user_car_id, self.user_id, self.car_id)
+
+    car = db.relationship('Car')
+
+    @classmethod
+    def create(cls, user_id, make, model, year, is_default):
+
+        current_cars = cls.query.filter_by(user_id=user_id).all()
+
+        if is_default and current_cars:
+            for car in current_cars:
+                car.is_default = False
+
+        car = Car.query.filter(Car.make == make, Car.model == model,
+                               Car.year == year).one()
+
+        new_car = cls(user_id=user_id, car=car, is_default=is_default)
+
+        db.session.add(new_car)
+        db.session.commit()
 
 
 class TransitType(db.Model):
@@ -147,6 +168,7 @@ class Residence(db.Model):
     # relationships
     user = db.relationship('User')
     electricity_logs = db.relationship('ElectricityLog')
+    ng_logs = db.relationship('NGLog')
     region = db.relationship("Region",
                              secondary="zipcodes",
                              backref="residences",
@@ -202,8 +224,8 @@ class ElectricityLog(db.Model):
 
         lb_CO2e_MWh = self.residence.region.lb_CO2e_MWh
         MWh = self.kWh_to_MWh()
-        CO2e = MWh * lb_CO2e_MWh
 
+        CO2e = MWh * lb_CO2e_MWh
         return CO2e
 
 
@@ -224,6 +246,18 @@ class NGLog(db.Model):
             (self.ng_id, self.residence_id, self.therms, self.start_date,
              self.end_date)
 
+    # Define relationship to residence
+    residence = db.relationship('Residence')
+
+    def co2_calc(self):
+        """Calculate the CO2 emissions for kwh entry."""
+
+        tonnes_CO2_per_therm = 0.005302  # 0.005302 metric tons CO2/therm
+        pounds_per_tonne = 2204.620  # 2,204.620 pounds per tonne
+
+        CO2e = self.therms * tonnes_CO2_per_therm * pounds_per_tonne
+        return CO2e
+
 ##############################################################################
 # Helper functions
 
@@ -242,7 +276,7 @@ def connect_to_db(app):
 
     # Configure to use our database.
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///carbon_calc'
-    app.config['SQLALCHEMY_ECHO'] = False
+    app.config['SQLALCHEMY_ECHO'] = True
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)

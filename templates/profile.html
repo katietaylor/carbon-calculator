@@ -6,6 +6,8 @@
 
 <h1>{{ name }}'s Profile </h1>
 
+<!-- Residence ############################################################ -->
+
 <h2>Residences</h2>
 {% if residences %}
     <table>
@@ -28,11 +30,6 @@
     <h2>No residences added</h2>
 {% endif %}
 <br>
-      
-
-
-
-<div>add residence</div>
 
 <form action="/add-residence" method="POST">
     address: <input type="text" name="address"> <br>
@@ -43,5 +40,38 @@
     <input type="submit" value="Add Residence">
 </form>
 
+<!-- Cars ################################################################# -->
+
+<h2>Cars</h2>
+{% if usercars %}
+    <table>
+        <tr>
+            <th>Make</th>
+            <th>Model</th> 
+            <th>Year</th>
+            <th>Default</th>
+        </tr>
+        {% for usercar in usercars %}
+        <tr>
+            <th>{{ usercar.car.make }}</th>
+            <th>{{ usercar.car.model }}</th>
+            <th>{{ usercar.car.year }}</th>
+            <th>{{ usercar.is_default }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No cars added</h2>
+{% endif %}
+<br>
+
+<form action="/add-car" method="POST">
+    Make: <input type="text" name="make"> <br>
+    Model: <input type="text" name="model"> <br>
+    Year <input type="text" name="year"> <br>
+    set as default?: <input type="checkbox" name="default"> <br>
+
+    <input type="submit" value="Add Car">
+</form>
 
 {% endblock %}

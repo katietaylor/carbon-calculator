@@ -190,11 +190,21 @@ class ElectricityLog(db.Model):
     # Define relationship to residence
     residence = db.relationship('Residence')
 
-    def co2_calc(self, kwh, user_id, address):
+    def kWh_to_MWh(self):
+        """Convert kWh entered by users into MWh to match the EPA factor"""
+
+        # 1 Kwh = 0.001 Megawatt Hours
+        MWh = self.kwh * 0.001
+        return MWh
+
+    def co2_calc(self):
         """Calculate the CO2 emissions for kwh entry."""
 
-        region = self.residence.region
-        lb_CO2e_MWh = region[0].lb_CO2e_MWh
+        lb_CO2e_MWh = self.residence.region.lb_CO2e_MWh
+        MWh = self.kWh_to_MWh()
+        CO2e = MWh * lb_CO2e_MWh
+
+        return CO2e
 
 
 class NGLog(db.Model):

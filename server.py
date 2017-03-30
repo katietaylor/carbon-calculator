@@ -71,6 +71,15 @@ def register_process():
     return redirect("/")
 
 
+@app.route("/logout", methods=["POST"])
+def logout_process():
+    """Logs out users and redirects to homepage."""
+
+    del session["user_id"]
+    flash('You were successfully logged out')
+    return redirect("/")
+
+
 @app.route("/profile", methods=["GET"])
 def view_profile():
     """User profile page"""

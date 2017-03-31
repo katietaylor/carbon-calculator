@@ -18,9 +18,10 @@ def load_regions():
     # Read region file and insert data
     for row in open("seed-data/regions.csv"):
         row = row.rstrip()
-        region_id, name, lb_CO2e_MWh = row.split(",")
+        region_id, name, lb_co2e_mega_wh = row.split(",")
 
-        region = Region(region_id=region_id, name=name, lb_CO2e_MWh=lb_CO2e_MWh)
+        region = Region(region_id=region_id, name=name,
+                        lb_co2e_mega_wh=lb_co2e_mega_wh)
 
         # Add to the session so the data will be stored
         db.session.add(region)
@@ -68,7 +69,7 @@ def load_cars():
                       model=row["model"],  # carline
                       fuel_type=row["fuelType1"],  # primary fuel
                       year=row["year"],  # model year
-                      grams_CO2_mile=row["co2TailpipeGpm"],  # tailpipe CO2
+                      grams_co2_mile=row["co2TailpipeGpm"],  # tailpipe CO2
                       mpg_street=row["city08"],  # city MPG for fuelType1
                       mpg_hw=row["highway08"],  # highway MPG for fuelType1
                       mpg_combo=row["comb08"],  # combined MPG for fuelType1

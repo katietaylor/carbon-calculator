@@ -248,7 +248,7 @@ def add_trip():
 
     car_id = Car.query.filter_by(make=make, model=model, year=year).first().car_id
 
-    new_trip = TripLog.create(user_id, car_id, date, miles)
+    TripLog.create(user_id, car_id, date, miles)
 
     return redirect("/carbon-log")
 

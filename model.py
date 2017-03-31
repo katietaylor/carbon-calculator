@@ -15,11 +15,11 @@ class Region(db.Model):
 
     region_id = db.Column(db.String(9), primary_key=True)
     name = db.Column(db.String(256), nullable=False)
-    lb_CO2e_MWh = db.Column(db.Float, nullable=False)
+    lb_co2e_mega_wh = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return "<Region Id=%s, Region=%s, CO2e/MWH=%s>" % \
-            (self.region_id, self.name, self.lb_CO2e_MWh)
+            (self.region_id, self.name, self.lb_co2e_mega_wh)
 
 
 class Zipcode(db.Model):
@@ -47,7 +47,7 @@ class Car(db.Model):
     model = db.Column(db.String(64), nullable=False)
     fuel_type = db.Column(db.String(64), nullable=True)
     year = db.Column(db.Integer, nullable=False)
-    grams_CO2_mile = db.Column(db.Float, nullable=True)
+    grams_co2_mile = db.Column(db.Float, nullable=True)
     mpg_street = db.Column(db.Float, nullable=True)
     mpg_hw = db.Column(db.Float, nullable=True)
     mpg_combo = db.Column(db.Float, nullable=True)
@@ -118,7 +118,7 @@ class TransitType(db.Model):
     transit_type_id = db.Column(db.Integer, autoincrement=True,
                                 primary_key=True)
     transit_type = db.Column(db.Unicode(64), nullable=False)
-    grams_CO2_mile = db.Column(db.Integer, nullable=True)
+    grams_co2_mile = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
         return "<ID=%s, Transit Type=%s>" % (self.transit_type_id,
@@ -242,11 +242,11 @@ class ElectricityLog(db.Model):
     def co2_calc(self):
         """Calculate the CO2 emissions for kwh entry."""
 
-        lb_CO2e_MWh = self.residence.region.lb_CO2e_MWh
+        lb_co2e_mega_wh = self.residence.region.lb_co2e_mega_wh
         MWh = self.kWh_to_MWh()
 
-        CO2e = MWh * lb_CO2e_MWh
-        return CO2e
+        co2e = MWh * lb_co2e_mega_wh
+        return co2e
 
 
 class NGLog(db.Model):
@@ -272,11 +272,11 @@ class NGLog(db.Model):
     def co2_calc(self):
         """Calculate the CO2 emissions for kwh entry."""
 
-        tonnes_CO2_per_therm = 0.005302  # 0.005302 metric tons CO2/therm
+        tonnes_co2_per_therm = 0.005302  # 0.005302 metric tons CO2/therm
         pounds_per_tonne = 2204.620  # 2,204.620 pounds per tonne
 
-        CO2e = self.therms * tonnes_CO2_per_therm * pounds_per_tonne
-        return CO2e
+        co2e = self.therms * tonnes_co2_per_therm * pounds_per_tonne
+        return co2e
 
 ##############################################################################
 # Helper functions

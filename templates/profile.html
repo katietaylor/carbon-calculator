@@ -12,14 +12,14 @@
 {% if residences %}
     <table>
         <tr>
-            <th>Address</th>
+            <th>House Name or Address</th>
             <th>Zipcode</th> 
             <th>Residents</th>
             <th>Default</th>
         </tr>
         {% for residence in residences %}
         <tr>
-            <th>{{ residence.address }}</th>
+            <th>{{ residence.name_or_address }}</th>
             <th>{{ residence.zipcode_id }}</th>
             <th>{{ residence.number_of_residents }}</th>
             <th>{{ residence.is_default }}</th>
@@ -32,7 +32,7 @@
 <br>
 
 <form action="/add-residence" method="POST">
-    address: <input type="text" name="address"> <br>
+    House Name or Address: <input type="text" name="name_or_address"> <br>
     zipcode: <input type="text" name="zipcode"> <br>
     number of residents? <input type="text" name="no_residents"> <br>
     set as default?: <input type="checkbox" name="default"> <br>

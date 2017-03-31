@@ -43,9 +43,9 @@ class Car(db.Model):
     __tablename__ = 'cars'
 
     car_id = db.Column(db.Integer, primary_key=True)
-    make = db.Column(db.Unicode(100), nullable=False)
-    model = db.Column(db.Unicode(100), nullable=False)
-    fuel_type = db.Column(db.Unicode(100), nullable=True)
+    make = db.Column(db.String(64), nullable=False)
+    model = db.Column(db.String(64), nullable=False)
+    fuel_type = db.Column(db.String(64), nullable=True)
     year = db.Column(db.Integer, nullable=False)
     grams_CO2_mile = db.Column(db.Float, nullable=True)
     mpg_street = db.Column(db.Float, nullable=True)
@@ -102,7 +102,7 @@ class UserCar(db.Model):
                 car.is_default = False
 
         car = Car.query.filter(Car.make == make, Car.model == model,
-                               Car.year == year).one()
+                               Car.year == year).first()
 
         new_car = cls(user_id=user_id, car=car, is_default=is_default)
 
@@ -125,12 +125,12 @@ class TransitType(db.Model):
                                              self.transit_type)
 
 
-class TransitLog(db.Model):
+class TripLog(db.Model):
     """Log of all user trips."""
 
-    __tablename__ = 'transit_log'
+    __tablename__ = 'trip_log'
 
-    transit_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    trip_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'),
                         nullable=False)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.car_id'), nullable=True)
@@ -143,8 +143,21 @@ class TransitLog(db.Model):
 
     def __repr__(self):
         return "<ID=%s, User=%s, Car=%s, Type=%s, Miles=%s, Date=%s>" % \
-            (self.transit_id, self.user_id, self.car_id,
+            (self.trip_id, self.user_id, self.car_id,
              self.transportation_type, self.miles, self.date)
+
+    car = db.relationship('Car')
+
+    @classmethod
+    def create(cls, user_id, car_id, date, miles,
+               number_of_passengers=1, transportation_type=1):
+
+        new_trip = cls(user_id=user_id, car_id=car_id,
+                       transportation_type=transportation_type, date=date,
+                       miles=miles, number_of_passengers=number_of_passengers)
+
+        db.session.add(new_trip)
+        db.session.commit()
 
 
 class Residence(db.Model):
@@ -157,7 +170,7 @@ class Residence(db.Model):
                         nullable=False)
     zipcode_id = db.Column(db.String(16), db.ForeignKey('zipcodes.zipcode_id'),
                            nullable=False)
-    address = db.Column(db.Unicode(256), nullable=False)
+    name_or_address = db.Column(db.Unicode(256), nullable=False)
     is_default = db.Column(db.Boolean, nullable=True)
     number_of_residents = db.Column(db.Integer, nullable=True)
 
@@ -175,7 +188,7 @@ class Residence(db.Model):
                              uselist=False)
 
     @classmethod
-    def create(cls, user_id, zipcode_id, address, is_default,
+    def create(cls, user_id, zipcode_id, name_or_address, is_default,
                number_of_residents):
 
         current_residences = cls.query.filter_by(user_id=user_id).all()
@@ -185,7 +198,8 @@ class Residence(db.Model):
                 residence.is_default = False
 
         new_residence = cls(user_id=user_id, zipcode_id=zipcode_id,
-                            address=address, is_default=is_default,
+                            name_or_address=name_or_address,
+                            is_default=is_default,
                             number_of_residents=number_of_residents)
 
         db.session.add(new_residence)
@@ -276,7 +290,7 @@ def connect_to_db(app):
 
     # Configure to use our database.
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///carbon_calc'
-    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)

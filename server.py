@@ -5,7 +5,7 @@ from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
-                   UserCar)
+                   UserCar, Car, TripLog)
 from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
@@ -109,7 +109,7 @@ def view_profile():
 def add_residence():
     """Add a residence for a profile"""
 
-    address = request.form.get("address")
+    name_or_address = request.form.get("name_or_address")
     zipcode = request.form.get("zipcode")
     number_of_residents = request.form.get("no_residents")
     user_id = session.get("user_id")
@@ -118,7 +118,7 @@ def add_residence():
     if is_default is None:
         is_default = False
 
-    Residence.create(user_id, zipcode, address, is_default,
+    Residence.create(user_id, zipcode, name_or_address, is_default,
                      number_of_residents)
 
     return redirect("/profile")
@@ -162,12 +162,18 @@ def view_carbon_log():
         ng_logs = NGLog.query.filter(
             ElectricityLog.residence.has(Residence.user_id == user_id)).all()
 
+        trip_logs = TripLog.query.filter_by(user_id=user_id).all()
+
         residences = Residence.query.filter_by(user_id=user_id).all()
+
+        usercars = UserCar.query.filter_by(user_id=user_id).all()
 
         return render_template("carbon-log.html",
                                electricity_logs=electricity_logs,
                                residences=residences,
-                               ng_logs=ng_logs)
+                               ng_logs=ng_logs,
+                               trip_logs=trip_logs,
+                               usercars=usercars)
 
     # return to homepage when not logged in
     else:
@@ -176,18 +182,20 @@ def view_carbon_log():
 
 @app.route("/add-kwh", methods=["POST"])
 def add_kwh():
-    """User profile page"""
+    """User kwh data for the user."""
 
     start_date = request.form.get("start_date")
     end_date = request.form.get("end_date")
     kwh = request.form.get("kwh")
-    address = request.form.get("residence")
+    name_or_address = request.form.get("residence")
     user_id = session.get("user_id")
 
     try:
-        residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+        residence = Residence.query.filter_by(user_id=user_id,
+                                              name_or_address=name_or_address).one()
     except NoResultFound:  # one error
-        residence = Residence.query.filter_by(user_id=user_id, address=address).first()
+        residence = Residence.query.filter_by(user_id=user_id,
+                                              name_or_address=name_or_address).first()
 
     residence_id = residence.residence_id
 
@@ -202,15 +210,16 @@ def add_kwh():
 
 @app.route("/add-ng", methods=["POST"])
 def add_ng():
-    """User profile page"""
+    """Add natural gas data for the user."""
 
     start_date = request.form.get("start_date")
     end_date = request.form.get("end_date")
     therms = request.form.get("therms")
-    address = request.form.get("residence")
+    name_or_address = request.form.get("residence")
     user_id = session.get("user_id")
 
-    residence = Residence.query.filter_by(user_id=user_id, address=address).one()
+    residence = Residence.query.filter_by(user_id=user_id,
+                                          name_or_address=name_or_address).one()
 
     residence_id = residence.residence_id
 
@@ -218,6 +227,30 @@ def add_ng():
                        therms=therms, residence_id=residence_id)
 
     db.session.add(new_therms)
+    db.session.commit()
+
+    return redirect("/carbon-log")
+
+
+@app.route("/add-trip", methods=["POST"])
+def add_trip():
+    """Add transportation data for the user."""
+
+    date = request.form.get("date")
+    miles = int(request.form.get("miles"))
+    car = request.form.get("car").split("|")
+
+    make = car[0]
+    model = car[1]
+    year = car[2]
+
+    user_id = session.get("user_id")
+
+    car_id = Car.query.filter_by(make=make, model=model, year=year).first().car_id
+
+    new_trip = TripLog.create(user_id, car_id, date, miles)
+
+    db.session.add(new_trip)
     db.session.commit()
 
     return redirect("/carbon-log")

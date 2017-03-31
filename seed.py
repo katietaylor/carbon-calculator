@@ -1,7 +1,7 @@
 """Utility file to seed carbon_calc database."""
 
 from sqlalchemy import func
-from model import Region, Zipcode, Car
+from model import Region, Zipcode, Car, TransitType
 from model import connect_to_db, db
 from server import app
 import csv
@@ -13,7 +13,7 @@ def load_regions():
     print "\n Regions \n"
 
     # Delete all rows in table, to avoid duplicates
-    Region.query.delete()
+    # Region.query.delete()
 
     # Read region file and insert data
     for row in open("seed-data/regions.csv"):
@@ -35,7 +35,7 @@ def load_zipcodes():
     print "\n Zipcodes \n"
 
     # Delete all rows in table, to avoid duplicates
-    Zipcode.query.delete()
+    # Zipcode.query.delete()
 
     # Read zipcode file and insert data
     for row in open("seed-data/zipcode-regions.csv"):
@@ -58,7 +58,7 @@ def load_cars():
     print "\n Load Cars \n"
 
     # Delete all rows in table, to avoid duplicates
-    Car.query.delete()
+    # Car.query.delete()
 
     with open('seed-data/vehicles.csv') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -80,6 +80,15 @@ def load_cars():
     # Commit the changes to the database
     db.session.commit()
 
+
+def load_transit_type():
+    """Load transportation types into the database."""
+
+    car = TransitType(transit_type='car')
+    db.session.add(car)
+    db.session.commit()
+
+
 if __name__ == "__main__":
     connect_to_db(app)
 
@@ -87,3 +96,4 @@ if __name__ == "__main__":
     load_regions()
     load_zipcodes()
     load_cars()
+    load_transit_type()

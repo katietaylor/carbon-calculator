@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<!-- Electricity ########################################################## -->
+
 <h1>Electricity Data</h1>
 {% if electricity_logs %}
     <table>
@@ -11,7 +13,7 @@
             <th>Begin Date</th>
             <th>End Date</th> 
             <th>kwh</th>
-            <th>address</th>
+            <th>house name or address</th>
             <th>lbs of CO2</th>
         </tr>
         {% for log in electricity_logs %}
@@ -19,7 +21,7 @@
             <th>{{ log.start_date }}</th>
             <th>{{ log.end_date }}</th>
             <th>{{ log.kwh }}</th>
-            <th>{{ log.residence.address }}</th>
+            <th>{{ log.residence.name_or_address }}</th>
             <th>{{ log.co2_calc() }}</th>
         </tr>
         {% endfor %}
@@ -37,13 +39,15 @@
     
     Residence <select name="residence">
     {% for residence in residences %}
-        <option value="{{ residence.address }}">{{ residence.address }}</option>
+        <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
     {% endfor %}
     </select>
     <br>
 
     <input type="submit" value="Add kwh">
 </form>
+
+<!-- Natural Gas ########################################################## -->
 
 <h1>Natural Gas Data</h1>
 
@@ -61,7 +65,7 @@
             <th>{{ log.start_date }}</th>
             <th>{{ log.end_date }}</th>
             <th>{{ log.therms }}</th>
-            <th>{{ log.residence.address }}</th>
+            <th>{{ log.residence.name_or_address }}</th>
             <th>{{ log.co2_calc() }}</th>
         </tr>
         {% endfor %}
@@ -79,7 +83,7 @@
     
     Residence <select name="residence">
     {% for residence in residences %}
-        <option value="{{ residence.address }}">{{ residence.address }}</option>
+        <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
     {% endfor %}
     </select>
     <br>
@@ -87,15 +91,48 @@
     <input type="submit" value="Add ng">
 </form>
 
+<!-- Transportation ####################################################### -->
 
 <h1>Transportation Data</h1>
 
+{% if trip_logs %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Miles</th> 
+            <th>Car</th>
+            <th>lbs of CO2</th>
+        </tr>
+        {% for log in trip_logs %}
+        <tr>
+            <th>{{ log.date }}</th>
+            <th>{{ log.miles }}</th>
+            <th>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</th>
+            <th>{{ log.co2_calc() }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No transportation data added yet</h2>
+{% endif %}
+
+<br>
+<br>
+<form action="/add-trip" method="POST">
+    Begin Date: <input type="date" name="date"> <br>
+    Distance in Miles <input type="number" name="miles"> <br>
+    
+    Car <select name="car">
+    {% for usercar in usercars %}
+        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}"
+        >{{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
+    {% endfor %}
+    </select>
+    <br>
+
+    <input type="submit" value="Add trip">
+</form>
+
+
 
 {% endblock %}
-
-
-<select name="food">
-    <option value="pizza">Pizza</option>
-    <option value="icecream">Ice Cream</option>
-    <option value="eggsham">Green Eggs and Ham</option>
-  </select>

@@ -250,9 +250,6 @@ def add_trip():
 
     new_trip = TripLog.create(user_id, car_id, date, miles)
 
-    db.session.add(new_trip)
-    db.session.commit()
-
     return redirect("/carbon-log")
 
 

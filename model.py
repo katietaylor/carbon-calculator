@@ -159,6 +159,12 @@ class TripLog(db.Model):
         db.session.add(new_trip)
         db.session.commit()
 
+    def co2_calc(self):
+        """Calculate the CO2 emissions for kwh entry."""
+
+        co2 = 99999
+        return co2
+
 
 class Residence(db.Model):
     """Residence profiles for users. Users may have many residences."""

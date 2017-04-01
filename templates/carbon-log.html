@@ -33,9 +33,9 @@
 <br>
 <br>
 <form action="/add-kwh" method="POST">
-    Begin Date: <input type="date" name="start_date"> <br>
-    End Date: <input type="date" name="end_date"> <br>
-    kwh <input type="number" name="kwh"> <br>
+    Begin Date: <input type="date" name="start_date" required> <br>
+    End Date: <input type="date" name="end_date" required> <br>
+    kwh <input type="number" name="kwh" required> <br>
     
     Residence <select name="residence">
     {% for residence in residences %}
@@ -77,9 +77,9 @@
 <br>
 <br>
 <form action="/add-ng" method="POST">
-    Begin Date: <input type="date" name="start_date"> <br>
-    End Date: <input type="date" name="end_date"> <br>
-    therms of natural gas <input type="number" name="therms"> <br>
+    Begin Date: <input type="date" name="start_date" required> <br>
+    End Date: <input type="date" name="end_date" required> <br>
+    therms of natural gas <input type="number" name="therms" required> <br>
     
     Residence <select name="residence">
     {% for residence in residences %}
@@ -119,14 +119,15 @@
 <br>
 <br>
 <form action="/add-trip" method="POST">
-    Begin Date: <input type="date" name="date"> <br>
-    Distance in Miles <input type="number" name="miles"> <br>
+    Date: <input type="date" name="date" required> <br>
+    Distance in Miles <input type="number" name="miles" required> <br>
     
     Car <select name="car">
     {% for usercar in usercars %}
-        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}"
-        >{{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
+        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}">
+        {{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
     {% endfor %}
+        <option value="Other">Other</option>
     </select>
     <br>
 

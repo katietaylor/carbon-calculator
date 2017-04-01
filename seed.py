@@ -69,6 +69,13 @@ def load_cars():
                       model=row["model"],  # carline
                       fuel_type=row["fuelType1"],  # primary fuel
                       year=row["year"],  # model year
+                      cylinders=row["cylinders"],
+                      drive=row["drive"],
+                      eng_id=row["engId"],
+                      eng_description=row["eng_dscr"],
+                      displacement=row["displ"],  # engine displacement in liters
+                      trans_description=row["trans_dscr"],  # transmission descriptor
+                      transmission=row["trany"],
                       grams_co2_mile=row["co2TailpipeGpm"],  # tailpipe CO2
                       mpg_street=row["city08"],  # city MPG for fuelType1
                       mpg_hw=row["highway08"],  # highway MPG for fuelType1
@@ -84,6 +91,8 @@ def load_cars():
 
 def load_transit_type():
     """Load transportation types into the database."""
+
+    print "\n Load Tranporation types \n"
 
     car = TransitType(transit_type='car')
     db.session.add(car)

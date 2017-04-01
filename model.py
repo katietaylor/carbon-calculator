@@ -47,6 +47,13 @@ class Car(db.Model):
     model = db.Column(db.String(64), nullable=False)
     fuel_type = db.Column(db.String(64), nullable=True)
     year = db.Column(db.Integer, nullable=False)
+    cylinders = db.Column(db.String(64), nullable=True)
+    drive = db.Column(db.String(64), nullable=True)
+    eng_id = db.Column(db.String(64), nullable=True)
+    eng_description = db.Column(db.String(64), nullable=True)
+    displacement = db.Column(db.String(64), nullable=True)
+    trans_description = db.Column(db.String(64), nullable=True)
+    transmission = db.Column(db.String(64), nullable=True)
     grams_co2_mile = db.Column(db.Float, nullable=True)
     mpg_street = db.Column(db.Float, nullable=True)
     mpg_hw = db.Column(db.Float, nullable=True)
@@ -117,7 +124,7 @@ class TransitType(db.Model):
 
     transit_type_id = db.Column(db.Integer, autoincrement=True,
                                 primary_key=True)
-    transit_type = db.Column(db.Unicode(64), nullable=False)
+    transit_type = db.Column(db.String(64), nullable=False)
     grams_co2_mile = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
@@ -160,9 +167,11 @@ class TripLog(db.Model):
         db.session.commit()
 
     def co2_calc(self):
-        """Calculate the CO2 emissions for kwh entry."""
+        """Calculate the CO2 emissions for a car trip."""
 
-        co2 = 99999
+        grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
+
+        co2 = self.miles * self.car.grams_co2_mile * grams_to_lbs
         return co2
 
 

@@ -46,6 +46,7 @@ def login_process():
     # If either email or password incorrect, show message to user.
     else:
         flash("This combination of username and password doesn't exist")
+        return render_template("homepage.html")
 
 
 @app.route("/process-signup", methods=["POST"])
@@ -164,9 +165,11 @@ def view_carbon_log():
 
         trip_logs = TripLog.query.filter_by(user_id=user_id).all()
 
-        residences = Residence.query.filter_by(user_id=user_id).all()
+        residences = Residence.query.filter_by(user_id=user_id).order_by(
+            Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
-        usercars = UserCar.query.filter_by(user_id=user_id).all()
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.user_car_id.desc()).all()
 
         return render_template("carbon-log.html",
                                electricity_logs=electricity_logs,

@@ -42,11 +42,11 @@ def login_process():
         session["user_id"] = user.user_id
 
         flash('You were successfully logged in')
-        return render_template("homepage.html")
+        return redirect("/")
     # If either email or password incorrect, show message to user.
     else:
         flash("This combination of username and password doesn't exist")
-        return render_template("homepage.html")
+        return redirect("/")
 
 
 @app.route("/process-signup", methods=["POST"])
@@ -98,8 +98,10 @@ def view_profile():
         residences = Residence.query.filter_by(user_id=user_id).all()
         usercars = UserCar.query.filter_by(user_id=user_id).all()
 
+        makes = Car.get_unique_makes()
+
         return render_template("profile.html", residences=residences, name=name,
-                               usercars=usercars)
+                               usercars=usercars, makes=makes)
 
     # return to homepage when not logged in
     else:

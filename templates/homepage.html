@@ -5,10 +5,12 @@
 {% block content %}
 
 <h1>Homepage</h1>
+{% for message in get_flashed_messages() %}
+    <div>{{ message }}</div>
+{% endfor %}
 
 <a href="/profile">profile</a><br>
 
 <a href="/carbon-log">Add Data</a>
-
 
 {% endblock %}

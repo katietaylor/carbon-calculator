@@ -291,16 +291,27 @@ class NGLog(db.Model):
 # Helper functions
 
 
-def example_data():
+def initialize_test_data():
     """Seed test database with test data."""
 
-    region = Region(region_id="CAMX", name="United States",
-                    lb_co2e_mega_wh=1150.3)
+    # Region.query.delete()
+    # Zipcode.query.delete()
+    # Car.query.delete()
+    # TransitType.query.delete()
+    # User.query.delete()
+    # UserCar.query.delete()
+    # TripLog.query.delete()
+    # ElectricityLog.query.delete()
+    # NGLog.query.delete()
+    # Residence.query.delete()
 
-    usa_region = Region(region_id="USA", name="WECC California",
-                        lb_co2e_mega_wh=621.9)
+    region = Region(region_id="CAMX", name="WECC California",
+                    lb_co2e_mega_wh=621.9)
 
-    zipcode = Zipcode(zipcode_id=94133, region_id=CAMX)
+    usa_region = Region(region_id="USA", name="United States",
+                        lb_co2e_mega_wh=1150.3)
+
+    zipcode = Zipcode(zipcode_id=94133, region_id="CAMX")
 
     car_one_type = Car(car_id=1, make="Toyota", model="Prius",
                        fuel_type="Regular Gasoline", year=2004,
@@ -345,7 +356,7 @@ def example_data():
 
     transit_type = TransitType(transit_type='car')
 
-    user = User(email="cat@email.com", password="password", name="Phillipe")
+    user = User(user_id=1, email="cat@email.com", password="password", name="Phillipe")
 
     residence_1 = Residence(user_id=1, zipcode_id=94133, name_or_address="Home",
                             is_default=True, number_of_residents=1)
@@ -353,26 +364,41 @@ def example_data():
                             name_or_address="Beach House",
                             is_default=False, number_of_residents=2)
 
-    usercar_1 = Car(user_id=1, car_id=1, is_default=True)
-    usercar_2 = Car(user_id=1, car_id=4, is_default=False)
+    usercar_1 = UserCar(user_id=1, car_id=1, is_default=True)
+    usercar_2 = UserCar(user_id=1, car_id=4, is_default=False)
 
     triplog_1 = TripLog(user_id=1, car_id=1, transportation_type=1,
-                        date=2017-01-01, miles=100, number_of_passengers=1)
+                        date="2017-01-01", miles=100, number_of_passengers=1)
     triplog_2 = TripLog(user_id=1, car_id=4, transportation_type=1,
-                        date=2017-02-01, miles=310, number_of_passengers=2)
-    elect_log_1 = ElectricityLog(start_date=2017-01-01, end_date=2017-02-01,
+                        date="2017-02-01", miles=310, number_of_passengers=2)
+    elect_log_1 = ElectricityLog(start_date="2017-01-01", end_date="2017-02-01",
                                  kwh=188, residence_id=1)
-    elect_log_2 = ElectricityLog(start_date=2017-01-15, end_date=2017-02-15,
+    elect_log_2 = ElectricityLog(start_date="2017-01-15", end_date="2017-02-15",
                                  kwh=60, residence_id=2)
 
-    ng_log = NGLog(start_date=2017-01-01, end_date=2017-02-01, therms=30,
+    ng_log = NGLog(start_date="2017-01-01", end_date="2017-02-01", therms=30,
                    residence_id=1)
 
-    db.session.add_all([region, usa_region, zipcode, car_one_type,
-                        car_4runner_1, car_4runner_2, car_4runner_3,
-                        car_4runner_4, transit_type, user, residence_1,
-                        residence_2, usercar_1, usercar_2, triplog_1, triplog_2,
-                        elect_log_1, elect_log_2, ng_log])
+    # db.session.add_all([user, car_one_type, car_4runner_1, car_4runner_2,
+    #                     car_4runner_3, car_4runner_4, usa_region, region,
+    #                     zipcode, transit_type, residence_1, residence_2,
+    #                     usercar_1, usercar_2, triplog_1, triplog_2,
+    #                     elect_log_1, elect_log_2, ng_log])
+
+    # db.session.commit()
+
+    db.session.add_all([user, car_one_type, car_4runner_1, car_4runner_2,
+                        car_4runner_3, car_4runner_4, usa_region, region,
+                        transit_type])
+    db.session.commit()
+
+    db.session.add_all([zipcode])
+    db.session.commit()
+
+    db.session.add_all([residence_1, residence_2, usercar_1, usercar_2])
+    db.session.commit()
+
+    db.session.add_all([triplog_1, triplog_2, elect_log_1, elect_log_2, ng_log])
     db.session.commit()
 
 
@@ -385,11 +411,11 @@ def init_app():
     print "Connected to DB."
 
 
-def connect_to_db(app):
+def connect_to_db(app, uri='postgres:///carbon_calc'):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///carbon_calc'
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app

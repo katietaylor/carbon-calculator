@@ -379,14 +379,6 @@ def initialize_test_data():
     ng_log = NGLog(start_date="2017-01-01", end_date="2017-02-01", therms=30,
                    residence_id=1)
 
-    # db.session.add_all([user, car_one_type, car_4runner_1, car_4runner_2,
-    #                     car_4runner_3, car_4runner_4, usa_region, region,
-    #                     zipcode, transit_type, residence_1, residence_2,
-    #                     usercar_1, usercar_2, triplog_1, triplog_2,
-    #                     elect_log_1, elect_log_2, ng_log])
-
-    # db.session.commit()
-
     db.session.add_all([user, car_one_type, car_4runner_1, car_4runner_2,
                         car_4runner_3, car_4runner_4, usa_region, region,
                         transit_type])

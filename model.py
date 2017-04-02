@@ -291,6 +291,91 @@ class NGLog(db.Model):
 # Helper functions
 
 
+def example_data():
+    """Seed test database with test data."""
+
+    region = Region(region_id="CAMX", name="United States",
+                    lb_co2e_mega_wh=1150.3)
+
+    usa_region = Region(region_id="USA", name="WECC California",
+                        lb_co2e_mega_wh=621.9)
+
+    zipcode = Zipcode(zipcode_id=94133, region_id=CAMX)
+
+    car_one_type = Car(car_id=1, make="Toyota", model="Prius",
+                       fuel_type="Regular Gasoline", year=2004,
+                       cylinders=4, drive="Front-Wheel Drive", eng_id=0,
+                       eng_description="", displacement=1.5,
+                       trans_description="",
+                       transmission="Automatic (variable gear ratios)",
+                       grams_co2_mile=193.195652173913, mpg_street=48,
+                       mpg_hw=45, mpg_combo=46)
+    car_4runner_1 = Car(car_id=2, make="Toyota", model="4Runner 2WD",
+                        fuel_type="Regular Gasoline", year=2004,
+                        cylinders=6, drive="Rear-Wheel Drive", eng_id=0,
+                        eng_description="", displacement=4.0,
+                        trans_description="CLKUP",
+                        transmission="Automatic 4-spd",
+                        grams_co2_mile=493.722222222222, mpg_street=16,
+                        mpg_hw=20, mpg_combo=18)
+    car_4runner_2 = Car(car_id=3, make="Toyota", model="4Runner 2WD",
+                        fuel_type="Regular Gasoline", year=2004,
+                        cylinders=8, drive="Rear-Wheel Drive", eng_id=0,
+                        eng_description="", displacement=4.7,
+                        trans_description="CLKUP",
+                        transmission="Automatic 5-spd",
+                        grams_co2_mile=555.4375, mpg_street=15,
+                        mpg_hw=18, mpg_combo=16)
+    car_4runner_3 = Car(car_id=4, make="Toyota", model="4Runner 4WD",
+                        fuel_type="Regular Gasoline", year=2004,
+                        cylinders=6, drive="4-Wheel or All-Wheel Drive",
+                        eng_id=0, eng_description="", displacement=4.0,
+                        trans_description="CLKUP",
+                        transmission="Automatic 4-spd",
+                        grams_co2_mile=522.764705882353, mpg_street=15,
+                        mpg_hw=19, mpg_combo=17)
+    car_4runner_4 = Car(car_id=5, make="Toyota", model="4Runner 4WD",
+                        fuel_type="Regular Gasoline", year=2004,
+                        cylinders=8, drive="4-Wheel or All-Wheel Drive", eng_id=0,
+                        eng_description="", displacement=4.7,
+                        trans_description="CLKUP",
+                        transmission="Automatic 5-spd",
+                        grams_co2_mile=592.466666666667, mpg_street=14,
+                        mpg_hw=17, mpg_combo=15)
+
+    transit_type = TransitType(transit_type='car')
+
+    user = User(email="cat@email.com", password="password", name="Phillipe")
+
+    residence_1 = Residence(user_id=1, zipcode_id=94133, name_or_address="Home",
+                            is_default=True, number_of_residents=1)
+    residence_2 = Residence(user_id=1, zipcode_id=94133,
+                            name_or_address="Beach House",
+                            is_default=False, number_of_residents=2)
+
+    usercar_1 = Car(user_id=1, car_id=1, is_default=True)
+    usercar_2 = Car(user_id=1, car_id=4, is_default=False)
+
+    triplog_1 = TripLog(user_id=1, car_id=1, transportation_type=1,
+                        date=2017-01-01, miles=100, number_of_passengers=1)
+    triplog_2 = TripLog(user_id=1, car_id=4, transportation_type=1,
+                        date=2017-02-01, miles=310, number_of_passengers=2)
+    elect_log_1 = ElectricityLog(start_date=2017-01-01, end_date=2017-02-01,
+                                 kwh=188, residence_id=1)
+    elect_log_2 = ElectricityLog(start_date=2017-01-15, end_date=2017-02-15,
+                                 kwh=60, residence_id=2)
+
+    ng_log = NGLog(start_date=2017-01-01, end_date=2017-02-01, therms=30,
+                   residence_id=1)
+
+    db.session.add_all([region, usa_region, zipcode, car_one_type,
+                        car_4runner_1, car_4runner_2, car_4runner_3,
+                        car_4runner_4, transit_type, user, residence_1,
+                        residence_2, usercar_1, usercar_2, triplog_1, triplog_2,
+                        elect_log_1, elect_log_2, ng_log])
+    db.session.commit()
+
+
 def init_app():
     # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
     from flask import Flask
@@ -324,3 +409,11 @@ if __name__ == "__main__":
     print "Connected to DB."
 
     # db.create_all()
+
+    import doctest
+
+    print
+    result = doctest.testmod()
+    if not result.failed:
+        print "ALL TESTS PASSED. GOOD WORK!"
+    print

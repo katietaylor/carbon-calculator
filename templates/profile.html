@@ -66,7 +66,11 @@
 <br>
 
 <form action="/add-car" method="POST">
-    Make: <input type="text" name="make"> <br>
+    Make: <select name="make">
+    {% for make in makes %}
+        <option value="{{ make }}">{{ make }}</option>
+    {% endfor %}
+    </select><br>
     Model: <input type="text" name="model"> <br>
     Year <input type="text" name="year"> <br>
     set as default?: <input type="checkbox" name="default"> <br>

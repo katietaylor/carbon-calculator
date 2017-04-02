@@ -65,6 +65,34 @@ class Car(db.Model):
 
     usercars = db.relationship('UserCar')
 
+    @classmethod
+    def get_unique_makes(cls):
+        """Get list of unique car makes (brands)."""
+
+        query = db.session.query(cls.make).distinct()
+        makes = sorted([row.make for row in query.all()])
+
+        return makes
+
+    @classmethod
+    def get_unique_models(cls, make):
+        """Get list of unique car models for a given make."""
+
+        query = db.session.query(cls.model).filter_by(make=make).distinct()
+        models = [row.model for row in query.all()]
+
+        return models
+
+    @classmethod
+    def get_unique_years(cls, make, model):
+        """Get list of unique car models for a given make."""
+
+        query = db.session.query(cls.year).filter_by(
+            make=make, model=model).distinct()
+        years = [row.year for row in query.all()]
+
+        return years
+
 
 class User(db.Model):
     """User of carbon footprint calculator."""

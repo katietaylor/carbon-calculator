@@ -67,7 +67,7 @@
 
 <form action="/add-car", id="add-car" method="POST">
     Make: <select name="make", id="make">
-        <option selected="selected", disabled="disabled">Select a Car Make</option>
+        <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
     {% for make in makes %}
         <option value="{{ make }}">{{ make }}</option>
     {% endfor %}
@@ -90,37 +90,50 @@
     var model = $("#model");
     var year = $("#year");
 
-    make.on("change", getModelYearList);
-    model.on("change", getModelYearList);
-    year.on("change", getModelYearList);
+    make.on("change", onMakeChange);
+    model.on("change", onModelChange);
+    year.on("change", onYearChange);
 
-    function getModelYearList(evt) {
+    function onMakeChange(evt) {
         var data = {};
-        data.make = make.val()
-
-        if (model.val()) {
-            data.model = model.val();
-        }
-        if (year.val()) {
-            data.year = year.val();
-        }
+        data.make = make.val();
 
         $.ajax({
             url: "/car-data",
             data: data,
             success: function(data) {
+                
                 model.empty();
-                model.append("<option value='', disabled='disabled'>SELECT MODEL</option>");
+                model.append("<option value=''>SELECT MODEL</option>");
+                var modelsFound = [];
+
+                // create a list of unique models
                 $.each(data, function(i,car) {
-                    console.log(car)
-                    if ($.inArray(car.model, model) == -1) {
-                        model.append("<option value='"+car.model+"'>"+car.model+"</option>");
+                    console.log(car);
+                    if ($.inArray(car.model, modelsFound) == -1) {
+                        modelsFound.push(car.model);
                     }
                 })
-                // iterate over list of cars, 
-                // clear out old options list
-                // create model options
+                // sort the list and append it to the Model dropdown list
+                $.each(modelsFound.sort(), function(i,carModel) {
+                    model.append("<option value='"+carModel+"'>"+carModel+"</option>");
+                })
                 
+                year.empty();
+                year.append("<option value=''>SELECT YEAR</option>");
+                var yearsFound = [];
+
+                // create a list of unique years
+                $.each(data, function(i,car) {
+                    console.log(car);
+                    if ($.inArray(car.year, yearsFound) == -1) {
+                        yearsFound.push(car.year);
+                    }
+                })
+                // sort the list and append it to the Year dropdown list
+                $.each(yearsFound.sort(), function(i,carYear) {
+                    year.append("<option value='"+carYear+"'>"+carYear+"</option>");
+                })
             },
             error: function(data) {
 
@@ -128,7 +141,89 @@
         })
     }
 
-    // function showModelList
+    function onModelChange(evt) {
+        var data = {};
+        data.make = make.val();
+        data.model = model.val();
+        var selectedYear = year.val();
+
+        $.ajax({
+            url: "/car-data",
+            data: data,
+            success: function(data) {
+
+                year.empty();
+                year.append("<option value=''>SELECT YEAR</option>");
+                var yearsFound = [];
+
+                // create a list of unique years
+                $.each(data, function(i,car) {
+                    console.log(car);
+                    if ($.inArray(car.year, yearsFound) == -1) {
+                        yearsFound.push(car.year);
+                    }
+                })
+
+                // sort the list and append it to the Year dropdown list
+                $.each(yearsFound.sort(), function(i,carYear) {
+                    var optionSelected = "";
+                    // if year has already been selected, keep current year as selected value
+                    if (carYear.toString() == selectedYear) {
+                            optionSelected = "selected='selected'";
+                        }
+                    year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
+                })
+            },
+            error: function(data) {
+
+            }
+        })
+    }
+
+
+    function onYearChange(evt) {
+        var data = {};
+        data.make = make.val();
+        data.year = year.val();
+        var selectedModel = model.val();
+
+        $.ajax({
+            url: "/car-data",
+            data: data,
+            success: function(data) {
+
+                model.empty();
+                model.append("<option value=''>SELECT YEAR</option>");
+                var modelsFound = [];
+
+                // create a list of unique models
+                $.each(data, function(i,car) {
+                    console.log(car);
+                    if ($.inArray(car.model, modelsFound) == -1) {
+                        modelsFound.push(car.model);
+                    }
+                })
+
+                // sort the list and append it to the Model dropdown list
+                $.each(modelsFound.sort(), function(i,carModel) {
+                    var optionSelected = "";
+                    // if model has already been selected, keep current model as selected value
+                    if (carModel == selectedModel) {
+                            optionSelected = "selected='selected'";
+                        }
+                    model.append("<option " + optionSelected + " value='"+carModel+"'>"+carModel+"</option>");
+                })
+            },
+            error: function(data) {
+
+            }
+        })
+    }
+
+    
+
+
+
 
 
 </script>

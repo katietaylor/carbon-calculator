@@ -74,24 +74,10 @@ class Car(db.Model):
 
         return makes
 
-    @classmethod
-    def get_unique_models(cls, make):
-        """Get list of unique car models for a given make."""
-
-        query = db.session.query(cls.model).filter_by(make=make).distinct()
-        models = [row.model for row in query.all()]
-
-        return models
-
-    @classmethod
-    def get_unique_years(cls, make, model):
-        """Get list of unique car models for a given make."""
-
-        query = db.session.query(cls.year).filter_by(
-            make=make, model=model).distinct()
-        years = [row.year for row in query.all()]
-
-        return years
+    def as_dict(self):
+        """This method changes the results of a query into a dictionary. The
+        column name is set to the dictionary key"""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class User(db.Model):

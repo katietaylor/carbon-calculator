@@ -7,6 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
                    UserCar, Car, TripLog)
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import and_
 
 app = Flask(__name__)
 
@@ -147,6 +148,42 @@ def add_car():
     UserCar.create(user_id, make, model, year, is_default)
 
     return redirect("/profile")
+
+
+@app.route("/car-data", methods=["GET"])
+def get_car_data():
+    """Get list of unique cars given make, model, and year."""
+
+    make = request.args.get('make')
+    model = request.args.get('model')
+    year = request.args.get('year')
+
+    query = db.session.query(Car.make, Car.model, Car.year)
+
+    # applies a filter to the query based on what values the user has inputed
+    if make is not None:
+        query = query.filter(Car.make == make).distinct()
+
+    if model is not None:
+        query = query.filter(Car.model == model).distinct()
+
+    if year is not None:
+        query = query.filter(Car.year == year).distint()
+
+    models = []
+
+    for car_tuple in query.all():
+        car_dict = {}
+        car_dict["make"] = car_tuple[0]
+        car_dict["model"] = car_tuple[1]
+        car_dict["year"] = car_tuple[2]
+        if car_dict not in models:
+            models.append(car_dict)
+
+    # creates a list of dictionaries
+    # models = [row.as_dict() for row in query.all()]
+
+    return jsonify(models)
 
 
 ###  kWh, NG, Trans Carbon Log ################################################

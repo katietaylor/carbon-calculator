@@ -65,17 +65,73 @@
 {% endif %}
 <br>
 
-<form action="/add-car" method="POST">
-    Make: <select name="make">
+<form action="/add-car", id="add-car" method="POST">
+    Make: <select name="make", id="make">
+        <option selected="selected", disabled="disabled">Select a Car Make</option>
     {% for make in makes %}
         <option value="{{ make }}">{{ make }}</option>
     {% endfor %}
     </select><br>
-    Model: <input type="text" name="model"> <br>
-    Year <input type="text" name="year"> <br>
+    Model: <select name="model", id="model">
+
+    </select><br>
+    Year: <select name="year", id="year">
+ 
+    </select><br>
     set as default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Car">
 </form>
+
+<script type="text/javascript">
+    "use strict";
+
+    var make = $("#make");
+    var model = $("#model");
+    var year = $("#year");
+
+    make.on("change", getModelYearList);
+    model.on("change", getModelYearList);
+    year.on("change", getModelYearList);
+
+    function getModelYearList(evt) {
+        var data = {};
+        data.make = make.val()
+
+        if (model.val()) {
+            data.model = model.val();
+        }
+        if (year.val()) {
+            data.year = year.val();
+        }
+
+        $.ajax({
+            url: "/car-data",
+            data: data,
+            success: function(data) {
+                model.empty();
+                model.append("<option value='', disabled='disabled'>SELECT MODEL</option>");
+                $.each(data, function(i,car) {
+                    console.log(car)
+                    if ($.inArray(car.model, model) == -1) {
+                        model.append("<option value='"+car.model+"'>"+car.model+"</option>");
+                    }
+                })
+                // iterate over list of cars, 
+                // clear out old options list
+                // create model options
+                
+            },
+            error: function(data) {
+
+            }
+        })
+    }
+
+    // function showModelList
+
+
+</script>
+
 
 {% endblock %}

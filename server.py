@@ -168,7 +168,7 @@ def get_car_data():
         query = query.filter(Car.model == model).distinct()
 
     if year is not None:
-        query = query.filter(Car.year == year).distint()
+        query = query.filter(Car.year == year).distinct()
 
     models = []
 

@@ -119,8 +119,14 @@
 <br>
 <br>
 <form action="/add-trip" method="POST">
-    Date: <input type="date" name="date" required> <br>
-    Distance in Miles <input type="number" name="miles" required> <br>
+    Date: <input type="date" name="date" required> <br><br>
+    Enter Distance in Miles: <input type="number" name="miles" id="distance" step="0.01" required> <br>
+    or <br>
+    Enter the start and end locations: <br>
+    Start: <input type="text" name="origin" id="origin"> <br>
+    End: <input type="text" name="destination" id="destination"><br>
+    <button type="button" id="distance-button">Calculate Distance</button> <br><br>
+
     
     Car <select name="car">
     {% for usercar in usercars %}
@@ -129,11 +135,38 @@
     {% endfor %}
         <option value="Other">Other</option>
     </select>
-    <br>
+    <br><br>
 
     <input type="submit" value="Add trip">
 </form>
 
+<script type="text/javascript">
+    "use strict";
+
+    $("#distance-button").on("click", getDistance);
+    
+    function getDistance() {
+        var origin = $("#origin");
+        var destination = $("#destination");
+
+        var data = {};
+            data.origin = origin.val();
+            data.destination = destination.val();
+
+        $.ajax({
+            url: "/get-distance",
+            data: data,
+            success: function(response) {
+                // change the distance in the dom to the response
+                $("#distance").val(response);
+            }
+        })
+    }
+
+    
+
+
+</script>
 
 
 {% endblock %}

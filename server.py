@@ -7,7 +7,10 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
                    UserCar, Car, TripLog)
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql import and_
+import requests
+import os
+
+# source misc/secrets.sh in terminal before running server
 
 app = Flask(__name__)
 
@@ -172,15 +175,14 @@ def get_car_data():
 
     models = []
 
+    # creates a list of dictionaries
     for car_tuple in query.all():
         car_dict = {}
         car_dict["make"] = car_tuple[0]
         car_dict["model"] = car_tuple[1]
         car_dict["year"] = car_tuple[2]
-        if car_dict not in models:
-            models.append(car_dict)
+        models.append(car_dict)
 
-    # creates a list of dictionaries
     # models = [row.as_dict() for row in query.all()]
 
     return jsonify(models)
@@ -279,7 +281,7 @@ def add_trip():
     """Add transportation data for the user."""
 
     date = request.form.get("date")
-    miles = int(request.form.get("miles"))
+    miles = float(request.form.get("miles"))
     car = request.form.get("car").split("|")
 
     make = car[0]
@@ -293,6 +295,38 @@ def add_trip():
     TripLog.create(user_id, car_id, date, miles)
 
     return redirect("/carbon-log")
+
+
+@app.route("/get-distance", methods=["GET"])
+def get_distance():
+    """Get the distance from google distance matrix api based on the origin
+    and destination entered by the user"""
+
+    origin = request.args.get('origin')
+    destination = request.args.get('destination')
+    api_key = os.environ['GOOGLE_API_KEY']
+
+    print "\n \n", api_key, "\n \n"
+
+    payload = {"units": "imperial",
+               "origins": origin,
+               "destinations": destination,
+               "key": api_key,
+               "mode": "driving"
+               }
+
+    r = requests.get("https://maps.googleapis.com/maps/api/distancematrix/json?",
+                     params=payload)
+
+    distance_info = r.json()
+
+    distance = distance_info["rows"][0]["elements"][0]["distance"]["text"]
+    distance = distance.split(" ")[0]
+
+    return distance
+
+
+
 
 
 ###  Helper Functions #########################################################

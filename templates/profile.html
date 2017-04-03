@@ -101,14 +101,14 @@
         $.ajax({
             url: "/car-data",
             data: data,
-            success: function(data) {
+            success: function(response) {
                 
                 model.empty();
                 model.append("<option value=''>SELECT MODEL</option>");
                 var modelsFound = [];
 
                 // create a list of unique models
-                $.each(data, function(i,car) {
+                $.each(response, function(i,car) {
                     console.log(car);
                     if ($.inArray(car.model, modelsFound) == -1) {
                         modelsFound.push(car.model);
@@ -124,7 +124,7 @@
                 var yearsFound = [];
 
                 // create a list of unique years
-                $.each(data, function(i,car) {
+                $.each(response, function(i,car) {
                     console.log(car);
                     if ($.inArray(car.year, yearsFound) == -1) {
                         yearsFound.push(car.year);
@@ -135,7 +135,7 @@
                     year.append("<option value='"+carYear+"'>"+carYear+"</option>");
                 })
             },
-            error: function(data) {
+            error: function(response) {
 
             }
         })
@@ -150,20 +150,19 @@
         $.ajax({
             url: "/car-data",
             data: data,
-            success: function(data) {
+            success: function(response) {
 
                 year.empty();
                 year.append("<option value=''>SELECT YEAR</option>");
                 var yearsFound = [];
 
                 // create a list of unique years
-                $.each(data, function(i,car) {
+                $.each(response, function(i,car) {
                     console.log(car);
                     if ($.inArray(car.year, yearsFound) == -1) {
                         yearsFound.push(car.year);
                     }
                 })
-
                 // sort the list and append it to the Year dropdown list
                 $.each(yearsFound.sort(), function(i,carYear) {
                     var optionSelected = "";
@@ -174,7 +173,7 @@
                     year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
                 })
             },
-            error: function(data) {
+            error: function(response) {
 
             }
         })
@@ -190,20 +189,19 @@
         $.ajax({
             url: "/car-data",
             data: data,
-            success: function(data) {
+            success: function(response) {
 
                 model.empty();
                 model.append("<option value=''>SELECT YEAR</option>");
                 var modelsFound = [];
 
                 // create a list of unique models
-                $.each(data, function(i,car) {
+                $.each(response, function(i,car) {
                     console.log(car);
                     if ($.inArray(car.model, modelsFound) == -1) {
                         modelsFound.push(car.model);
                     }
                 })
-
                 // sort the list and append it to the Model dropdown list
                 $.each(modelsFound.sort(), function(i,carModel) {
                     var optionSelected = "";
@@ -214,16 +212,11 @@
                     model.append("<option " + optionSelected + " value='"+carModel+"'>"+carModel+"</option>");
                 })
             },
-            error: function(data) {
+            error: function(response) {
 
             }
         })
     }
-
-    
-
-
-
 
 
 </script>

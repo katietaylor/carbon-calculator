@@ -161,7 +161,8 @@ def get_car_data():
     model = request.args.get('model')
     year = request.args.get('year')
 
-    query = db.session.query(Car.make, Car.model, Car.year)
+    query = db.session.query(Car.make, Car.model, Car.year, Car.cylinders,
+                             Car.transmission)
 
     # applies a filter to the query based on what values the user has inputed
     if make is not None:
@@ -181,6 +182,8 @@ def get_car_data():
         car_dict["make"] = car_tuple[0]
         car_dict["model"] = car_tuple[1]
         car_dict["year"] = car_tuple[2]
+        car_dict["cylinders"] = car_tuple[3]
+        car_dict["transmission"] = car_tuple[4]
         models.append(car_dict)
 
     # models = [row.as_dict() for row in query.all()]
@@ -199,12 +202,12 @@ def view_carbon_log():
     if user_id:
 
         electricity_logs = ElectricityLog.query.filter(
-            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+            ElectricityLog.residence.has(Residence.user_id == user_id)).limit(5).all()
 
         ng_logs = NGLog.query.filter(
-            NGLog.residence.has(Residence.user_id == user_id)).all()
+            NGLog.residence.has(Residence.user_id == user_id)).limit(5).all()
 
-        trip_logs = TripLog.query.filter_by(user_id=user_id).all()
+        trip_logs = TripLog.query.filter_by(user_id=user_id).limit(5).all()
 
         residences = Residence.query.filter_by(user_id=user_id).order_by(
             Residence.is_default.desc(), Residence.residence_id.desc()).all()

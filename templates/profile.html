@@ -49,6 +49,7 @@
             <th>Make</th>
             <th>Model</th> 
             <th>Year</th>
+            <th>Cylinders</th>
             <th>Default</th>
         </tr>
         {% for usercar in usercars %}
@@ -56,6 +57,7 @@
             <th>{{ usercar.car.make }}</th>
             <th>{{ usercar.car.model }}</th>
             <th>{{ usercar.car.year }}</th>
+            <th>{{ usercar.car.cylinders }}</th>
             <th>{{ usercar.is_default }}</th>
         </tr>
         {% endfor %}
@@ -68,16 +70,16 @@
 <form action="/add-car", id="add-car" method="POST">
     Make: <select name="make", id="make">
         <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
-    {% for make in makes %}
-        <option value="{{ make }}">{{ make }}</option>
-    {% endfor %}
+        {% for make in makes %}
+            <option value="{{ make }}">{{ make }}</option>
+        {% endfor %}
     </select><br>
-    Model: <select name="model", id="model">
-
-    </select><br>
-    Year: <select name="year", id="year">
- 
-    </select><br>
+    
+    Model: <select name="model", id="model"></select><br>
+    Year: <select name="year", id="year"></select><br>
+    Cylinders: <select name="cylinders", id="cylinders"></select><br>
+    Transmission: <select name="transmission", id="transmission"></select><br>
+    
     set as default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Car">
@@ -89,6 +91,8 @@
     var make = $("#make");
     var model = $("#model");
     var year = $("#year");
+    var cylinders = $("#cylinders");
+    var transmission = $("#transmission");
 
     make.on("change", onMakeChange);
     model.on("change", onModelChange);
@@ -171,6 +175,13 @@
                             optionSelected = "selected='selected'";
                         }
                     year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
+
+                if year.val()
+                
+
+
+
+
                 })
             },
             error: function(response) {

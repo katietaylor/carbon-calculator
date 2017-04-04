@@ -327,6 +327,24 @@ def get_distance():
 ###  Viewing, Editing, Deleting Log Data ######################################
 
 
+@app.route("/kwh-log", methods=["GET"])
+def view_kwh_log():
+    """Lists all kwh the user has entered. User can enter and edit data on this
+    page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        electricity_logs = ElectricityLog.query.filter(
+            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+
+        return render_template("kwh-list.html",
+                               electricity_logs=electricity_logs)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
 
 
 

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %} Carb Log {% endblock %}
+
+{% block content %}
+
+<h1>Electricity Data</h1>
+{% if electricity_logs %}
+    <table>
+        <tr>
+            <th>Begin Date</th>
+            <th>End Date</th> 
+            <th>kilowatt hours</th>
+            <th>Residence</th>
+            <th>Pounds of CO2</th>
+        </tr>
+        {% for log in electricity_logs %}
+        <tr>
+            <th>{{ log.start_date }}</th>
+            <th>{{ log.end_date }}</th>
+            <th>{{ log.kwh }}</th>
+            <th>{{ log.residence.name_or_address }}</th>
+            <th>{{ log.co2_calc() }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No electricy data added yet</h2>
+{% endif %}
+
+
+
+
+{% endblock %}

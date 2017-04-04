@@ -97,6 +97,8 @@
     make.on("change", onMakeChange);
     model.on("change", onModelChange);
     year.on("change", onYearChange);
+    cylinders.on("change", onCylindersChange);
+    transmission.on("change", onTransmissionChange);
 
     function onMakeChange(evt) {
         var data = {};
@@ -107,7 +109,10 @@
             data: data,
             success: function(response) {
                 
+                cylinders.empty();
+                transmission.empty();
                 model.empty();
+
                 model.append("<option value=''>SELECT MODEL</option>");
                 var modelsFound = [];
 
@@ -175,14 +180,39 @@
                             optionSelected = "selected='selected'";
                         }
                     year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
-
-                if year.val()
-                
-
-
-
-
                 })
+
+                if (year.val()) {
+                    cylinders.empty();
+                    cylinders.append("<option value=''>SELECT CYLINDERS</option>");
+                    var cylindersFound = [];
+
+                    // create a list of unique cylinders
+                    $.each(response, function(i,car) {
+                        if ($.inArray(car.cylinders, cylindersFound) == -1) {
+                            cylindersFound.push(car.cylinders);
+                        }
+                    })
+                    // sort the list and append it to the Year dropdown list
+                    $.each(cylindersFound.sort(), function(i,carCylinder) {
+                        cylinders.append("<option value='"+carCylinder+"'>"+carCylinder+"</option>");
+                    })
+                
+                    transmission.empty();
+                    transmission.append("<option value=''>SELECT TRANSMISSION</option>");
+                    var transmissionsFound = [];
+
+                    // create a list of unique transmission
+                    $.each(response, function(i,car) {
+                        if ($.inArray(car.transmission, transmissionsFound) == -1) {
+                            transmissionsFound.push(car.transmission);
+                        }
+                    })
+                    // sort the list and append it to the Year dropdown list
+                    $.each(transmissionsFound.sort(), function(i,carTransmission) {
+                        transmission.append("<option value='"+carTransmission+"'>"+carTransmission+"</option>");
+                    })
+                }
             },
             error: function(response) {
 
@@ -222,6 +252,38 @@
                         }
                     model.append("<option " + optionSelected + " value='"+carModel+"'>"+carModel+"</option>");
                 })
+            
+            if (model.val()) {
+                    cylinders.empty();
+                    cylinders.append("<option value=''>SELECT CYLINDERS</option>");
+                    var cylindersFound = [];
+
+                    // create a list of unique cylinders
+                    $.each(response, function(i,car) {
+                        if ($.inArray(car.cylinders, cylindersFound) == -1) {
+                            cylindersFound.push(car.cylinders);
+                        }
+                    })
+                    // sort the list and append it to the Year dropdown list
+                    $.each(cylindersFound.sort(), function(i,carCylinder) {
+                        cylinders.append("<option value='"+carCylinder+"'>"+carCylinder+"</option>");
+                    })
+                
+                    transmission.empty();
+                    transmission.append("<option value=''>SELECT TRANSMISSION</option>");
+                    var transmissionsFound = [];
+
+                    // create a list of unique transmission
+                    $.each(response, function(i,car) {
+                        if ($.inArray(car.transmission, transmissionsFound) == -1) {
+                            transmissionsFound.push(car.transmission);
+                        }
+                    })
+                    // sort the list and append it to the Year dropdown list
+                    $.each(transmissionsFound.sort(), function(i,carTransmission) {
+                        transmission.append("<option value='"+carTransmission+"'>"+carTransmission+"</option>");
+                    })
+                }
             },
             error: function(response) {
 
@@ -229,6 +291,9 @@
         })
     }
 
+    function populateCylinders() {}
+
+    function populateTransmissions() {}
 
 </script>
 

@@ -185,6 +185,16 @@ class TripLog(db.Model):
 
         grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
 
+        make = self.car.make
+        model = self.car.model
+        year = self.car.year
+
+        grams_co2_mile = query = db.session.query(Car.grams_co2_mile).filter_by(
+            make=make, model=model, year=year).all()
+
+        grams_co2_mile = sum([factor[0] for factor in grams_co2_mile]) / len(
+            [factor[0] for factor in grams_co2_mile])
+
         co2 = self.miles * self.car.grams_co2_mile * grams_to_lbs
         return co2
 

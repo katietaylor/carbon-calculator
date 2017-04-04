@@ -318,10 +318,13 @@ def get_distance():
 
     distance_info = r.json()
 
-    distance = distance_info["rows"][0]["elements"][0]["distance"]["text"]
-    distance = distance.split(" ")[0]
+    print distance_info
 
-    return distance
+    distance_meters = distance_info["rows"][0]["elements"][0]["distance"]["value"]
+    meters_to_miles = 0.00062137  # 0.00062137 miles in 1 meter
+    distance_miles = distance_meters * meters_to_miles
+
+    return str(round(distance_miles, 2))
 
 
 ###  Viewing, Editing, Deleting Log Data ######################################

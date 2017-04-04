@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} Carb Log {% endblock %}
+
+{% block content %}
+
+{% if ng_logs %}
+    <table>
+        <tr>
+            <th>Begin Date</th>
+            <th>End Date</th> 
+            <th>Therms of NG</th>
+            <th>Residence</th>
+            <th>Poundss of CO2</th>
+        </tr>
+        {% for log in ng_logs %}
+        <tr>
+            <th>{{ log.start_date }}</th>
+            <th>{{ log.end_date }}</th>
+            <th>{{ log.therms }}</th>
+            <th>{{ log.residence.name_or_address }}</th>
+            <th>{{ log.co2_calc() }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No natural gas data added yet</h2>
+{% endif %}
+
+
+
+
+{% endblock %}

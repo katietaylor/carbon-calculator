@@ -202,7 +202,7 @@ def view_carbon_log():
             ElectricityLog.residence.has(Residence.user_id == user_id)).all()
 
         ng_logs = NGLog.query.filter(
-            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+            NGLog.residence.has(Residence.user_id == user_id)).all()
 
         trip_logs = TripLog.query.filter_by(user_id=user_id).all()
 
@@ -341,6 +341,45 @@ def view_kwh_log():
 
         return render_template("kwh-list.html",
                                electricity_logs=electricity_logs)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
+
+
+@app.route("/ng-log", methods=["GET"])
+def view_ng_log():
+    """Lists all kwh the user has entered. User can enter and edit data on this
+    page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        ng_logs = NGLog.query.filter(
+            NGLog.residence.has(Residence.user_id == user_id)).all()
+
+        return render_template("ng-list.html",
+                               ng_logs=ng_logs)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
+
+
+@app.route("/trip-log", methods=["GET"])
+def view_trip_log():
+    """Lists all kwh the user has entered. User can enter and edit data on this
+    page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        trip_logs = TripLog.query.filter_by(user_id=user_id).all()
+
+        return render_template("trip-list.html",
+                               trip_logs=trip_logs)
 
     # return to homepage when not logged in
     else:

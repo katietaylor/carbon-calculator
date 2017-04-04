@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} Carb Log {% endblock %}
+
+{% block content %}
+
+<h1>Transportation Data</h1>
+
+{% if trip_logs %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Miles</th> 
+            <th>Car</th>
+            <th>Pounds of CO2</th>
+        </tr>
+        {% for log in trip_logs %}
+        <tr>
+            <th>{{ log.date }}</th>
+            <th>{{ log.miles }}</th>
+            <th>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</th>
+            <th>{{ log.co2_calc() }}</th>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>No transportation data added yet</h2>
+{% endif %}
+
+
+
+
+{% endblock %}

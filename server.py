@@ -306,8 +306,6 @@ def get_distance():
     destination = request.args.get('destination')
     api_key = os.environ['GOOGLE_API_KEY']
 
-    print "\n \n", api_key, "\n \n"
-
     payload = {"units": "imperial",
                "origins": origin,
                "destinations": destination,
@@ -324,6 +322,9 @@ def get_distance():
     distance = distance.split(" ")[0]
 
     return distance
+
+
+###  Viewing, Editing, Deleting Log Data ######################################
 
 
 

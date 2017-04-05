@@ -170,10 +170,10 @@ def get_car_data():
     if make is not None:
         query = query.filter(Car.make == make).distinct()
 
-    if model is not None:
+    if model is not None and model:
         query = query.filter(Car.model == model).distinct()
 
-    if year is not None:
+    if year is not None and year:
         query = query.filter(Car.year == year).distinct()
 
     if cylinders is not None:
@@ -183,6 +183,8 @@ def get_car_data():
         query = query.filter(Car.transmission == transmission).distinct()
 
     models = []
+
+    print "\n \n", query.all(), "\n \n"
 
     # creates a list of dictionaries
     for car_tuple in query.all():

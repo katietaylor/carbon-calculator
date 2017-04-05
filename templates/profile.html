@@ -128,23 +128,38 @@
         data.make = make.val();
         data.model = model.val();
 
+        cylinders.empty()
+        transmission.empty()
+
         $.ajax({
             url: "/car-data",
             data: data,
             success: function(response) {
-                cylinders.empty()
-                transmission.empty()
+                
                 populateYears(response);
 
-                if (year.val()) {
-                    populateCylinders(response);
-                    populateTransmissions(response);
-                }
             },
             error: function(response) {
 
             }
         })
+
+        if (year.val()) {
+            data.year = year.val();
+
+            $.ajax({
+                url: "/car-data",
+                data: data,
+                success: function(response) {
+
+                    populateCylinders(response);
+                    populateTransmissions(response);
+                },
+                error: function(response) {
+
+                }
+            })
+        }
     }
 
     function onYearChange(evt) {
@@ -152,23 +167,37 @@
         data.make = make.val();
         data.year = year.val();
 
+        cylinders.empty()
+        transmission.empty()
+
         $.ajax({
             url: "/car-data",
             data: data,
             success: function(response) {
-                cylinders.empty()
-                transmission.empty()
-                populateModels(response);
 
-                if (model.val()) {
-                    populateCylinders(response);
-                    populateTransmissions(response);
-                }   
+                populateModels(response);
             },
             error: function(response) {
 
             }
         })
+
+        if (model.val()) {
+            data.model = model.val();
+
+            $.ajax({
+                url: "/car-data",
+                data: data,
+                success: function(response) {
+
+                    populateCylinders(response);
+                    populateTransmissions(response);
+                },
+                error: function(response) {
+
+                }
+            })
+        }
     }
 
     function onCylindersChange(evt) {
@@ -257,7 +286,7 @@
             if (carYear.toString() == selectedYear) {
                     optionSelected = "selected='selected'";
                 }
-            year.append("<option " + optionSelected + " value='" + carYear + "'>" + carYear + "</option>");
+            year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
         })
     }
 
@@ -273,7 +302,7 @@
                 cylindersFound.push(car.cylinders);
             }
         })
-        // sort the list and append it to the Year dropdown list
+        // sort the list and append it to the Cylinders dropdown list
         $.each(cylindersFound.sort(), function(i, carCylinders) {
             var optionSelected = "";
             // if cylinders has already been selected, keep current cylinders as selected value
@@ -281,7 +310,7 @@
                     optionSelected = "selected='selected'";
                 }
 
-            cylinders.append("<option " + optionSelected + "value='" + carCylinders + "'>" + carCylinders + "</option>");
+            cylinders.append("<option " + optionSelected + "value='"+carCylinders+"'>"+carCylinders+"</option>");
         })
     }
 

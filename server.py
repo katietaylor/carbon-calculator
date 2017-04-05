@@ -116,9 +116,9 @@ def view_profile():
 def add_residence():
     """Add a residence for a profile"""
 
-    name_or_address = request.form.get("name_or_address")
+    name_or_address = request.form.get("residence_name")
     zipcode = request.form.get("zipcode")
-    number_of_residents = request.form.get("no_residents")
+    number_of_residents = request.form.get("residents")
     user_id = session.get("user_id")
     is_default = request.form.get("default")
 
@@ -127,6 +127,38 @@ def add_residence():
 
     Residence.create(user_id, zipcode, name_or_address, is_default,
                      number_of_residents)
+
+    return redirect("/profile")
+
+
+@app.route("/edit-residence", methods=["POST"])
+def edit_residence():
+    """Edit a residence in a profile"""
+
+    user_id = session.get("user_id")
+    residence_id = request.form.get("residence_id")
+    name_or_address = request.form.get("residence_name")
+    zipcode = request.form.get("zipcode")
+    number_of_residents = request.form.get("residents")
+    is_default = request.form.get("default")
+
+    edited_residence = Residence.query.get(residence_id)
+
+    if is_default is None:
+        is_default = False
+
+    current_residences = Residence.query.filter_by(user_id=user_id).all()
+
+    if is_default:
+        for residence in current_residences:
+            residence.is_default = False
+
+    edited_residence.name_or_address = name_or_address
+    edited_residence.zipcode = zipcode
+    edited_residence.number_of_residents = number_of_residents
+    edited_residence.is_default = is_default
+
+    db.session.commit()
 
     return redirect("/profile")
 

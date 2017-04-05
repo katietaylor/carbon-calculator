@@ -24,7 +24,12 @@
             <td>{{ residence.zipcode_id }}</td>
             <td>{{ residence.number_of_residents }}</td>
             <td>{{ residence.is_default }}</td>
-            <td><button type="button" class="edit" data-id="{{ residence.residence_id }}">
+            <td><button type="button" class="edit" 
+                data-id="{{ residence.residence_id }}"
+                data-residence-name="{{ residence.name_or_address }}"
+                data-zipcode="{{ residence.zipcode_id }}"
+                data-residents="{{ residence.number_of_residents }}"
+                data-is-default="{{ residence.is_default }}">
                 Edit</button></td>
         </tr>
         {% endfor %}
@@ -36,9 +41,9 @@
 
 <!-- form for adding new residence (will be a bootstrap modal) -->
 <form action="/add-residence" id="add-residence" method="POST">
-    House Name or Address: <input type="text" name="name_or_address"> <br>
+    House Name or Address: <input type="text" name="residence_name"> <br>
     zipcode: <input type="text" name="zipcode"> <br>
-    number of residents? <input type="text" name="no_residents"> <br>
+    number of residents? <input type="text" name="residents"> <br>
     set as default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Residence">
@@ -47,12 +52,13 @@
 <!-- form for editing existing residence (will be a bootstrap modal) -->
 <form action="/edit-residence" id="edit-residence" method="POST" hidden>
     <br>
-    House Name or Address: <input type="text" name="name_or_address" id="name"> <br>
+    <input type="text" name="residence_id" id="residenceId" value="" hidden> <br>
+    House Name or Address: <input type="text" name="residence_name" id="residenceName"> <br>
     zipcode: <input type="text" name="zipcode" id="zipcode"> <br>
-    number of residents? <input type="text" name="no_residents" id="residents"> <br>
-    set as default?: <input type="checkbox" name="default" id="is_default"> <br>
+    number of residents? <input type="text" name="residents" id="residents"> <br>
+    set as default?: <input type="checkbox" name="default" id="isDefault"> <br>
 
-    <input type="submit" value="Add Residence">
+    <input type="submit" value="Edit Residence">
 </form>
 
 
@@ -61,10 +67,24 @@
     $(".edit").on("click", editResidence);  
     
     function editResidence() {
-        var residence_id = $(this).data("id");
-        console.log(residence_id);
-        $("#edit-residence").show()
 
+        var residenceId = $(this).data("id");
+        var currentResidenceName = $(this).data("residenceName");
+        var currentZipcode = $(this).data("zipcode");
+        var currentResidents = $(this).data("residents");
+        var currentIsDefault = $(this).data("isDefault");
+
+        $("#edit-residence").show();
+
+        $("#residenceId").val(residenceId);
+        $("#residenceName").val(currentResidenceName);
+        $("#zipcode").val(currentZipcode);
+        $("#residents").val(currentResidents);
+        if (currentIsDefault === "True") {
+            $("#isDefault").prop("checked", true);
+        } else {
+            $("#isDefault").prop("checked", false);
+        }
 
     }
 

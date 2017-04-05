@@ -383,8 +383,8 @@ def view_ng_log():
 
 @app.route("/trip-log", methods=["GET"])
 def view_trip_log():
-    """Lists all trips the user has entered. User can enter and edit data on this
-    page."""
+    """Lists all trips the user has entered. User can enter and edit data on
+    this page."""
 
     user_id = session.get("user_id")
 

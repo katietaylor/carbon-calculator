@@ -16,10 +16,10 @@
         </tr>
         {% for log in trip_logs %}
         <tr>
-            <th>{{ log.date }}</th>
-            <th>{{ log.miles }}</th>
-            <th>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</th>
-            <th>{{ log.co2_calc() }}</th>
+            <td>{{ log.date }}</td>
+            <td>{{ log.miles }}</td>
+            <td>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</td>
+            <td>{{ log.co2_calc() }}</td>
         </tr>
         {% endfor %}
     </table>

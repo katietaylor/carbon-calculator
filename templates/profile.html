@@ -16,13 +16,15 @@
             <th>Zipcode</th> 
             <th>Residents</th>
             <th>Default</th>
+            <th></th>
         </tr>
         {% for residence in residences %}
         <tr>
-            <th>{{ residence.name_or_address }}</th>
-            <th>{{ residence.zipcode_id }}</th>
-            <th>{{ residence.number_of_residents }}</th>
-            <th>{{ residence.is_default }}</th>
+            <td>{{ residence.name_or_address }}</td>
+            <td>{{ residence.zipcode_id }}</td>
+            <td>{{ residence.number_of_residents }}</td>
+            <td>{{ residence.is_default }}</td>
+
         </tr>
         {% endfor %}
     </table>
@@ -54,11 +56,11 @@
         </tr>
         {% for usercar in usercars %}
         <tr>
-            <th>{{ usercar.car.make }}</th>
-            <th>{{ usercar.car.model }}</th>
-            <th>{{ usercar.car.year }}</th>
-            <th>{{ usercar.car.cylinders }}</th>
-            <th>{{ usercar.is_default }}</th>
+            <td>{{ usercar.car.make }}</td>
+            <td>{{ usercar.car.model }}</td>
+            <td>{{ usercar.car.year }}</td>
+            <td>{{ usercar.car.cylinders }}</td>
+            <td>{{ usercar.is_default }}</td>
         </tr>
         {% endfor %}
     </table>

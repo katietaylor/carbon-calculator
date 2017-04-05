@@ -16,11 +16,11 @@
         </tr>
         {% for log in electricity_logs %}
         <tr>
-            <th>{{ log.start_date }}</th>
-            <th>{{ log.end_date }}</th>
-            <th>{{ log.kwh }}</th>
-            <th>{{ log.residence.name_or_address }}</th>
-            <th>{{ log.co2_calc() }}</th>
+            <td>{{ log.start_date }}</td>
+            <td>{{ log.end_date }}</td>
+            <td>{{ log.kwh }}</td>
+            <td>{{ log.residence.name_or_address }}</td>
+            <td>{{ log.co2_calc() }}</td>
         </tr>
         {% endfor %}
     </table>

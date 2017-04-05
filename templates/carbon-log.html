@@ -15,6 +15,7 @@
             <th>killowatt hours</th>
             <th>Residence</th>
             <th>Pounds of CO2</th>
+            <th></th>
         </tr>
         {% for log in electricity_logs %}
         <tr>
@@ -23,6 +24,13 @@
             <td>{{ log.kwh }}</td>
             <td>{{ log.residence.name_or_address }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-kwh-log" 
+                data-id="{{ log.elect_id }}"
+                data-start-date="{{ log.start_date }}"
+                data-end-date="{{ log.end_date }}"
+                data-kwh="{{ log.kwh }}"
+                data-residence="{{ log.residence.name_or_address }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -30,8 +38,9 @@
     <h2>No electricy data added yet</h2>
 {% endif %}
 
-<br>
-<br>
+<br><br>
+
+<!-- form for adding new kwh (will be a bootstrap modal) -->
 <form action="/add-kwh" method="POST">
     Begin Date: <input type="date" name="start_date" required> <br>
     End Date: <input type="date" name="end_date" required> <br>
@@ -41,11 +50,49 @@
     {% for residence in residences %}
         <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
     {% endfor %}
-    </select>
-    <br>
-
+    </select><br>
     <input type="submit" value="Add kwh">
 </form>
+
+<!-- form for editing kwh entries (will be a bootstrap modal) -->
+<form action="/edit-kwh" id="edit-kwh" method="POST" hidden>
+    <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
+    Begin Date: <input type="date" name="start_date" id="start-date" required> <br>
+    End Date: <input type="date" name="end_date" id="end-date" required> <br>
+    kwh <input type="number" name="kwh" id="kwh" required> <br>
+    Residence <select name="residence" id="residence">
+    {% for residence in residences %}
+        <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+    {% endfor %}
+    </select><br>
+    <input type="submit" id="submit-kwh-edit" value="Edit kwh">
+</form>
+
+<script type="text/javascript">
+    
+    $(".edit-kwh-log").on("click", editResidence);  
+    
+    function editResidence() {
+        var electId = $(this).data("id");
+        var currentStartDate = $(this).data("startDate");
+        var currentEndDate = $(this).data("endDate");
+        var currentKwh = $(this).data("kwh");
+        var currentResidence = $(this).data("residence");
+
+        $("#edit-kwh").show();
+
+        $("#elect-id").val(electId);
+        $("#start-date").val(currentStartDate);
+        $("#end-date").val(currentEndDate);
+        $("#kwh").val(currentKwh);
+        $("#residence").val(currentResidence);
+    }
+
+    $("#submit-kwh-edit").on("submit", function () {
+        $("#edit-kwh").hide();
+    })
+
+</script>
 
 <!-- Natural Gas ########################################################## -->
 
@@ -59,6 +106,7 @@
             <th>Therms of NG</th>
             <th>Residence</th>
             <th>Poundss of CO2</th>
+            <th></th>
         </tr>
         {% for log in ng_logs %}
         <tr>
@@ -67,6 +115,13 @@
             <td>{{ log.therms }}</td>
             <td>{{ log.residence.name_or_address }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-ng-log" 
+                data-id="{{ log.ng_id }}"
+                data-start-date="{{ log.start_date }}"
+                data-end-date="{{ log.end_date }}"
+                data-therms="{{ log.therms }}"
+                data-residence="{{ log.residence.name_or_address }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -76,6 +131,7 @@
 
 <br>
 <br>
+<!-- form for adding new natural gas (will be a bootstrap modal) -->
 <form action="/add-ng" method="POST">
     Begin Date: <input type="date" name="start_date" required> <br>
     End Date: <input type="date" name="end_date" required> <br>
@@ -88,7 +144,21 @@
     </select>
     <br>
 
-    <input type="submit" value="Add ng">
+    <input type="submit" value="Add NG">
+</form>
+
+<!-- form for editing natural gas entries (will be a bootstrap modal) -->
+<form action="/edit-ng" id="edit-ng" method="POST" hidden>
+    <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
+    Begin Date: <input type="date" name="start_date" id="start-date" required> <br>
+    End Date: <input type="date" name="end_date" id="end-date" required> <br>
+    therms <input type="number" name="therms" id="therms" required> <br>
+    Residence <select name="residence" id="residence">
+    {% for residence in residences %}
+        <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+    {% endfor %}
+    </select><br>
+    <input type="submit" id="submit-ng-edit" value="Edit NG">
 </form>
 
 <!-- Transportation ####################################################### -->

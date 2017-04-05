@@ -294,6 +294,37 @@ def add_kwh():
     return redirect("/carbon-log")
 
 
+@app.route("/edit-kwh", methods=["POST"])
+def edit_kwh():
+    """Edit a kwh electricity log."""
+
+    elect_id = request.form.get("elect_id")
+    start_date = request.form.get("start_date")
+    end_date = request.form.get("end_date")
+    kwh = request.form.get("kwh")
+    name_or_address = request.form.get("residence")
+    residence_id = Residence.query.filter_by(
+        name_or_address=name_or_address).one().residence_id
+
+    print elect_id
+    print start_date
+    print end_date
+    print kwh
+    print name_or_address
+    print residence_id
+
+    edited_kwh = ElectricityLog.query.get(elect_id)
+
+    edited_kwh.start_date = start_date
+    edited_kwh.end_date = end_date
+    edited_kwh.kwh = kwh
+    edited_kwh.residence_id = residence_id
+
+    db.session.commit()
+
+    return redirect("/carbon-log")
+
+
 @app.route("/add-ng", methods=["POST"])
 def add_ng():
     """Add natural gas data for the user."""

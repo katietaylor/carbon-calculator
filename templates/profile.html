@@ -24,7 +24,8 @@
             <td>{{ residence.zipcode_id }}</td>
             <td>{{ residence.number_of_residents }}</td>
             <td>{{ residence.is_default }}</td>
-
+            <td><button type="button" class="edit" data-id="{{ residence.residence_id }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -33,14 +34,41 @@
 {% endif %}
 <br>
 
-<form action="/add-residence" method="POST">
+<!-- form for adding new residence (will be a bootstrap modal) -->
+<form action="/add-residence" id="add-residence" method="POST">
     House Name or Address: <input type="text" name="name_or_address"> <br>
     zipcode: <input type="text" name="zipcode"> <br>
     number of residents? <input type="text" name="no_residents"> <br>
     set as default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Residence">
+</form><br>
+
+<!-- form for editing existing residence (will be a bootstrap modal) -->
+<form action="/edit-residence" id="edit-residence" method="POST" hidden>
+    <br>
+    House Name or Address: <input type="text" name="name_or_address" id="name"> <br>
+    zipcode: <input type="text" name="zipcode" id="zipcode"> <br>
+    number of residents? <input type="text" name="no_residents" id="residents"> <br>
+    set as default?: <input type="checkbox" name="default" id="is_default"> <br>
+
+    <input type="submit" value="Add Residence">
 </form>
+
+
+<script type="text/javascript">
+    
+    $(".edit").on("click", editResidence);  
+    
+    function editResidence() {
+        var residence_id = $(this).data("id");
+        console.log(residence_id);
+        $("#edit-residence").show()
+
+
+    }
+
+</script>
 
 <!-- Cars ################################################################# -->
 

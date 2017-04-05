@@ -132,6 +132,8 @@
             url: "/car-data",
             data: data,
             success: function(response) {
+                cylinders.empty()
+                transmission.empty()
                 populateYears(response);
 
                 if (year.val()) {
@@ -154,12 +156,56 @@
             url: "/car-data",
             data: data,
             success: function(response) {
+                cylinders.empty()
+                transmission.empty()
                 populateModels(response);
 
                 if (model.val()) {
                     populateCylinders(response);
                     populateTransmissions(response);
                 }   
+            },
+            error: function(response) {
+
+            }
+        })
+    }
+
+    function onCylindersChange(evt) {
+        var data = {};
+        data.make = make.val();
+        data.model = model.val();
+        data.year = year.val();
+        data.cylinders = cylinders.val();
+
+        $.ajax({
+            url: "/car-data",
+            data: data,
+            success: function(response) {
+
+                populateTransmissions(response);
+
+            },
+            error: function(response) {
+
+            }
+        })
+    }
+
+    function onTransmissionChange(evt) {
+        var data = {};
+        data.make = make.val();
+        data.model = model.val()
+        data.year = year.val();
+        data.transmission = transmission.val();
+
+        $.ajax({
+            url: "/car-data",
+            data: data,
+            success: function(response) {
+
+                populateCylinders(response);
+                    
             },
             error: function(response) {
 
@@ -181,7 +227,7 @@
             }
         })
         // sort the list and append it to the Model dropdown list
-        $.each(modelsFound.sort(), function(i,carModel) {
+        $.each(modelsFound.sort(), function(i, carModel) {
             var optionSelected = "";
             // if model has already been selected, keep current model as selected value
             if (carModel == selectedModel) {
@@ -211,7 +257,7 @@
             if (carYear.toString() == selectedYear) {
                     optionSelected = "selected='selected'";
                 }
-            year.append("<option " + optionSelected + " value='"+carYear+"'>"+carYear+"</option>");
+            year.append("<option " + optionSelected + " value='" + carYear + "'>" + carYear + "</option>");
         })
     }
 
@@ -235,7 +281,7 @@
                     optionSelected = "selected='selected'";
                 }
 
-            cylinders.append("<option value='"+carCylinders+"'>"+carCylinders+"</option>");
+            cylinders.append("<option " + optionSelected + "value='" + carCylinders + "'>" + carCylinders + "</option>");
         })
     }
 
@@ -246,7 +292,7 @@
         var transmissionsFound = [];
 
         // create a list of unique transmission
-        $.each(response, function(i,car) {
+        $.each(response, function(i, car) {
             if ($.inArray(car.transmission, transmissionsFound) == -1) {
                 transmissionsFound.push(car.transmission);
             }
@@ -258,7 +304,7 @@
             if (carTransmission.toString() == selectedTransmission) {
                     optionSelected = "selected='selected'";
                 }
-            transmission.append("<option value='"+carTransmission+"'>"+carTransmission+"</option>");
+            transmission.append("<option " + optionSelected + "value='" + carTransmission + "'>" + carTransmission + "</option>");
         })
     }
 

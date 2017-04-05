@@ -160,6 +160,8 @@ def get_car_data():
     make = request.args.get('make')
     model = request.args.get('model')
     year = request.args.get('year')
+    cylinders = request.args.get('cylinders')
+    transmission = request.args.get('transmission')
 
     query = db.session.query(Car.make, Car.model, Car.year, Car.cylinders,
                              Car.transmission)
@@ -173,6 +175,12 @@ def get_car_data():
 
     if year is not None:
         query = query.filter(Car.year == year).distinct()
+
+    if cylinders is not None:
+        query = query.filter(Car.cylinders == cylinders).distinct()
+
+    if transmission is not None:
+        query = query.filter(Car.transmission == transmission).distinct()
 
     models = []
 

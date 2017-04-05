@@ -68,19 +68,19 @@
 <br>
 
 <form action="/add-car", id="add-car" method="POST">
-    Make: <select name="make", id="make">
+    Make: <select name="make", id="make" required>
         <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
         {% for make in makes %}
             <option value="{{ make }}">{{ make }}</option>
         {% endfor %}
     </select><br>
     
-    Model: <select name="model", id="model"></select><br>
-    Year: <select name="year", id="year"></select><br>
-    Cylinders: <select name="cylinders", id="cylinders"></select><br>
-    Transmission: <select name="transmission", id="transmission"></select><br>
+    Model: <select name="model", id="model" required></select><br>
+    Year: <select name="year", id="year" required></select><br>
+    Cylinders (optional): <select name="cylinders", id="cylinders"></select><br>
+    Transmission (optional): <select name="transmission", id="transmission"></select><br>
     
-    set as default?: <input type="checkbox" name="default"> <br>
+    Set as Default?: <input type="checkbox" name="default"> <br>
 
     <input type="submit" value="Add Car">
 </form>

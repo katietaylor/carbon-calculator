@@ -141,12 +141,11 @@ def add_car():
     is_default = request.form.get("default")
     user_id = session.get("user_id")
 
+    # resets default car if new car is set as the default
     if is_default is None:
         is_default = False
     else:
         is_default = True
-
-    print user_id, make, model, year, is_default, type(is_default)
 
     UserCar.create(user_id, make, model, year, is_default)
 
@@ -166,7 +165,7 @@ def get_car_data():
     query = db.session.query(Car.make, Car.model, Car.year, Car.cylinders,
                              Car.transmission)
 
-    # applies a filter to the query based on what values the user has inputed
+    # applies filters to the query based on what values the user has inputed
     if make is not None:
         query = query.filter(Car.make == make).distinct()
 
@@ -195,8 +194,6 @@ def get_car_data():
         car_dict["cylinders"] = car_tuple[3]
         car_dict["transmission"] = car_tuple[4]
         models.append(car_dict)
-
-    # models = [row.as_dict() for row in query.all()]
 
     return jsonify(models)
 
@@ -250,7 +247,7 @@ def add_kwh():
     try:
         residence = Residence.query.filter_by(user_id=user_id,
                                               name_or_address=name_or_address).one()
-    except NoResultFound:  # one error
+    except NoResultFound:  # .one() error
         residence = Residence.query.filter_by(user_id=user_id,
                                               name_or_address=name_or_address).first()
 
@@ -333,6 +330,7 @@ def get_distance():
 
     print distance_info
 
+    # Gets the distance value from the returned JSON
     distance_meters = distance_info["rows"][0]["elements"][0]["distance"]["value"]
     meters_to_miles = 0.00062137  # 0.00062137 miles in 1 meter
     distance_miles = distance_meters * meters_to_miles
@@ -385,7 +383,7 @@ def view_ng_log():
 
 @app.route("/trip-log", methods=["GET"])
 def view_trip_log():
-    """Lists all kwh the user has entered. User can enter and edit data on this
+    """Lists all trips the user has entered. User can enter and edit data on this
     page."""
 
     user_id = session.get("user_id")

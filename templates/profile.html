@@ -24,7 +24,7 @@
             <td>{{ residence.zipcode_id }}</td>
             <td>{{ residence.number_of_residents }}</td>
             <td>{{ residence.is_default }}</td>
-            <td><button type="button" class="edit" 
+            <td><button type="button" class="edit-residence" 
                 data-id="{{ residence.residence_id }}"
                 data-residence-name="{{ residence.name_or_address }}"
                 data-zipcode="{{ residence.zipcode_id }}"
@@ -58,16 +58,15 @@
     number of residents? <input type="text" name="residents" id="residents"> <br>
     set as default?: <input type="checkbox" name="default" id="isDefault"> <br>
 
-    <input type="submit" value="Edit Residence">
+    <input type="submit" id="submit-residence-edit" value="Edit Residence">
 </form>
 
 
 <script type="text/javascript">
     
-    $(".edit").on("click", editResidence);  
+    $(".edit-residence").on("click", editResidence);  
     
     function editResidence() {
-
         var residenceId = $(this).data("id");
         var currentResidenceName = $(this).data("residenceName");
         var currentZipcode = $(this).data("zipcode");
@@ -85,8 +84,11 @@
         } else {
             $("#isDefault").prop("checked", false);
         }
-
     }
+
+    $("#submit-residence-edit").on("submit", function () {
+        $("#edit-residence").hide();
+    })
 
 </script>
 

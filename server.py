@@ -306,13 +306,6 @@ def edit_kwh():
     residence_id = Residence.query.filter_by(
         name_or_address=name_or_address).one().residence_id
 
-    print elect_id
-    print start_date
-    print end_date
-    print kwh
-    print name_or_address
-    print residence_id
-
     edited_kwh = ElectricityLog.query.get(elect_id)
 
     edited_kwh.start_date = start_date
@@ -344,6 +337,39 @@ def add_ng():
                        therms=therms, residence_id=residence_id)
 
     db.session.add(new_therms)
+    db.session.commit()
+
+    return redirect("/carbon-log")
+
+
+@app.route("/edit-ng", methods=["POST"])
+def edit_ng():
+    """Edit a natural gas log."""
+
+    ng_id = request.form.get("ng_id")
+    start_date = request.form.get("start_date")
+    end_date = request.form.get("end_date")
+    therms = request.form.get("therms")
+    name_or_address = request.form.get("residence")
+    residence_id = Residence.query.filter_by(
+        name_or_address=name_or_address).one().residence_id
+
+    print "\n \n"
+    print "ng id:", ng_id
+    print start_date
+    print end_date
+    print therms
+    print name_or_address
+    print residence_id
+    print "\n \n"
+
+    edited_ng = NGLog.query.get(ng_id)
+
+    edited_ng.start_date = start_date
+    edited_ng.end_date = end_date
+    edited_ng.therms = therms
+    edited_ng.residence_id = residence_id
+
     db.session.commit()
 
     return redirect("/carbon-log")

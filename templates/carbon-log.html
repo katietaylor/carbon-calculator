@@ -57,10 +57,10 @@
 <!-- form for editing kwh entries (will be a bootstrap modal) -->
 <form action="/edit-kwh" id="edit-kwh" method="POST" hidden>
     <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
-    Begin Date: <input type="date" name="start_date" id="start-date" required> <br>
-    End Date: <input type="date" name="end_date" id="end-date" required> <br>
+    Begin Date: <input type="date" name="start_date" id="e-start-date" required> <br>
+    End Date: <input type="date" name="end_date" id="e-end-date" required> <br>
     kwh <input type="number" name="kwh" id="kwh" required> <br>
-    Residence <select name="residence" id="residence">
+    Residence <select name="residence" id="e-residence">
     {% for residence in residences %}
         <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
     {% endfor %}
@@ -82,10 +82,10 @@
         $("#edit-kwh").show();
 
         $("#elect-id").val(electId);
-        $("#start-date").val(currentStartDate);
-        $("#end-date").val(currentEndDate);
+        $("#e-start-date").val(currentStartDate);
+        $("#e-end-date").val(currentEndDate);
         $("#kwh").val(currentKwh);
-        $("#residence").val(currentResidence);
+        $("#e-residence").val(currentResidence);
     }
 
     $("#submit-kwh-edit").on("submit", function () {
@@ -149,17 +149,43 @@
 
 <!-- form for editing natural gas entries (will be a bootstrap modal) -->
 <form action="/edit-ng" id="edit-ng" method="POST" hidden>
-    <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
-    Begin Date: <input type="date" name="start_date" id="start-date" required> <br>
-    End Date: <input type="date" name="end_date" id="end-date" required> <br>
+    <input type="text" name="ng_id" id="ng-id" value="" hidden> <br>
+    Begin Date: <input type="date" name="start_date" id="ng-start-date" required> <br>
+    End Date: <input type="date" name="end_date" id="ng-end-date" required> <br>
     therms <input type="number" name="therms" id="therms" required> <br>
-    Residence <select name="residence" id="residence">
+    Residence <select name="residence" id="ng-residence">
     {% for residence in residences %}
         <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
     {% endfor %}
     </select><br>
     <input type="submit" id="submit-ng-edit" value="Edit NG">
 </form>
+
+<script type="text/javascript">
+    
+    $(".edit-ng-log").on("click", editResidence);  
+    
+    function editResidence() {
+        var ngId = $(this).data("id");
+        var currentStartDate = $(this).data("startDate");
+        var currentEndDate = $(this).data("endDate");
+        var currentTherms = $(this).data("therms");
+        var currentResidence = $(this).data("residence");
+
+        $("#edit-ng").show();
+
+        $("#ng-id").val(ngId);
+        $("#ng-start-date").val(currentStartDate);
+        $("#ng-end-date").val(currentEndDate);
+        $("#therms").val(currentTherms);
+        $("#ng-esidence").val(currentResidence);
+    }
+
+    $("#submit-ng-edit").on("submit", function () {
+        $("#edit-ng").hide();
+    })
+
+</script>
 
 <!-- Transportation ####################################################### -->
 

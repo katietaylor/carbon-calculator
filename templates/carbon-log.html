@@ -178,7 +178,7 @@
         $("#ng-start-date").val(currentStartDate);
         $("#ng-end-date").val(currentEndDate);
         $("#therms").val(currentTherms);
-        $("#ng-esidence").val(currentResidence);
+        $("#ng-residence").val(currentResidence);
     }
 
     $("#submit-ng-edit").on("submit", function () {
@@ -198,6 +198,7 @@
             <th>Miles</th> 
             <th>Car</th>
             <th>Pounds of CO2</th>
+            <th></th>
         </tr>
         {% for log in trip_logs %}
         <tr>
@@ -205,6 +206,12 @@
             <td>{{ log.miles }}</td>
             <td>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-trip-log" 
+                data-id="{{ log.trip_id }}"
+                data-date="{{ log.date }}"
+                data-distance="{{ log.miles }}"
+                data-car="{{ log.car.make }}|{{ log.car.model }}|{{ log.car.year }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -214,6 +221,7 @@
 
 <br>
 <br>
+<!-- form for adding trip log entries (will be a bootstrap modal) -->
 <form action="/add-trip" method="POST">
     Date: <input type="date" name="date" required> <br><br>
     Enter Distance in Miles: <input type="number" name="miles" id="distance" step="0.01" required> <br>
@@ -223,7 +231,6 @@
     End: <input type="text" name="destination" id="destination"><br>
     <button type="button" id="distance-button">Calculate Distance</button> <br><br>
 
-    
     Car <select name="car">
     {% for usercar in usercars %}
         <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}">
@@ -234,6 +241,29 @@
     <br><br>
 
     <input type="submit" value="Add trip">
+</form>
+
+<!-- form for editing trip log entries (will be a bootstrap modal) -->
+<form action="/edit-trip" id="edit-trip" method="POST" hidden>
+    <input type="text" name="trip_id" id="trip-id" value="" hidden> <br>
+    Date: <input type="date" name="date" id ="trip-date" required> <br><br>
+    Enter Distance in Miles: <input type="number" name="miles" id="trip-distance" step="0.01" required> <br>
+    or <br>
+    Enter the start and end locations: <br>
+    Start: <input type="text" name="origin" id="trip-origin"> <br>
+    End: <input type="text" name="destination" id="trip-destination"><br>
+    <button type="button" id="trip-distance-button">Calculate Distance</button> <br><br>
+
+    Car <select name="car" id="trip-car">
+    {% for usercar in usercars %}
+        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}">
+        {{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
+    {% endfor %}
+        <option value="Other">Other</option>
+    </select>
+    <br><br>
+
+    <input type="submit" value="Edit trip">
 </form>
 
 <script type="text/javascript">
@@ -260,8 +290,48 @@
         })
     }
 
+    $("#trip-distance-button").on("click", getDistance2);
     
+    function getDistance2() {
+        var origin = $("#trip-origin");
+        var destination = $("#trip-destination");
 
+        var data = {};
+            data.origin = origin.val();
+            data.destination = destination.val();
+
+        $.ajax({
+            url: "/get-distance",
+            data: data,
+            success: function(response) {
+                // change the distance in the dom to the response
+                console.log(response);
+                $("#trip-distance").val(response);
+            }
+        })
+    }
+
+    $(".edit-trip-log").on("click", editTrip);  
+    
+    function editTrip() {
+        var tripId = $(this).data("id");
+        var currentDate = $(this).data("date");
+        var currentDistance = $(this).data("distance");
+        var currentCar = $(this).data("car");
+
+        console.log(currentCar)
+
+        $("#edit-trip").show();
+
+        $("#trip-id").val(tripId);
+        $("#trip-date").val(currentDate);
+        $("#trip-distance").val(currentDistance);
+        $("#trip-car").val(currentCar);
+    }
+
+    $("#submit-trip-edit").on("submit", function () {
+        $("#edit-trip").hide();
+    })
 
 </script>
 

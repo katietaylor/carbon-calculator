@@ -215,8 +215,6 @@ def get_car_data():
 
     models = []
 
-    print "\n \n", query.all(), "\n \n"
-
     # creates a list of dictionaries
     for car_tuple in query.all():
         car_dict = {}
@@ -354,15 +352,6 @@ def edit_ng():
     residence_id = Residence.query.filter_by(
         name_or_address=name_or_address).one().residence_id
 
-    print "\n \n"
-    print "ng id:", ng_id
-    print start_date
-    print end_date
-    print therms
-    print name_or_address
-    print residence_id
-    print "\n \n"
-
     edited_ng = NGLog.query.get(ng_id)
 
     edited_ng.start_date = start_date
@@ -396,6 +385,32 @@ def add_trip():
     return redirect("/carbon-log")
 
 
+@app.route("/edit-trip", methods=["POST"])
+def edit_trip():
+    """Edit transportation data entered by the user."""
+
+    trip_id = request.form.get("trip_id")
+    date = request.form.get("date")
+    miles = float(request.form.get("miles"))
+    car = request.form.get("car").split("|")
+
+    make = car[0]
+    model = car[1]
+    year = car[2]
+
+    car_id = Car.query.filter_by(make=make, model=model, year=year).first().car_id
+
+    edited_trip = TripLog.query.get(trip_id)
+
+    edited_trip.date = date
+    edited_trip.miles = miles
+    edited_trip.car_id = car_id
+
+    db.session.commit()
+
+    return redirect("/carbon-log")
+
+
 @app.route("/get-distance", methods=["GET"])
 def get_distance():
     """Get the distance from google distance matrix api based on the origin
@@ -417,9 +432,10 @@ def get_distance():
 
     distance_info = r.json()
 
-    print distance_info
-
     # Gets the distance value from the returned JSON
+
+    ## either add in a try/except use .get() to make better error messages and so
+    # server doesn't fail
     distance_meters = distance_info["rows"][0]["elements"][0]["distance"]["value"]
     meters_to_miles = 0.00062137  # 0.00062137 miles in 1 meter
     distance_miles = distance_meters * meters_to_miles

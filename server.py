@@ -456,7 +456,8 @@ def view_kwh_log():
     if user_id:
 
         electricity_logs = ElectricityLog.query.filter(
-            ElectricityLog.residence.has(Residence.user_id == user_id)).all()
+            ElectricityLog.residence.has(Residence.user_id == user_id)
+            ).order_by(ElectricityLog.start_date.desc()).all()
 
         return render_template("kwh-list.html",
                                electricity_logs=electricity_logs)
@@ -476,7 +477,8 @@ def view_ng_log():
     if user_id:
 
         ng_logs = NGLog.query.filter(
-            NGLog.residence.has(Residence.user_id == user_id)).all()
+            NGLog.residence.has(Residence.user_id == user_id)
+            ).order_by(NGLog.start_date.desc()).all()
 
         return render_template("ng-list.html",
                                ng_logs=ng_logs)
@@ -495,7 +497,8 @@ def view_trip_log():
 
     if user_id:
 
-        trip_logs = TripLog.query.filter_by(user_id=user_id).all()
+        trip_logs = TripLog.query.filter_by(user_id=user_id).order_by(
+            TripLog.date.desc()).all()
 
         return render_template("trip-list.html",
                                trip_logs=trip_logs)

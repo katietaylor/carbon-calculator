@@ -1,7 +1,7 @@
 """Utility file to seed carbon_calc database."""
 
 from sqlalchemy import func
-from model import Region, Zipcode, Car, TransitType, ElectricityLog
+from model import Region, Zipcode, Car, TransitType, ElectricityLog, NGLog
 from model import connect_to_db, db
 from server import app
 import csv
@@ -80,7 +80,7 @@ def load_cars():
     db.session.commit()
 
 
-def load_kwh(residence_id, csv_file):
+def load_daily_kwh(residence_id, csv_file):
     """Load kwh into database."""
 
     print "\n Load kwh \n"
@@ -94,8 +94,6 @@ def load_kwh(residence_id, csv_file):
 
             kwh_data[date] = kwh_data.get(date, 0) + usage
 
-        # print kwh_data
-
         for date in kwh_data:
             elect_log = ElectricityLog(residence_id=residence_id,
                                        kwh=kwh_data[date],
@@ -103,6 +101,30 @@ def load_kwh(residence_id, csv_file):
                                        end_date=date
                                        )
             db.session.add(elect_log)
+    db.session.commit()
+
+
+def load_daily_ng(residence_id, csv_file):
+    """Load ng into database."""
+
+    print "\n Load Natural Gas \n"
+
+    with open(csv_file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        ng_data = {}
+        for row_dict in reader:
+            date = row_dict["DATE"]
+            usage = float(row_dict["USAGE"])
+
+            ng_data[date] = ng_data.get(date, 0) + usage
+
+        for date in ng_data:
+            ng_log = NGLog(residence_id=residence_id,
+                           therms=ng_data[date],
+                           start_date=date,
+                           end_date=date
+                           )
+            db.session.add(ng_log)
     db.session.commit()
 
 
@@ -124,4 +146,5 @@ if __name__ == "__main__":
     # load_zipcodes()
     # load_cars()
     # load_transit_type()
-    load_kwh(1, "seed-data/DailyUsageData/pge_electric_interval_data_2078453646_2016-12-31_to_2017-04-01.csv")
+    # load_daily_kwh(1, "seed-data/DailyUsageData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
+    load_daily_ng(1, "seed-data/DailyUsageData/pge_gas_interval_data_2078453600_2011-12-31_to_2017-04-01.csv")

@@ -1,7 +1,7 @@
 """Utility file to seed carbon_calc database."""
 
 from sqlalchemy import func
-from model import Region, Zipcode, Car, TransitType
+from model import Region, Zipcode, Car, TransitType, ElectricityLog
 from model import connect_to_db, db
 from server import app
 import csv
@@ -11,9 +11,6 @@ def load_regions():
     """Load grid regions into database."""
 
     print "\n Regions \n"
-
-    # Delete all rows in table, to avoid duplicates
-    # Region.query.delete()
 
     # Read region file and insert data
     for row in open("seed-data/regions.csv"):
@@ -35,9 +32,6 @@ def load_zipcodes():
 
     print "\n Zipcodes \n"
 
-    # Delete all rows in table, to avoid duplicates
-    # Zipcode.query.delete()
-
     # Read zipcode file and insert data
     for row in open("seed-data/zipcode-regions.csv"):
         row = row.rstrip()
@@ -57,9 +51,6 @@ def load_cars():
     """Load cars into database."""
 
     print "\n Load Cars \n"
-
-    # Delete all rows in table, to avoid duplicates
-    # Car.query.delete()
 
     with open('seed-data/vehicles.csv') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -89,6 +80,32 @@ def load_cars():
     db.session.commit()
 
 
+def load_kwh(residence_id, csv_file):
+    """Load kwh into database."""
+
+    print "\n Load kwh \n"
+
+    with open(csv_file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        kwh_data = {}
+        for row_dict in reader:
+            date = row_dict["DATE"]
+            usage = float(row_dict["USAGE"])
+
+            kwh_data[date] = kwh_data.get(date, 0) + usage
+
+        # print kwh_data
+
+        for date in kwh_data:
+            elect_log = ElectricityLog(residence_id=residence_id,
+                                       kwh=kwh_data[date],
+                                       start_date=date,
+                                       end_date=date
+                                       )
+            db.session.add(elect_log)
+    db.session.commit()
+
+
 def load_transit_type():
     """Load transportation types into the database."""
 
@@ -102,8 +119,9 @@ def load_transit_type():
 if __name__ == "__main__":
     connect_to_db(app)
 
-    # Call functions to import the
-    load_regions()
-    load_zipcodes()
-    load_cars()
-    load_transit_type()
+    # Call functions to import the data
+    # load_regions()
+    # load_zipcodes()
+    # load_cars()
+    # load_transit_type()
+    load_kwh(1, "seed-data/DailyUsageData/pge_electric_interval_data_2078453646_2016-12-31_to_2017-04-01.csv")

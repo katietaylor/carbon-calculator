@@ -127,10 +127,10 @@
         {% endfor %}
     </select><br>
     
-    Model: <select name="model", id="model" required></select><br>
-    Year: <select name="year", id="year" required></select><br>
-    Cylinders (optional): <select name="cylinders", id="cylinders"></select><br>
-    Transmission (optional): <select name="transmission", id="transmission"></select><br>
+    Model: <select name="model", id="model" required disabled></select><br>
+    Year: <select name="year", id="year" required disabled></select><br>
+    Cylinders (optional): <select name="cylinders", id="cylinders" disabled></select><br>
+    Transmission (optional): <select name="transmission", id="transmission" disabled></select><br>
     
     Set as Default?: <input type="checkbox" name="default"> <br>
 
@@ -156,11 +156,16 @@
         var data = {};
         data.make = make.val();
 
+        model.prop("disabled", false);
+        year.prop("disabled", false);
+        cylinders.prop("disabled", true);
+        transmission.prop("disabled", true);
+
         $.ajax({
             url: "/car-data",
             data: data,
             success: function(response) {
-                
+
                 cylinders.empty();
                 transmission.empty();
                 model.empty();
@@ -168,6 +173,7 @@
 
                 populateModels(response);
                 populateYears(response);
+
             },
             error: function(response) {
             }
@@ -194,6 +200,9 @@
 
         if (year.val()) {
             data.year = year.val();
+
+            cylinders.prop("disabled", false);
+            transmission.prop("disabled", false);
 
             $.ajax({
                 url: "/car-data",
@@ -228,6 +237,9 @@
 
         if (model.val()) {
             data.model = model.val();
+
+            cylinders.prop("disabled", false);
+            transmission.prop("disabled", false);
 
             $.ajax({
                 url: "/car-data",

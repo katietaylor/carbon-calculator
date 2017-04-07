@@ -63,8 +63,6 @@ class Car(db.Model):
         return "<Car Id=%s, Make=%s, Model=%s, Year=%s>" % \
             (self.car_id, self.make, self.model, self.year)
 
-    usercars = db.relationship('UserCar')
-
     @classmethod
     def get_unique_makes(cls):
         """Get list of unique car makes (brands)."""
@@ -99,22 +97,25 @@ class User(db.Model):
 class UserCar(db.Model):
     """Car profiles for users. Users may have multiple cars."""
 
-    __tablename__ = 'user_cars'
+    __tablename__ = 'usercars'
 
-    user_car_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    usercar_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'),
                         nullable=False)
-    car_id = db.Column(db.Integer, db.ForeignKey('cars.car_id'), nullable=False)
+    make = db.Column(db.String(64), nullable=False)
+    model = db.Column(db.String(64), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    cylinders = db.Column(db.String(64), nullable=True)
+    transmission = db.Column(db.String(64), nullable=True)
     is_default = db.Column(db.Boolean, nullable=True)
 
     def __repr__(self):
         return "<User Car=%s, User Id=%s, Car Id=%s>" % \
-            (self.user_car_id, self.user_id, self.car_id)
-
-    car = db.relationship('Car')
+            (self.usercar_id, self.user_id, self.car_id)
 
     @classmethod
-    def create(cls, user_id, make, model, year, is_default):
+    def create(cls, user_id, make, model, year, cylinders, transmission,
+               is_default):
 
         current_cars = cls.query.filter_by(user_id=user_id).all()
 
@@ -122,10 +123,9 @@ class UserCar(db.Model):
             for car in current_cars:
                 car.is_default = False
 
-        car = Car.query.filter(Car.make == make, Car.model == model,
-                               Car.year == year).first()
-
-        new_car = cls(user_id=user_id, car=car, is_default=is_default)
+        new_car = cls(user_id=user_id, make=make, model=model, year=year,
+                      cylinders=cylinders, transmission=transmission,
+                      is_default=is_default)
 
         db.session.add(new_car)
         db.session.commit()
@@ -154,7 +154,8 @@ class TripLog(db.Model):
     trip_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'),
                         nullable=False)
-    car_id = db.Column(db.Integer, db.ForeignKey('cars.car_id'), nullable=True)
+    usercar_id = db.Column(db.Integer, db.ForeignKey('usercars.usercar_id'),
+                           nullable=True)
     transportation_type = db.Column(db.Integer,
                                     db.ForeignKey('transit_type.transit_type_id'),
                                     nullable=False)
@@ -164,16 +165,16 @@ class TripLog(db.Model):
 
     def __repr__(self):
         return "<ID=%s, User=%s, Car=%s, Type=%s, Miles=%s, Date=%s>" % \
-            (self.trip_id, self.user_id, self.car_id,
+            (self.trip_id, self.user_id, self.usercar_id,
              self.transportation_type, self.miles, self.date)
 
-    car = db.relationship('Car')
+    usercar = db.relationship('UserCar')
 
     @classmethod
-    def create(cls, user_id, car_id, date, miles,
+    def create(cls, user_id, usercar_id, date, miles,
                number_of_passengers=1, transportation_type=1):
 
-        new_trip = cls(user_id=user_id, car_id=car_id,
+        new_trip = cls(user_id=user_id, usercar_id=usercar_id,
                        transportation_type=transportation_type, date=date,
                        miles=miles, number_of_passengers=number_of_passengers)
 
@@ -185,12 +186,12 @@ class TripLog(db.Model):
 
         grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
 
-        make = self.car.make
-        model = self.car.model
-        year = self.car.year
+        make = self.usercar.make
+        model = self.usercar.model
+        year = self.usercar.year
 
         # get all CO2 factors that meet the car search criteria
-        grams_co2_mile = query = db.session.query(Car.grams_co2_mile).filter_by(
+        grams_co2_mile = db.session.query(Car.grams_co2_mile).filter_by(
             make=make, model=model, year=year).all()
 
         # convert list of tuples just a list of values
@@ -198,7 +199,7 @@ class TripLog(db.Model):
 
         avg_grams_co2_mile = sum(grams_co2_mile) / len(grams_co2_mile)
 
-        co2 = self.miles * self.car.grams_co2_mile * grams_to_lbs
+        co2 = self.miles * avg_grams_co2_mile * grams_to_lbs
         return co2
 
 
@@ -391,8 +392,13 @@ def initialize_test_data():
                             name_or_address="Beach House",
                             is_default=False, number_of_residents=2)
 
-    usercar_1 = UserCar(user_id=1, car_id=1, is_default=True)
-    usercar_2 = UserCar(user_id=1, car_id=4, is_default=False)
+    usercar_1 = UserCar(user_id=1, make="Toyota", model="Prius", year=2004,
+                        cylinders=4,
+                        transmission="Automatic (variable gear ratios)",
+                        is_default=True)
+    usercar_2 = UserCar(user_id=1, make="Toyota", model="4Runner 4WD",
+                        year=2004, cylinders=6, transmission="Automatic 4-spd",
+                        is_default=False)
 
     triplog_1 = TripLog(user_id=1, car_id=1, transportation_type=1,
                         date="2017-01-01", miles=100, number_of_passengers=1)

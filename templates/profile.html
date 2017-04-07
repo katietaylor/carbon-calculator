@@ -102,15 +102,24 @@
             <th>Model</th> 
             <th>Year</th>
             <th>Cylinders</th>
+            <th>Transmission</th>
             <th>Default</th>
+            <th></th>
         </tr>
         {% for usercar in usercars %}
         <tr>
-            <td>{{ usercar.car.make }}</td>
-            <td>{{ usercar.car.model }}</td>
-            <td>{{ usercar.car.year }}</td>
-            <td>{{ usercar.car.cylinders }}</td>
+            <td>{{ usercar.make }}</td>
+            <td>{{ usercar.model }}</td>
+            <td>{{ usercar.year }}</td>
+            <td>{{ usercar.cylinders }}</td>
+            <td>{{ usercar.transmission }}</td>
             <td>{{ usercar.is_default }}</td>
+            <td><button type="button" class="edit-car" 
+                data-rmake="{{ usercar.make }}"
+                data-model="{{ usercar.model }}"
+                data-year="{{ usercar.year }}"
+                data-is-default="{{ usercar.is_default }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>

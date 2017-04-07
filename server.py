@@ -170,16 +170,19 @@ def add_car():
     make = request.form.get("make")
     model = request.form.get("model")
     year = int(request.form.get("year"))
+    cylinders = request.form.get("cylinders")
+    transmission = request.form.get("transmission")
     is_default = request.form.get("default")
     user_id = session.get("user_id")
 
-    # resets default car if new car is set as the default
+    # If default checkbox not checked, set value to False instead of None
     if is_default is None:
         is_default = False
     else:
         is_default = True
 
-    UserCar.create(user_id, make, model, year, is_default)
+    UserCar.create(user_id, make, model, year, cylinders, transmission,
+                   is_default)
 
     return redirect("/profile")
 
@@ -250,7 +253,7 @@ def view_carbon_log():
             Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
         usercars = UserCar.query.filter_by(user_id=user_id).order_by(
-            UserCar.is_default.desc(), UserCar.user_car_id.desc()).all()
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
 
         return render_template("carbon-log.html",
                                electricity_logs=electricity_logs,
@@ -378,9 +381,10 @@ def add_trip():
 
     user_id = session.get("user_id")
 
-    car_id = Car.query.filter_by(make=make, model=model, year=year).first().car_id
+    usercar_id = UserCar.query.filter_by(make=make, model=model, year=year
+                                         ).first().usercar_id
 
-    TripLog.create(user_id, car_id, date, miles)
+    TripLog.create(user_id, usercar_id, date, miles)
 
     return redirect("/carbon-log")
 

@@ -204,13 +204,14 @@
         <tr>
             <td>{{ log.date }}</td>
             <td>{{ log.miles }}</td>
-            <td>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</td>
+            <td>{{ log.usercar.make }} {{ log.usercar.model }} {{ log.usercar.year }}</td>
             <td>{{ log.co2_calc() }}</td>
             <td><button type="button" class="edit-trip-log" 
                 data-id="{{ log.trip_id }}"
                 data-date="{{ log.date }}"
                 data-distance="{{ log.miles }}"
-                data-car="{{ log.car.make }}|{{ log.car.model }}|{{ log.car.year }}">
+                data-car="{{ log.usercar.make }}|{{ log.usercar.model }}|{{ log.usercar.year }}"
+                data-usercar-id="{{ log.usercar.usercar_id }}">
                 Edit</button></td>
         </tr>
         {% endfor %}
@@ -233,8 +234,8 @@
 
     Car <select name="car">
     {% for usercar in usercars %}
-        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}">
-        {{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
+        <option value="{{ usercar.make }}|{{ usercar.model }}|{{ usercar.year }}">
+        {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
     {% endfor %}
         <option value="Other">Other</option>
     </select>
@@ -256,8 +257,8 @@
 
     Car <select name="car" id="trip-car">
     {% for usercar in usercars %}
-        <option value="{{ usercar.car.make }}|{{ usercar.car.model }}|{{ usercar.car.year }}">
-        {{ usercar.car.make }} {{ usercar.car.model }} {{ usercar.car.year }}</option>
+        <option value="{{ usercar.make }}|{{ usercar.model }}|{{ usercar.year }}">
+        {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
     {% endfor %}
         <option value="Other">Other</option>
     </select>

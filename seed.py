@@ -128,6 +128,23 @@ def load_daily_ng(residence_id, csv_file):
     db.session.commit()
 
 
+def load_bill_ng(residence_id, csv_file):
+    """Load ng into database."""
+
+    print "\n Load Natural Gas \n"
+
+    with open(csv_file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            ng_log = NGLog(residence_id=residence_id,
+                           therms=row["USAGE"],
+                           start_date=row["START DATE"],
+                           end_date=row["END DATE"]
+                           )
+            db.session.add(ng_log)
+    db.session.commit()
+
+
 def load_transit_type():
     """Load transportation types into the database."""
 
@@ -146,5 +163,5 @@ if __name__ == "__main__":
     # load_zipcodes()
     # load_cars()
     # load_transit_type()
-    # load_daily_kwh(1, "seed-data/DailyUsageData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
-    load_daily_ng(1, "seed-data/DailyUsageData/pge_gas_interval_data_2078453600_2011-12-31_to_2017-04-01.csv")
+    # load_daily_kwh(1, "seed-data/PGEData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
+    load_bill_ng(1, "seed-data/PGEData/pge_gas_billing_data_2078453600_2010-07-15_to_2017-03-13.csv")

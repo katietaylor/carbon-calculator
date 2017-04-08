@@ -373,16 +373,9 @@ def add_trip():
 
     date = request.form.get("date")
     miles = float(request.form.get("miles"))
-    car = request.form.get("car").split("|")
-
-    make = car[0]
-    model = car[1]
-    year = car[2]
+    usercar_id = request.form.get("car")
 
     user_id = session.get("user_id")
-
-    usercar_id = UserCar.query.filter_by(make=make, model=model, year=year
-                                         ).first().usercar_id
 
     TripLog.create(user_id, usercar_id, date, miles)
 

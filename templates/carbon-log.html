@@ -234,7 +234,7 @@
 
     Car <select name="car">
     {% for usercar in usercars %}
-        <option value="{{ usercar.make }}|{{ usercar.model }}|{{ usercar.year }}">
+        <option value="{{ usercar.usercar_id }}">
         {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
     {% endfor %}
         <option value="Other">Other</option>
@@ -253,11 +253,11 @@
     Enter the start and end locations: <br>
     Start: <input type="text" name="origin" id="trip-origin"> <br>
     End: <input type="text" name="destination" id="trip-destination"><br>
-    <button type="button" id="trip-distance-button">Calculate Distance</button> <br><br>
+    <button type="button" id="edit-distance-button">Calculate Distance</button> <br><br>
 
     Car <select name="car" id="trip-car">
     {% for usercar in usercars %}
-        <option value="{{ usercar.make }}|{{ usercar.model }}|{{ usercar.year }}">
+        <option value="{{ usercar.usercar_id }}">
         {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
     {% endfor %}
         <option value="Other">Other</option>
@@ -291,7 +291,7 @@
         })
     }
 
-    $("#trip-distance-button").on("click", getDistance2);
+    $("#edit-distance-button").on("click", getDistance2);
     
     function getDistance2() {
         var origin = $("#trip-origin");
@@ -319,6 +319,7 @@
         var currentDate = $(this).data("date");
         var currentDistance = $(this).data("distance");
         var currentCar = $(this).data("car");
+        var currentUserCar = $(this).data("usercarId")
 
         console.log(currentCar)
 

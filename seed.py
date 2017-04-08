@@ -159,9 +159,9 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Call functions to import the data
-    load_regions()
-    load_zipcodes()
-    load_cars()
-    load_transit_type()
-    # load_daily_kwh(1, "seed-data/PGEData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
-    # load_bill_ng(1, "seed-data/PGEData/pge_gas_billing_data_2078453600_2010-07-15_to_2017-03-13.csv")
+    # load_regions()
+    # load_zipcodes()
+    # load_cars()
+    # load_transit_type()
+    load_daily_kwh(1, "seed-data/PGEData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
+    load_bill_ng(1, "seed-data/PGEData/pge_gas_billing_data_2078453600_2010-07-15_to_2017-03-13.csv")

@@ -13,13 +13,20 @@
             <th>Miles</th> 
             <th>Car</th>
             <th>Pounds of CO2</th>
+            <th></th>
         </tr>
         {% for log in trip_logs %}
         <tr>
             <td>{{ log.date }}</td>
             <td>{{ log.miles }}</td>
-            <td>{{ log.car.make }} {{ log.car.model }} {{ log.car.year }}</td>
+            <td>{{ log.usercar.make }} {{ log.usercar.model }} {{ log.usercar.year }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-trip-log" 
+                data-id="{{ log.trip_id }}"
+                data-date="{{ log.date }}"
+                data-distance="{{ log.miles }}"
+                data-usercar-id="{{ log.usercar.usercar_id }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>

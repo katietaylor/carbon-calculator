@@ -189,13 +189,20 @@ class TripLog(db.Model):
         make = self.usercar.make
         model = self.usercar.model
         year = self.usercar.year
+        cylinders = self.usercar.cylinders
+        transmission = self.usercar.transmission
 
         # get all CO2 factors that meet the car search criteria
         grams_co2_mile = db.session.query(Car.grams_co2_mile).filter_by(
-            make=make, model=model, year=year).all()
+            make=make, model=model, year=year)
+
+        if cylinders:
+            grams_co2_mile = grams_co2_mile.filter_by(cylinders=cylinders)
+        if transmission:
+            grams_co2_mile = grams_co2_mile.filter_by(transmission=transmission)
 
         # convert list of tuples just a list of values
-        grams_co2_mile = [factor[0] for factor in grams_co2_mile]
+        grams_co2_mile = [factor[0] for factor in grams_co2_mile.all()]
 
         avg_grams_co2_mile = sum(grams_co2_mile) / len(grams_co2_mile)
 

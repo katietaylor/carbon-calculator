@@ -210,7 +210,6 @@
                 data-id="{{ log.trip_id }}"
                 data-date="{{ log.date }}"
                 data-distance="{{ log.miles }}"
-                data-car="{{ log.usercar.make }}|{{ log.usercar.model }}|{{ log.usercar.year }}"
                 data-usercar-id="{{ log.usercar.usercar_id }}">
                 Edit</button></td>
         </tr>
@@ -291,9 +290,9 @@
         })
     }
 
-    $("#edit-distance-button").on("click", getDistance2);
+    $("#edit-distance-button").on("click", editDistance);
     
-    function getDistance2() {
+    function editDistance() {
         var origin = $("#trip-origin");
         var destination = $("#trip-destination");
 
@@ -318,17 +317,14 @@
         var tripId = $(this).data("id");
         var currentDate = $(this).data("date");
         var currentDistance = $(this).data("distance");
-        var currentCar = $(this).data("car");
         var currentUserCar = $(this).data("usercarId")
-
-        console.log(currentCar)
 
         $("#edit-trip").show();
 
         $("#trip-id").val(tripId);
         $("#trip-date").val(currentDate);
         $("#trip-distance").val(currentDistance);
-        $("#trip-car").val(currentCar);
+        $("#trip-car").val(currentUserCar);
     }
 
     $("#submit-trip-edit").on("submit", function () {

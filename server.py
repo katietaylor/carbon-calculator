@@ -389,19 +389,13 @@ def edit_trip():
     trip_id = request.form.get("trip_id")
     date = request.form.get("date")
     miles = float(request.form.get("miles"))
-    car = request.form.get("car").split("|")
-
-    make = car[0]
-    model = car[1]
-    year = car[2]
-
-    car_id = Car.query.filter_by(make=make, model=model, year=year).first().car_id
+    usercar_id = request.form.get("car")
 
     edited_trip = TripLog.query.get(trip_id)
 
     edited_trip.date = date
     edited_trip.miles = miles
-    edited_trip.car_id = car_id
+    edited_trip.usercar_id = usercar_id
 
     db.session.commit()
 
@@ -495,7 +489,7 @@ def view_trip_log():
     if user_id:
 
         trip_logs = TripLog.query.filter_by(user_id=user_id).order_by(
-            TripLog.date.desc()).all()
+            TripLog.date.desc(), TripLog.trip_id).all()
 
         return render_template("trip-list.html",
                                trip_logs=trip_logs)

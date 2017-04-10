@@ -391,12 +391,12 @@ def initialize_test_data():
 
     transit_type = TransitType(transit_type='car')
 
-    user = User(user_id=1, email="cat@email.com", password="password", name="Phillipe")
+    user = User(user_id=1, email=u"cat@email.com", password="password", name=u"Phillipe")
 
-    residence_1 = Residence(user_id=1, zipcode_id=94133, name_or_address="Home",
+    residence_1 = Residence(user_id=1, zipcode_id=94133, name_or_address=u"Home",
                             is_default=True, number_of_residents=1)
     residence_2 = Residence(user_id=1, zipcode_id=94133,
-                            name_or_address="Beach House",
+                            name_or_address=u"Beach House",
                             is_default=False, number_of_residents=2)
 
     usercar_1 = UserCar(user_id=1, make="Toyota", model="Prius", year=2004,

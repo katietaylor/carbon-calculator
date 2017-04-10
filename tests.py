@@ -2,6 +2,7 @@ from unittest import TestCase
 from model import *
 from server import app
 from flask import session
+import json
 
 
 class FlaskTestsDatabase(TestCase):
@@ -29,7 +30,7 @@ class FlaskTestsDatabase(TestCase):
         self.assertIsNotNone(car)
 
 
-class NoLoginIntegrationTest(TestCase):
+class LoggedOutIntegrationTest(TestCase):
     """Test each route when there is no user logged in."""
 
     def setUp(self):
@@ -143,9 +144,10 @@ class BasicIntegrationTest(TestCase):
     def test_cardata_page(self):
         resp = self.client.get("/car-data")
         self.assertEqual(200, resp.status_code)
-        self.assertIn("{", resp.data)
         self.assertIn("cylinders", resp.data)
         self.assertIn("model", resp.data)
+        cars = json.loads(resp.data)
+        self.assertEqual(len(cars), 5)
 
 
 class AddToProfile(TestCase):
@@ -173,23 +175,26 @@ class AddToProfile(TestCase):
         db.session.close()
         db.drop_all()
 
-    def add_residence(self, name, zipcode, number_of_residents, is_default):
-        return self.app.post('/add-residence', data=dict(
-            name_or_address=name,
+    def add_residence(self, user_id, name, zipcode, number_of_residents,
+                      is_default):
+        """Helper function to add a new residence to the profile."""
+        return self.client.post('/add-residence', data=dict(
+            residence_name=name,
             zipcode=zipcode,
-            number_of_residents=number_of_residents,
-            is_default=is_default
+            residents=number_of_residents,
+            default=is_default,
+            user_id=user_id
             ), follow_redirects=True)
 
     def test_adding_residence(self):
-        rv = self.add_residence("Treehouse", 94133, 2, True)
+        """Test adding a new residence with valid data."""
+        rv = self.add_residence(1, "Treehouse", 94133, 2, True)
         self.assertIn("Treehouse", rv.data)
 
 
 # /add-car
 # /add-kwh
-# /add-ng
-# /add-residence
+# TODO: /add-ng
 # /add-trip
 # /edit-kwh
 # /edit-ng

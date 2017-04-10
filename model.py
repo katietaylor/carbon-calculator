@@ -325,7 +325,7 @@ class ElectricityLog(db.Model):
     #                   cls.start_date BETWEEN start_date AND end_date OR
     #                   cls.end_date BETWEEN start_date AND end_date)
 
-        kwhs = cls.query.filter(cls.residence.user_id == user_id,
+        kwhs = cls.query.filter(cls.residence.has(Residence.user_id == user_id),
                                 cls.start_date >= start_date,
                                 cls.start_date <= end_date).all()
 
@@ -370,9 +370,9 @@ class NGLog(db.Model):
         """Sum the CO2 emissions from all of the kwhs within a given date
         range"""
 
-        kwhs = cls.query.filter(cls.residence.user_id == user_id,
-                                cls.start_date >= start_date,
-                                cls.start_date <= end_date).all()
+        ngs = cls.query.filter(cls.residence.has(Residence.user_id == user_id),
+                               cls.start_date >= start_date,
+                               cls.start_date <= end_date).all()
 
         total_co2 = 0
         for ng in ngs:

@@ -407,9 +407,9 @@ def initialize_test_data():
                         year=2004, cylinders=6, transmission="Automatic 4-spd",
                         is_default=False)
 
-    triplog_1 = TripLog(user_id=1, car_id=1, transportation_type=1,
+    triplog_1 = TripLog(user_id=1, usercar_id=1, transportation_type=1,
                         date="2017-01-01", miles=100, number_of_passengers=1)
-    triplog_2 = TripLog(user_id=1, car_id=4, transportation_type=1,
+    triplog_2 = TripLog(user_id=1, usercar_id=2, transportation_type=1,
                         date="2017-02-01", miles=310, number_of_passengers=2)
     elect_log_1 = ElectricityLog(start_date="2017-01-01", end_date="2017-02-01",
                                  kwh=188, residence_id=1)

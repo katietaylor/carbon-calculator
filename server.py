@@ -96,9 +96,9 @@ def view_profile():
     """User profile page"""
 
     user_id = session.get("user_id")
-    name = User.query.get(user_id).name
 
     if user_id:
+        name = User.query.get(user_id).name
         residences = Residence.query.filter_by(user_id=user_id).all()
         usercars = UserCar.query.filter_by(user_id=user_id).all()
 

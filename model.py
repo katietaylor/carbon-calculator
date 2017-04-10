@@ -209,6 +209,25 @@ class TripLog(db.Model):
         co2 = self.miles * avg_grams_co2_mile * grams_to_lbs
         return co2
 
+    @classmethod
+    def sum_trip_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036"):
+        """Sum the CO2 emissions from all of the trips within a given date
+        range"""
+
+        # trips = SELECT *
+        #         FROM trip_log
+        #         WHERE date >= start_date AND date <= end_date;
+
+        trips = cls.query.filter(cls.user_id == user_id,
+                                 cls.date >= start_date,
+                                 cls.date <= end_date).all()
+
+        total_co2 = 0
+        for trip in trips:
+            total_co2 += cls.co2_calc(trip)
+
+        return total_co2
+
 
 class Residence(db.Model):
     """Residence profiles for users. Users may have many residences."""
@@ -292,6 +311,30 @@ class ElectricityLog(db.Model):
         co2e = mega_wh * lb_co2e_mega_wh
         return co2e
 
+    @classmethod
+    def sum_kwh_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036"):
+        """Sum the CO2 emissions from all of the kwhs within a given date
+        range"""
+
+    #     kwhs = SELECT *
+    #            FROM electricity_log AS e
+    #            JOIN residences AS r ON (e.residence_id=r.residence_id)
+    #            WHERE r.user_id = user_id AND
+    #                  (start_date BETWEEN cls.start_date AND cls.end_date OR
+    #                   end_date BETWEEN cls.start_date AND cls.end_date OR
+    #                   cls.start_date BETWEEN start_date AND end_date OR
+    #                   cls.end_date BETWEEN start_date AND end_date)
+
+        kwhs = cls.query.filter(cls.residence.user_id == user_id,
+                                cls.start_date >= start_date,
+                                cls.start_date <= end_date).all()
+
+        total_co2 = 0
+        for kwh in kwhs:
+            total_co2 += cls.co2_calc(kwh)
+
+        return total_co2
+
 
 class NGLog(db.Model):
     """Log of user natural gas usage."""
@@ -321,6 +364,21 @@ class NGLog(db.Model):
 
         co2e = self.therms * tonnes_co2_per_therm * pounds_per_tonne
         return co2e
+
+    @classmethod
+    def sum_ng_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036"):
+        """Sum the CO2 emissions from all of the kwhs within a given date
+        range"""
+
+        kwhs = cls.query.filter(cls.residence.user_id == user_id,
+                                cls.start_date >= start_date,
+                                cls.start_date <= end_date).all()
+
+        total_co2 = 0
+        for ng in ngs:
+            total_co2 += cls.co2_calc(ng)
+
+        return total_co2
 
 ##############################################################################
 # Helper functions

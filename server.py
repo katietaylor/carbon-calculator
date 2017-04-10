@@ -499,6 +499,20 @@ def view_trip_log():
         return redirect("/")
 
 
+###  Homepage Charts ##########################################################
+
+
+@app.route("/co2-per-datatype.json", methods=["GET"])
+def get_co2_per_datatype():
+
+    user_id = session.get("user_id")
+
+    trip_co2 = TripLog.sum_trip_co2(user_id)
+    kwh_co2 = ElectricityLog.sum_kwh_co2(user_id)
+    ng_co2 = NGLog.sum_ng_co2(user_id)
+
+    return jsonify([trip_co2, kwh_co2, ng_co2])
+
 
 ###  Helper Functions #########################################################
 

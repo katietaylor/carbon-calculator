@@ -201,19 +201,19 @@ def get_car_data():
                              Car.transmission)
 
     # applies filters to the query based on what values the user has inputed
-    if make is not None:
+    if make:
         query = query.filter(Car.make == make).distinct()
 
-    if model is not None and model:
+    if model:
         query = query.filter(Car.model == model).distinct()
 
-    if year is not None and year:
+    if year:
         query = query.filter(Car.year == year).distinct()
 
-    if cylinders is not None:
+    if cylinders:
         query = query.filter(Car.cylinders == cylinders).distinct()
 
-    if transmission is not None:
+    if transmission:
         query = query.filter(Car.transmission == transmission).distinct()
 
     models = []

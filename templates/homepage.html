@@ -30,22 +30,19 @@
 </div>
 
 
-<div id="co2-by-source-chart">
-    <h3>How much does each CO2 source contribute to your total footprint?</h3>
+<div id="co2-trend-chart">
+    <h3>Carbon footprint per month</h3>
 
     <form action="/select-year">
-    <select name="year", id="donut-year">
-    <option selected="selected">ALL YEARS</option>
+    <select name="year", id="trend-year">
     {% for year in years %}
         <option value="{{ year }}">{{ year }}</option>
     {% endfor %}
     </select>
     </form>
 
-    <canvas id="donutChart"></canvas>
+    <canvas id="lineGraph"></canvas>
 </div>
-
-
 
 
 

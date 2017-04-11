@@ -223,7 +223,7 @@ class TripLog(db.Model):
         for trip in trips:
             total_co2 += cls.co2_calc(trip)
 
-        return total_co2
+        return round(total_co2, 2)
 
     @classmethod
     def get_trip_years(cls, user_id):
@@ -350,7 +350,7 @@ class ElectricityLog(db.Model):
         for kwh in kwhs:
             total_co2 += cls.co2_calc(kwh)
 
-        return total_co2
+        return round(total_co2, 2)
 
     @classmethod
     def get_kwh_years(cls, user_id):
@@ -412,7 +412,7 @@ class NGLog(db.Model):
         for ng in ngs:
             total_co2 += cls.co2_calc(ng)
 
-        return total_co2
+        return round(total_co2, 2)
 
     @classmethod
     def get_ng_years(cls, user_id):

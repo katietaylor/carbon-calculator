@@ -36,7 +36,8 @@ def homepage():
 
         print years
 
-        return render_template("homepage.html", years=sorted(years))
+        return render_template("homepage.html",
+                               years=sorted(years, reverse=True))
 
     else:
         return render_template("login-register.html")
@@ -531,6 +532,35 @@ def get_co2_per_datatype():
     ng_co2 = NGLog.sum_ng_co2(user_id, start_date, end_date)
 
     return jsonify([trip_co2, kwh_co2, ng_co2])
+
+
+@app.route("/co2-trend.json", methods=["GET"])
+def get_co2_trend():
+
+    user_id = session.get("user_id")
+    year = request.args.get("year")
+
+    months = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30,
+              10: 31, 11: 30, 12: 31}
+
+    months = sorted(months.items())
+    trip_co2_per_month = []
+    kwh_co2_per_month = []
+    ng_co2_per_month = []
+
+    for month in months:
+        start_date = "%s/1/%s" % (month[0], year)
+        end_date = "%s/%s/%s" % (month[0], month[1], year)
+        trip_co2_per_month.append(
+            TripLog.sum_trip_co2(user_id, start_date, end_date))
+        kwh_co2_per_month.append(
+            ElectricityLog.sum_kwh_co2(user_id, start_date, end_date))
+        ng_co2_per_month.append(
+            NGLog.sum_ng_co2(user_id, start_date, end_date))
+
+    return jsonify({"trip": trip_co2_per_month,
+                    "kwh": kwh_co2_per_month,
+                    "ng": ng_co2_per_month})
 
 
 ###  Helper Functions #########################################################

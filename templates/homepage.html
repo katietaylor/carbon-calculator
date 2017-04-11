@@ -14,10 +14,40 @@
 <a href="/carbon-log">Add Data</a>
 
 
-<div class="co2-by-source-chart">
-    <h3>How much does each CO2 sources contribute to your total footprint?</h3>
+<div id="co2-by-source-chart"> 
+    <h3>How much does each CO2 source contribute to your total footprint?</h3>
+
+    <form action="/select-year">
+    <select name="year", id="donut-year">
+    <option selected="selected">ALL YEARS</option>
+    {% for year in years %}
+        <option value="{{ year }}">{{ year }}</option>
+    {% endfor %}
+    </select>
+    </form>
+
     <canvas id="donutChart"></canvas>
 </div>
+
+
+<div id="co2-by-source-chart">
+    <h3>How much does each CO2 source contribute to your total footprint?</h3>
+
+    <form action="/select-year">
+    <select name="year", id="donut-year">
+    <option selected="selected">ALL YEARS</option>
+    {% for year in years %}
+        <option value="{{ year }}">{{ year }}</option>
+    {% endfor %}
+    </select>
+    </form>
+
+    <canvas id="donutChart"></canvas>
+</div>
+
+
+
+
 
 <script type="text/javascript" src="static/charts.js"></script>
 

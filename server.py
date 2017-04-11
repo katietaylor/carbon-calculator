@@ -21,12 +21,23 @@ app.jinja_env.undefined = StrictUndefined  # Undefined variable in Jinja2 will r
 
 
 @app.route("/", methods=["GET"])
-def login():
+def homepage():
     """Renders login template if the user is not signed in and the homepage if
     the user is logged in."""
 
-    if session.get("user_id"):
-        return render_template("homepage.html")
+    user_id = session.get("user_id")
+
+    if user_id:
+        years = set()
+        years.update(TripLog.get_trip_years(user_id),
+                     ElectricityLog.get_kwh_years(user_id),
+                     NGLog.get_ng_years(user_id)
+                     )
+
+        print years
+
+        return render_template("homepage.html", years=sorted(years))
+
     else:
         return render_template("login-register.html")
 
@@ -506,10 +517,18 @@ def view_trip_log():
 def get_co2_per_datatype():
 
     user_id = session.get("user_id")
+    year = request.args.get("year")
 
-    trip_co2 = TripLog.sum_trip_co2(user_id)
-    kwh_co2 = ElectricityLog.sum_kwh_co2(user_id)
-    ng_co2 = NGLog.sum_ng_co2(user_id)
+    start_date = "1/1/1900"
+    end_date = "1/1/2036"
+
+    if year != "ALL YEARS":
+        start_date = "1/1/%s" % (year)
+        end_date = "12/31/%s" % (year)
+
+    trip_co2 = TripLog.sum_trip_co2(user_id, start_date, end_date)
+    kwh_co2 = ElectricityLog.sum_kwh_co2(user_id, start_date, end_date)
+    ng_co2 = NGLog.sum_ng_co2(user_id, start_date, end_date)
 
     return jsonify([trip_co2, kwh_co2, ng_co2])
 

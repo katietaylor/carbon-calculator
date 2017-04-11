@@ -1,6 +1,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import func
 
 db = SQLAlchemy()
 
@@ -214,10 +215,6 @@ class TripLog(db.Model):
         """Sum the CO2 emissions from all of the trips within a given date
         range"""
 
-        # trips = SELECT *
-        #         FROM trip_log
-        #         WHERE date >= start_date AND date <= end_date;
-
         trips = cls.query.filter(cls.user_id == user_id,
                                  cls.date >= start_date,
                                  cls.date <= end_date).all()
@@ -227,6 +224,26 @@ class TripLog(db.Model):
             total_co2 += cls.co2_calc(trip)
 
         return total_co2
+
+    @classmethod
+    def get_trip_years(cls, user_id):
+        """Sum the CO2 emissions from all of the trips within a given date
+        range"""
+
+        # SELECT EXTRACT(YEAR FROM date)
+        # FROM trip_log
+        # WHERE user_id = user_id
+
+        # Extract the year from the date object
+        def date_to_year(data_date):
+            return data_date.date.year
+
+        trips = db.session.query(cls.date).filter(cls.user_id == user_id).all()
+
+        # get the year for each date object and then set() to remove duplicates
+        trip_years = sorted(set(map(date_to_year, trips)))
+
+        return trip_years
 
 
 class Residence(db.Model):
@@ -335,6 +352,23 @@ class ElectricityLog(db.Model):
 
         return total_co2
 
+    @classmethod
+    def get_kwh_years(cls, user_id):
+        """Sum the CO2 emissions from all of the electricity_logs within a
+        given date range"""
+
+        # Extract the year from the date object
+        def date_to_year(data_date):
+            return data_date.start_date.year
+
+        kwhs = db.session.query(cls.start_date).filter(
+            cls.residence.has(Residence.user_id == user_id)).all()
+
+        # get the year for each date object and then set() to remove duplicates
+        kwh_years = sorted(set(map(date_to_year, kwhs)))
+
+        return kwh_years
+
 
 class NGLog(db.Model):
     """Log of user natural gas usage."""
@@ -379,6 +413,23 @@ class NGLog(db.Model):
             total_co2 += cls.co2_calc(ng)
 
         return total_co2
+
+    @classmethod
+    def get_ng_years(cls, user_id):
+        """Sum the CO2 emissions from all of the electricity_logs within a
+        given date range"""
+
+        # Extract the year from the date object
+        def date_to_year(data_date):
+            return data_date.start_date.year
+
+        ngs = db.session.query(cls.start_date).filter(cls.residence.has(
+            Residence.user_id == user_id)).all()
+
+        # get the year for each date object and then set() to remove duplicates
+        ng_years = sorted(set(map(date_to_year, ngs)))
+
+        return ng_years
 
 ##############################################################################
 # Helper functions

@@ -22,6 +22,8 @@ class Region(db.Model):
         return "<Region Id=%s, Region=%s, CO2e/MWH=%s>" % \
             (self.region_id, self.name, self.lb_co2e_mega_wh)
 
+    zipcodes = db.relationship('Zipcode')
+
 
 class Zipcode(db.Model):
     """The grid region for every zipcode in the United States."""
@@ -35,6 +37,8 @@ class Zipcode(db.Model):
     def __repr__(self):
         return "<Zipcode=%s, Region Id=%s>" % \
             (self.zipcode_id, self.region_id)
+
+    region = db.relationship('Region')
 
 
 class Car(db.Model):
@@ -323,13 +327,16 @@ class ElectricityLog(db.Model):
         """Calculate the CO2 emissions for kwh entry."""
 
         lb_co2e_mega_wh = self.residence.region.lb_co2e_mega_wh
+
+        # convert kwh to megawatt hours for the instance
         mega_wh = self.kwh_to_mega_wh()
 
         co2e = mega_wh * lb_co2e_mega_wh
         return co2e
 
     @classmethod
-    def sum_kwh_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036"):
+    def sum_kwh_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036",
+                    residence_id=None):
         """Sum the CO2 emissions from all of the kwhs within a given date
         range"""
 
@@ -342,13 +349,49 @@ class ElectricityLog(db.Model):
     #                   cls.start_date BETWEEN start_date AND end_date OR
     #                   cls.end_date BETWEEN start_date AND end_date)
 
-        kwhs = cls.query.filter(cls.residence.has(Residence.user_id == user_id),
-                                cls.start_date >= start_date,
-                                cls.start_date <= end_date).all()
+        query = cls.query.filter(cls.residence.has(Residence.user_id == user_id),
+                                 cls.start_date >= start_date,
+                                 cls.start_date <= end_date)
+
+        if residence_id:
+            query.filter(cls.residence_id)
+
+        kwhs = query.all()
 
         total_co2 = 0
         for kwh in kwhs:
             total_co2 += cls.co2_calc(kwh)
+
+        return round(total_co2, 2)
+
+    def co2_calc_other_location(self, zipcode):
+        """Calculate the CO2 emissions for kwh entry at a different location."""
+
+        # find co2 factor for other location
+        lb_co2e_mega_wh = db.session.query(Region.lb_co2e_mega_wh).filter(
+            Region.zipcodes.any(Zipcode.zipcode_id == zipcode)).one()[0]
+
+        # convert kwh to megawatt hours for the instance
+        mega_wh = self.kwh_to_mega_wh()
+
+        co2e = mega_wh * lb_co2e_mega_wh
+        return co2e
+
+    @classmethod
+    def sum_kwh_co2_other_location(cls, user_id, zipcode, start_date="1/1/1900",
+                                   end_date="1/1/2036"):
+        """Sum the CO2 emissions from all of the kwhs within a given date
+        range"""
+
+        query = cls.query.filter(cls.residence.has(Residence.user_id == user_id),
+                                 cls.start_date >= start_date,
+                                 cls.start_date <= end_date)
+
+        kwhs = query.all()
+
+        total_co2 = 0
+        for kwh in kwhs:
+            total_co2 += cls.co2_calc_other_location(kwh, zipcode)
 
         return round(total_co2, 2)
 

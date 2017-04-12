@@ -28,6 +28,7 @@
 
     <canvas id="donutChart"></canvas>
 </div>
+<br><br>
 
 
 <div id="co2-trend-chart">
@@ -42,6 +43,22 @@
     </form>
 
     <canvas id="lineGraph"></canvas>
+</div>
+<br><br>
+
+<div id="co2-by-location">
+    <h3>Your Electricity Carbon Footprint varies by location.</h3>
+    <h4>Change the location to see what your footprint would be if you moved.</h4>
+
+    <form action="/select-year">
+    <select name="year", id="location-year">
+    {% for year in years %}
+        <option value="{{ year }}">{{ year }}</option>
+    {% endfor %}
+    </select>
+    </form>
+
+    <canvas id="BarChart"></canvas>
 </div>
 
 

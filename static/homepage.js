@@ -172,6 +172,32 @@ function getZipcode(evt) {
         success: function(response) {
             // change the distance in the dom to the response
             $("#zipcode").val(response);
+            compareLocations();
         }
     });
 }
+
+function compareLocations(evt) {
+    var year = $("#location-year");
+    var zipcode = $("#zipcode");
+
+    var data = {};
+        data.year= year.val();
+        data.zipcode = zipcode.val();
+
+    $.ajax({
+        url: "/co2-other-location.json",
+        data: data,
+        success: function(response) {
+            $("#location-comparison").show();
+            
+            $("#current-yr-total").html(response.current_yearly_co2);
+            $("#new-yr-total").html(response.new_yearly_co2);
+            $("#current-dly-rate").html(response.current_daily_rate);
+            $("#new-dly-rate").html(response.new_daily_rate);
+            $("#yr-diff").html();
+            $("#dly-rate-diff").html();
+        }
+    });
+}
+

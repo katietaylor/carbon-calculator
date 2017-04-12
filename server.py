@@ -563,8 +563,8 @@ def get_co2_trend():
                     "ng": ng_co2_per_month})
 
 
-@app.route("/co2-location-change.json", methods=["GET"])
-def get_co2_location_change():
+@app.route("/co2-other-location.json", methods=["GET"])
+def get_co2_other_location():
 
     user_id = session.get("user_id")
     year = request.args.get("year")
@@ -576,7 +576,7 @@ def get_co2_location_change():
     months = sorted(months.items())
 
     kwh_co2_per_month = []
-    kwh_co2_per_month_location_change = []
+    kwh_co2_per_month_other_location = []
 
     for month in months:
         start_date = "%s/1/%s" % (month[0], year)
@@ -585,18 +585,24 @@ def get_co2_location_change():
         kwh_co2_per_month.append(
             ElectricityLog.sum_kwh_co2(user_id, start_date, end_date))
 
-        kwh_co2_per_month_location_change.append(
+        kwh_co2_per_month_other_location.append(
             ElectricityLog.sum_kwh_co2_other_location(user_id, zipcode,
                                                       start_date, end_date))
+        co2_daily_rate = sum(kwh_co2_per_month) / 365
+        co2_daily_rate_other_location = sum(kwh_co2_per_month_other_location) / 365
 
-    return jsonify({"kwh": kwh_co2_per_month,
-                    "kwh": kwh_co2_per_month_location_change})
+    return jsonify({"current_monthly_co2": round(kwh_co2_per_month, 2),
+                    "new_monthly_co2": round(kwh_co2_per_month_other_location, 2),
+                    "current_yearly_co2": round(sum(kwh_co2_per_month), 2),
+                    "new_yearly_co2": round(sum(kwh_co2_per_month_other_location), 2),
+                    "current_daily_rate": round(co2_daily_rate, 2),
+                    "new_daily_rate": round(co2_daily_rate_other_location, 2),
+                    })
 
 
 @app.route("/get-zipcode", methods=["GET"])
 def get_zipcode():
-    """Get the distance from google distance matrix api based on the origin
-    and destination entered by the user"""
+    """Get the a viable zipcode for the city that the user enters."""
 
     city = request.args.get('city')
     state = request.args.get('state')

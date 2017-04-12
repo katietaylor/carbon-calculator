@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Login {% endblock %}
+{% block title %} CO2 Dashboard {% endblock %}
 
 {% block content %}
 
@@ -63,11 +63,32 @@
         <input type="submit" id="new-location-button" value="See Comparison">
     </form>
 
+    <table id="location-comparison" hidden>
+        <tr>
+            <th></th>
+            <th>Current Location</th> 
+            <th>New Location</th>
+            <th>Difference</th>
+        </tr>
+        <tr>
+            <td>Year Total</td>
+            <td id="current-yr-total"></td>
+            <td id="new-yr-total"></td>
+            <td id="yr-diff"></td>
+        </tr>
+        <tr>
+            <td>Daily Rate</td>
+            <td id="current-dly-rate"></td>
+            <td id="new-dly-rate"></td>
+            <td id="dly-rate-diff"></td>
+        </tr>
+    </table>
+
     <canvas id="BarChart"></canvas>
 </div>
 
 
 
-<script type="text/javascript" src="static/charts.js"></script>
+<script type="text/javascript" src="static/homepage.js"></script>
 
 {% endblock %}

@@ -18,12 +18,12 @@
     <h3>How much does each CO2 source contribute to your total footprint?</h3>
 
     <form action="/select-year">
-    <select name="year", id="donut-year">
-    <option selected="selected">ALL YEARS</option>
-    {% for year in years %}
-        <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
-    </select>
+        <select name="year", id="donut-year">
+        <option selected="selected">ALL YEARS</option>
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>
     </form>
 
     <canvas id="donutChart"></canvas>
@@ -35,11 +35,11 @@
     <h3>Carbon footprint per month</h3>
 
     <form action="/select-year">
-    <select name="year", id="trend-year">
-    {% for year in years %}
-        <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
-    </select>
+        <select name="year", id="trend-year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>
     </form>
 
     <canvas id="lineGraph"></canvas>
@@ -50,12 +50,17 @@
     <h3>Your Electricity Carbon Footprint varies by location.</h3>
     <h4>Change the location to see what your footprint would be if you moved.</h4>
 
-    <form action="/select-year">
-    <select name="year", id="location-year">
-    {% for year in years %}
-        <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
-    </select>
+    <form action="/get-zipcode">
+        <select name="year", id="location-year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>
+        
+        New City <input type="text" name="city" id="city"placeholder="City", required>
+        State <input type="text" name="state" id="state" placeholder="State", maxlength="2" required> <br>
+        <input type="text" name="zipcode" id="zipcode" hidden> <br>
+        <input type="submit" id="new-location-button" value="See Comparison">
     </form>
 
     <canvas id="BarChart"></canvas>

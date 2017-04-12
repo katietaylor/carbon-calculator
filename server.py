@@ -563,6 +563,62 @@ def get_co2_trend():
                     "ng": ng_co2_per_month})
 
 
+@app.route("/co2-location-change.json", methods=["GET"])
+def get_co2_location_change():
+
+    user_id = session.get("user_id")
+    year = request.args.get("year")
+    zipcode = request.args.get("zipcode")
+
+    months = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30,
+              10: 31, 11: 30, 12: 31}
+
+    months = sorted(months.items())
+
+    kwh_co2_per_month = []
+    kwh_co2_per_month_location_change = []
+
+    for month in months:
+        start_date = "%s/1/%s" % (month[0], year)
+        end_date = "%s/%s/%s" % (month[0], month[1], year)
+
+        kwh_co2_per_month.append(
+            ElectricityLog.sum_kwh_co2(user_id, start_date, end_date))
+
+        kwh_co2_per_month_location_change.append(
+            ElectricityLog.sum_kwh_co2_other_location(user_id, zipcode,
+                                                      start_date, end_date))
+
+    return jsonify({"kwh": kwh_co2_per_month,
+                    "kwh": kwh_co2_per_month_location_change})
+
+
+@app.route("/get-zipcode", methods=["GET"])
+def get_zipcode():
+    """Get the distance from google distance matrix api based on the origin
+    and destination entered by the user"""
+
+    city = request.args.get('city')
+    state = request.args.get('state')
+    api_key = os.environ['ZIP_CODE_API_KEY']
+
+    params = {"api_key": api_key,
+              "city": city,
+              "state": state,
+              }
+
+    #  https://www.zipcodeapi.com/rest/<api_key>/city-zips.<format>/<city>/<state>
+    url = "https://www.zipcodeapi.com/rest/{api_key}/city-zips.json/{city}/{state}".format(**params)
+    print url
+
+    r = requests.get(url)
+    zipcode_info = r.json()
+
+    zipcode = zipcode_info["zip_codes"][0]
+
+    return zipcode
+
+
 ###  Helper Functions #########################################################
 
 if __name__ == "__main__":

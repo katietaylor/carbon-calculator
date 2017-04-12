@@ -150,3 +150,28 @@ function updateCo2LineGraph() {
 }
 updateCo2LineGraph();
 $("#trend-year").on("change", updateCo2LineGraph);
+
+
+// Get Zipcode ################################################################
+
+$("#new-location-button").on("click", getZipcode);
+    
+function getZipcode(evt) {
+    evt.preventDefault();
+
+    var city = $("#city");
+    var state = $("#state");
+
+    var data = {};
+        data.city = city.val();
+        data.state = state.val();
+
+    $.ajax({
+        url: "/get-zipcode",
+        data: data,
+        success: function(response) {
+            // change the distance in the dom to the response
+            $("#zipcode").val(response);
+        }
+    });
+}

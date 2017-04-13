@@ -536,6 +536,8 @@ def get_co2_per_datatype():
 
 @app.route("/co2-trend.json", methods=["GET"])
 def get_co2_trend():
+    """Calculate the monthly CO2 for each CO2 source for a given year and
+    return as json."""
 
     user_id = session.get("user_id")
     year = request.args.get("year")
@@ -565,6 +567,8 @@ def get_co2_trend():
 
 @app.route("/co2-other-location.json", methods=["GET"])
 def get_co2_other_location():
+    """Calculate the kwh CO2 for the user's current residence and as well as the
+    potential CO2 at a different location and return as JSON."""
 
     user_id = session.get("user_id")
     year = request.args.get("year")
@@ -582,21 +586,27 @@ def get_co2_other_location():
         start_date = "%s/1/%s" % (month[0], year)
         end_date = "%s/%s/%s" % (month[0], month[1], year)
 
+        # CO2 per month
         kwh_co2_per_month.append(
             ElectricityLog.sum_kwh_co2(user_id, start_date, end_date))
-
         kwh_co2_per_month_other_location.append(
             ElectricityLog.sum_kwh_co2_other_location(user_id, zipcode,
                                                       start_date, end_date))
+        # CO2 per day (rate)
         co2_daily_rate = round(sum(kwh_co2_per_month) / 365, 2)
-        co2_daily_rate_other_location = round(sum(kwh_co2_per_month_other_location) / 365, 2)
+        co2_daily_rate_other_location = round(sum(
+            kwh_co2_per_month_other_location) / 365, 2)
 
+        # Total CO2 for the year
         kwh_co2_per_year = round(sum(kwh_co2_per_month), 2)
-        kwh_co2_per_year_other_location = round(sum(kwh_co2_per_month_other_location), 2)
+        kwh_co2_per_year_other_location = round(sum(
+            kwh_co2_per_month_other_location), 2)
 
-        # (current - new) / current * 100
+        # percent change = (current - new) / current * 100
         try:
-            percent_change = round(abs(kwh_co2_per_year - kwh_co2_per_year_other_location) / kwh_co2_per_year * 100, 2)
+            percent_change = round(abs(
+                kwh_co2_per_year - kwh_co2_per_year_other_location
+                ) / kwh_co2_per_year * 100, 2)
         except ZeroDivisionError:
             percent_change = None
 
@@ -623,7 +633,7 @@ def get_co2_other_location():
 
 @app.route("/get-zipcode", methods=["GET"])
 def get_zipcode():
-    """Get the a viable zipcode for the city that the user enters."""
+    """Get a viable zipcode for the city that the user enters."""
 
     city = request.args.get('city')
     state = request.args.get('state')

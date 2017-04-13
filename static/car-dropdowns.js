@@ -157,7 +157,6 @@ function populateModels(response) {
 
     // create a list of unique models
     $.each(response, function(i, car) {
-        console.log(car);
         if ($.inArray(car.model, modelsFound) == -1) {
             modelsFound.push(car.model);
         }
@@ -181,7 +180,6 @@ function populateYears(response) {
 
     // create a list of unique years
     $.each(response, function(i, car) {
-        console.log(car);
         if ($.inArray(car.year, yearsFound) == -1) {
             yearsFound.push(car.year);
         }

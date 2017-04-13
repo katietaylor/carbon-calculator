@@ -87,7 +87,65 @@
 </div>
 
 
+<div id="co2-by-car">
+    <h3>Your Transportation Carbon Footprint varies by car type.</h3>
+    <h4>Choose a car to see what your footprint would be drove a different car.</h4>
+
+    <form action="/co2-other-car.json">
+        Look at data for year:
+        <select name="trip_year", id="trip-year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select><br>
+        Compare against this car: <select name="car", id="my-car">
+        {% for usercar in usercars %}
+            <option value="{{ usercar.usercar_id }}">
+            {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
+        {% endfor %}
+        </select><br><br>
+        
+        <strong>Find a new car</strong><br>
+        Make: <select name="make", id="make" required>
+        <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
+        {% for make in makes %}
+            <option value="{{ make }}">{{ make }}</option>
+        {% endfor %}
+        </select><br>
+        Model: <select name="model", id="model" required disabled></select><br>
+        Year: <select name="car_year", id="car-year" required disabled></select><br>
+        Cylinders (optional): <select name="cylinders", id="cylinders" disabled></select><br>
+        Transmission (optional): <select name="transmission", id="transmission" disabled></select><br>
+    
+        <input type="submit" id="new-car-button" value="See Comparison">
+    </form>
+
+    <h3><div id="car-comparison-statement"></div></h3>
+
+    <table id="car-comparison" hidden>
+        <tr>
+            <th></th>
+            <th>Current car</th> 
+            <th>New Car</th>
+        </tr>
+        <tr>
+            <td>Year Total</td>
+            <td id="currentCar-yr-total"></td>
+            <td id="newCar-yr-total"></td>
+        </tr>
+        <tr>
+            <td>Daily Rate</td>
+            <td id="currentCar-dly-rate"></td>
+            <td id="newCar-dly-rate"></td>
+        </tr>
+    </table>
+
+    <canvas id="carBarChart"></canvas>
+</div>
+
+
 
 <script type="text/javascript" src="static/homepage.js"></script>
+<script type="text/javascript" src="static/car-dropdowns.js"></script>
 
 {% endblock %}

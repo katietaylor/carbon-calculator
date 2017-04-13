@@ -215,17 +215,68 @@ class TripLog(db.Model):
         return co2
 
     @classmethod
-    def sum_trip_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036"):
+    def sum_trip_co2(cls, user_id, start_date="1/1/1900", end_date="1/1/2036",
+                     usercar_id=None):
         """Sum the CO2 emissions from all of the trips within a given date
         range"""
 
-        trips = cls.query.filter(cls.user_id == user_id,
+        query = cls.query.filter(cls.user_id == user_id,
                                  cls.date >= start_date,
-                                 cls.date <= end_date).all()
+                                 cls.date <= end_date)
+
+        if usercar_id:
+            query = query.filter(cls.usercar_id == usercar_id)
+
+        trips = query.all()
 
         total_co2 = 0
         for trip in trips:
             total_co2 += cls.co2_calc(trip)
+
+        return round(total_co2, 2)
+
+    def co2_calc_other_car(self, make, model, year, cylinders, transmission):
+        """Calculate the CO2 emissions for kwh entry at a different location."""
+
+        grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
+
+        # find co2 factor for other car
+        grams_co2_mile = db.session.query(Car.grams_co2_mile).filter_by(
+            make=make, model=model, year=year)
+
+        if cylinders:
+            grams_co2_mile = grams_co2_mile.filter_by(cylinders=cylinders)
+        if transmission:
+            grams_co2_mile = grams_co2_mile.filter_by(transmission=transmission)
+
+        # convert list of tuples just a list of values
+        grams_co2_mile = [factor[0] for factor in grams_co2_mile.all()]
+
+        avg_grams_co2_mile = sum(grams_co2_mile) / len(grams_co2_mile)
+
+        co2 = self.miles * avg_grams_co2_mile * grams_to_lbs
+        return co2
+
+    @classmethod
+    def sum_trip_co2_other_car(cls, user_id, make, model, year, cylinders,
+                               transmission, start_date="1/1/1900",
+                               end_date="1/1/2036", usercar_id=None):
+        """Sum the CO2 emissions from all of the kwhs within a given date
+        range"""
+
+        query = cls.query.filter(cls.user_id == user_id,
+                                 cls.date >= start_date,
+                                 cls.date <= end_date)
+
+        if usercar_id:
+            query = query.filter(cls.usercar_id == usercar_id)
+
+        trips = query.all()
+
+        total_co2 = 0
+        for trip in trips:
+            total_co2 += cls.co2_calc_other_car(trip, make, model, year,
+                                                cylinders, transmission)
 
         return round(total_co2, 2)
 

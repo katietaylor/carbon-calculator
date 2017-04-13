@@ -307,3 +307,147 @@ function updateLocationBarChart(response) {
     });
         
 }
+
+// Compare Cars ###############################################################
+
+
+$("#new-car-button").on("click", compareCars);
+
+// Should only update graph if new car has values
+$("#trip-year").on("change", function () {
+    if ($("#make").val() && $("#model").val() && $("#car-year").val()) {
+        compareCars();
+    }
+});
+
+function compareCars(evt) {
+    evt.preventDefault();
+
+    var tripYear = $("#trip-year");
+    var make = $("#make");
+    var model = $("#model");
+    var carYear = $("#car-year");
+    var cylinders = $("#cylinders");
+    var transmission = $("#transmission");
+    var userCarId = $("#my-car");
+
+    var data = {};
+        data.tripYear = tripYear.val();
+        data.make = make.val();
+        data.model = model.val();
+        data.carYear = carYear.val();
+        data.cylinders = cylinders.val();
+        data.transmission = transmission.val();
+        data.userCarId = userCarId.val();
+
+    $.ajax({
+        url: "/co2-other-car.json",
+        data: data,
+        success: function(response) {
+            $("#car-comparison").show();
+            
+            $("#currentCar-yr-total").html(response.current_yearly_co2);
+            $("#newCar-yr-total").html(response.new_yearly_co2);
+            $("#currentCar-dly-rate").html(response.current_daily_rate);
+            $("#newCar-dly-rate").html(response.new_daily_rate);
+            $("#car-comparison-statement").html(response.comparison_statement);
+
+            updateLocationBarChart(response);
+        }
+    });
+}
+
+// Car Bar Graph ################XXXXX#########################################
+
+var carBarChart;
+function updateLocationBarChart(response) {
+
+    // Make bar of percent of different CO2 source types
+    var ctx_bar = $("#carBarChart");
+
+    if (carBarChart) {
+        carBarChart.destroy();
+    }
+    
+    var data = {
+        labels: ["January", "February", "March", "April", "May", "June",
+                 "July", "August", "September", "October", "November",
+                 "December"],
+        datasets: [
+            {
+                label: "Current Car",
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1,
+                data: response.current_monthly_co2,
+            },
+
+            {
+                label: "New Car",
+                backgroundColor: [
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1,
+                data: response.new_monthly_co2,
+            }
+        ]
+    };
+    
+    carBarChart = new Chart(ctx_bar, {
+        type: 'bar',
+        data: data,
+        options: options
+    });
+        
+}

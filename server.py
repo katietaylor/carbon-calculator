@@ -34,10 +34,13 @@ def homepage():
                      NGLog.get_ng_years(user_id)
                      )
 
-        print years
+        makes = Car.get_unique_makes()
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
 
         return render_template("homepage.html",
-                               years=sorted(years, reverse=True))
+                               years=sorted(years, reverse=True),
+                               makes=makes, usercars=usercars)
 
     else:
         return render_template("login-register.html")
@@ -654,6 +657,80 @@ def get_zipcode():
     zipcode = zipcode_info["zip_codes"][0]
 
     return zipcode
+
+
+@app.route("/co2-other-car.json", methods=["GET"])
+def get_co2_other_car():
+    """Calculate the kwh CO2 for the user's current residence and as well as the
+    potential CO2 at a different location and return as JSON."""
+
+    user_id = session.get("user_id")
+    trip_year = request.args.get("tripYear")
+    usercar_id = request.args.get("userCarId")
+    print "\n usercar_id:", usercar_id, "\n"
+    make = request.args.get("make")
+    model = request.args.get("model")
+    car_year = request.args.get("carYear")
+    cylinders = request.args.get("cylinders")
+    transmission = request.args.get("transmission")
+
+    months = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30,
+              10: 31, 11: 30, 12: 31}
+
+    months = sorted(months.items())
+
+    trip_co2_per_month = []
+    trip_co2_per_month_other_car = []
+
+    for month in months:
+        start_date = "%s/1/%s" % (month[0], trip_year)
+        end_date = "%s/%s/%s" % (month[0], month[1], trip_year)
+
+        # CO2 per month
+        trip_co2_per_month.append(
+            TripLog.sum_trip_co2(user_id, start_date, end_date, usercar_id))
+
+        trip_co2_per_month_other_car.append(
+            TripLog.sum_trip_co2_other_car(user_id, make, model, car_year,
+                                           cylinders, transmission, start_date,
+                                           end_date, usercar_id))
+        # CO2 per day (rate)
+        co2_daily_rate = round(sum(trip_co2_per_month) / 365, 2)
+        co2_daily_rate_other_car = round(sum(
+            trip_co2_per_month_other_car) / 365, 2)
+
+        # Total CO2 for the year
+        trip_co2_per_year = round(sum(trip_co2_per_month), 2)
+        trip_co2_per_year_other_car = round(sum(
+            trip_co2_per_month_other_car), 2)
+
+        # percent change = (current - new) / current * 100
+        try:
+            percent_change = round(abs(
+                trip_co2_per_year - trip_co2_per_year_other_car
+                ) / trip_co2_per_year * 100, 2)
+        except ZeroDivisionError:
+            percent_change = None
+
+        if percent_change is None:
+            statement = "There is no data for that year to compare."
+        elif trip_co2_per_year > trip_co2_per_year_other_car:
+            statement = "This car %s your carbon footprint by %s percent" \
+                % ("decreases", percent_change)
+        elif trip_co2_per_year < trip_co2_per_year_other_car:
+            statement = "This car %s your carbon footprint by %s percent" \
+                % ("increases", percent_change)
+        elif trip_co2_per_year == trip_co2_per_year_other_car:
+            statement = "This car doesn't change the carbon footprint"
+
+    return jsonify({"current_monthly_co2": trip_co2_per_month,
+                    "new_monthly_co2": trip_co2_per_month_other_car,
+                    "current_yearly_co2": trip_co2_per_year,
+                    "new_yearly_co2": trip_co2_per_year_other_car,
+                    "current_daily_rate": co2_daily_rate,
+                    "new_daily_rate": co2_daily_rate_other_car,
+                    "comparison_statement": statement
+                    })
 
 
 ###  Helper Functions #########################################################

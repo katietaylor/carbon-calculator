@@ -181,12 +181,10 @@ function getZipcode(evt) {
 
 $("#zipcode").on("change", compareLocations);
 
- 
-$("location-year").on("change", function () {
+// Should only update graph if zipcode has a value
+$("#location-year").on("change", function () {
     if ($("#zipcode").val()) {
         compareLocations();
-    console.log($("#zipcode").val());
-    console.log("hello world");
     }
 });
 

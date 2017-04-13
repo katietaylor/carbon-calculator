@@ -177,6 +177,8 @@ function getZipcode(evt) {
     });
 }
 
+// Compare Locations ##########################################################
+
 $("#zipcode").on("change", compareLocations);
 
  
@@ -187,8 +189,6 @@ $("location-year").on("change", function () {
     console.log("hello world");
     }
 });
-
-
 
 function compareLocations(evt) {
     var year = $("#location-year");
@@ -209,7 +209,103 @@ function compareLocations(evt) {
             $("#current-dly-rate").html(response.current_daily_rate);
             $("#new-dly-rate").html(response.new_daily_rate);
             $("#comparison-statement").html(response.comparison_statement);
+
+            updateLocationBarChart(response);
         }
     });
 }
 
+// Location Bar Graph #########################################################
+
+var locationBarChart;
+function updateLocationBarChart(response) {
+
+    // Make bar of percent of different CO2 source types
+    var ctx_bar = $("#locationBarChart");
+
+    if (locationBarChart) {
+        locationBarChart.destroy();
+    }
+    
+    var data = {
+        labels: ["January", "February", "March", "April", "May", "June",
+                 "July", "August", "September", "October", "November",
+                 "December"],
+        datasets: [
+            {
+                label: "Current Location",
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1,
+                data: response.current_monthly_co2,
+            },
+
+            {
+                label: "New Location",
+                backgroundColor: [
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1,
+                data: response.new_monthly_co2,
+            }
+        ]
+    };
+    
+    locationBarChart = new Chart(ctx_bar, {
+        type: 'bar',
+        data: data,
+        options: options
+    });
+        
+}

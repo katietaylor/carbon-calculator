@@ -177,6 +177,19 @@ function getZipcode(evt) {
     });
 }
 
+$("#zipcode").on("change", compareLocations);
+
+ 
+$("location-year").on("change", function () {
+    if ($("#zipcode").val()) {
+        compareLocations();
+    console.log($("#zipcode").val());
+    console.log("hello world");
+    }
+});
+
+
+
 function compareLocations(evt) {
     var year = $("#location-year");
     var zipcode = $("#zipcode");
@@ -195,8 +208,7 @@ function compareLocations(evt) {
             $("#new-yr-total").html(response.new_yearly_co2);
             $("#current-dly-rate").html(response.current_daily_rate);
             $("#new-dly-rate").html(response.new_daily_rate);
-            $("#yr-diff").html();
-            $("#dly-rate-diff").html();
+            $("#comparison-statement").html(response.comparison_statement);
         }
     });
 }

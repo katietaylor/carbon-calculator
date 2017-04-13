@@ -588,15 +588,36 @@ def get_co2_other_location():
         kwh_co2_per_month_other_location.append(
             ElectricityLog.sum_kwh_co2_other_location(user_id, zipcode,
                                                       start_date, end_date))
-        co2_daily_rate = sum(kwh_co2_per_month) / 365
-        co2_daily_rate_other_location = sum(kwh_co2_per_month_other_location) / 365
+        co2_daily_rate = round(sum(kwh_co2_per_month) / 365, 2)
+        co2_daily_rate_other_location = round(sum(kwh_co2_per_month_other_location) / 365, 2)
 
-    return jsonify({"current_monthly_co2": round(kwh_co2_per_month, 2),
-                    "new_monthly_co2": round(kwh_co2_per_month_other_location, 2),
-                    "current_yearly_co2": round(sum(kwh_co2_per_month), 2),
-                    "new_yearly_co2": round(sum(kwh_co2_per_month_other_location), 2),
-                    "current_daily_rate": round(co2_daily_rate, 2),
-                    "new_daily_rate": round(co2_daily_rate_other_location, 2),
+        kwh_co2_per_year = round(sum(kwh_co2_per_month), 2)
+        kwh_co2_per_year_other_location = round(sum(kwh_co2_per_month_other_location), 2)
+
+        # (current - new) / current * 100
+        try:
+            percent_change = round(abs(kwh_co2_per_year - kwh_co2_per_year_other_location) / kwh_co2_per_year * 100, 2)
+        except ZeroDivisionError:
+            percent_change = None
+
+        if percent_change is None:
+            statement = "There is no data for that year to compare."
+        elif kwh_co2_per_year > kwh_co2_per_year_other_location:
+            statement = "This location %s your carbon footprint by %s percent" \
+                % ("decreases", percent_change)
+        elif kwh_co2_per_year < kwh_co2_per_year_other_location:
+            statement = "This location %s your carbon footprint by %s percent" \
+                % ("increases", percent_change)
+        elif kwh_co2_per_year == kwh_co2_per_year_other_location:
+            statement = "This location doesn't change the carbon footprint"
+
+    return jsonify({"current_monthly_co2": kwh_co2_per_month,
+                    "new_monthly_co2": kwh_co2_per_month_other_location,
+                    "current_yearly_co2": kwh_co2_per_year,
+                    "new_yearly_co2": kwh_co2_per_year_other_location,
+                    "current_daily_rate": co2_daily_rate,
+                    "new_daily_rate": co2_daily_rate_other_location,
+                    "comparison_statement": statement
                     })
 
 

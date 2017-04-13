@@ -59,28 +59,27 @@
         
         New City <input type="text" name="city" id="city"placeholder="City", required>
         State <input type="text" name="state" id="state" placeholder="State", maxlength="2" required> <br>
-        <input type="text" name="zipcode" id="zipcode" hidden> <br>
+        <input type="text" name="zipcode" id="zipcode"> <br>
         <input type="submit" id="new-location-button" value="See Comparison">
     </form>
+
+    <h3><div id="comparison-statement"></div></h3>
 
     <table id="location-comparison" hidden>
         <tr>
             <th></th>
             <th>Current Location</th> 
             <th>New Location</th>
-            <th>Difference</th>
         </tr>
         <tr>
             <td>Year Total</td>
             <td id="current-yr-total"></td>
             <td id="new-yr-total"></td>
-            <td id="yr-diff"></td>
         </tr>
         <tr>
             <td>Daily Rate</td>
             <td id="current-dly-rate"></td>
             <td id="new-dly-rate"></td>
-            <td id="dly-rate-diff"></td>
         </tr>
     </table>
 

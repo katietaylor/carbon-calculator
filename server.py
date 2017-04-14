@@ -9,6 +9,7 @@ from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
 from sqlalchemy.orm.exc import NoResultFound
 import requests
 import os
+from datetime import datetime, date
 
 # source misc/secrets.sh in terminal before running server
 
@@ -585,6 +586,11 @@ def get_co2_other_location():
     kwh_co2_per_month = []
     kwh_co2_per_month_other_location = []
 
+    if datetime.now().year == int(year):
+        days = days_btw_today_and_jan1()
+    else:
+        days = 365
+
     for month in months:
         start_date = "%s/1/%s" % (month[0], year)
         end_date = "%s/%s/%s" % (month[0], month[1], year)
@@ -595,10 +601,11 @@ def get_co2_other_location():
         kwh_co2_per_month_other_location.append(
             ElectricityLog.sum_kwh_co2_other_location(user_id, zipcode,
                                                       start_date, end_date))
+
         # CO2 per day (rate)
-        co2_daily_rate = round(sum(kwh_co2_per_month) / 365, 2)
+        co2_daily_rate = round(sum(kwh_co2_per_month) / days, 2)
         co2_daily_rate_other_location = round(sum(
-            kwh_co2_per_month_other_location) / 365, 2)
+            kwh_co2_per_month_other_location) / days, 2)
 
         # Total CO2 for the year
         kwh_co2_per_year = round(sum(kwh_co2_per_month), 2)
@@ -661,13 +668,12 @@ def get_zipcode():
 
 @app.route("/co2-other-car.json", methods=["GET"])
 def get_co2_other_car():
-    """Calculate the kwh CO2 for the user's current residence and as well as the
-    potential CO2 at a different location and return as JSON."""
+    """Calculate the trip CO2 for the user's current car and as well as the
+    potential CO2 at a different car and return as JSON."""
 
     user_id = session.get("user_id")
     trip_year = request.args.get("tripYear")
     usercar_id = request.args.get("userCarId")
-    print "\n usercar_id:", usercar_id, "\n"
     make = request.args.get("make")
     model = request.args.get("model")
     car_year = request.args.get("carYear")
@@ -682,6 +688,11 @@ def get_co2_other_car():
     trip_co2_per_month = []
     trip_co2_per_month_other_car = []
 
+    if datetime.now().year == int(trip_year):
+        days = days_btw_today_and_jan1()
+    else:
+        days = 365
+
     for month in months:
         start_date = "%s/1/%s" % (month[0], trip_year)
         end_date = "%s/%s/%s" % (month[0], month[1], trip_year)
@@ -695,9 +706,9 @@ def get_co2_other_car():
                                            cylinders, transmission, start_date,
                                            end_date, usercar_id))
         # CO2 per day (rate)
-        co2_daily_rate = round(sum(trip_co2_per_month) / 365, 2)
+        co2_daily_rate = round(sum(trip_co2_per_month) / days, 2)
         co2_daily_rate_other_car = round(sum(
-            trip_co2_per_month_other_car) / 365, 2)
+            trip_co2_per_month_other_car) / days, 2)
 
         # Total CO2 for the year
         trip_co2_per_year = round(sum(trip_co2_per_month), 2)
@@ -734,6 +745,13 @@ def get_co2_other_car():
 
 
 ###  Helper Functions #########################################################
+
+def days_btw_today_and_jan1():
+    now = datetime.now()
+    today = date(now.year, now.month, now.day)
+    jan_first = date(now.year, 1, 1)
+
+    return (today - jan_first).days
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

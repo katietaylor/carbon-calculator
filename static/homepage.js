@@ -179,7 +179,8 @@ function getZipcode(evt) {
 
 // Compare Locations ##########################################################
 
-$("#zipcode").on("change", compareLocations);
+// only need this when the zipcode is unhidden, to save on 
+// $("#zipcode").on("change", compareLocations);
 
 // Should only update graph if zipcode has a value
 $("#location-year").on("change", function () {
@@ -352,15 +353,15 @@ function compareCars(evt) {
             $("#newCar-dly-rate").html(response.new_daily_rate);
             $("#car-comparison-statement").html(response.comparison_statement);
 
-            updateLocationBarChart(response);
+            updateCarBarChart(response);
         }
     });
 }
 
-// Car Bar Graph ################XXXXX#########################################
+// Car Bar Graph ##############################################################
 
 var carBarChart;
-function updateLocationBarChart(response) {
+function updateCarBarChart(response) {
 
     // Make bar of percent of different CO2 source types
     var ctx_bar = $("#carBarChart");

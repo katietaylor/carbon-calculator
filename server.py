@@ -254,7 +254,32 @@ def get_car_data():
     return jsonify(models)
 
 
-###  kWh, NG, Trans Carbon Log ################################################
+###  Electricity Data #########################################################
+
+@app.route("/kwh-log", methods=["GET"])
+def view_kwh_log():
+    """Lists all kwh the user has entered. User can enter and edit data on this
+    page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        electricity_logs = ElectricityLog.query.filter(
+            ElectricityLog.residence.has(Residence.user_id == user_id)
+            ).order_by(ElectricityLog.start_date.desc()).all()
+
+        residences = Residence.query.filter_by(user_id=user_id).order_by(
+            Residence.is_default.desc(), Residence.residence_id.desc()).all()
+
+        return render_template("kwh-list.html",
+                               electricity_logs=electricity_logs,
+                               residences=residences)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
+
 
 @app.route("/add-kwh", methods=["POST"])
 def add_kwh():
@@ -308,6 +333,33 @@ def edit_kwh():
     return redirect("/kwh-log")
 
 
+###  Natural Gas Data #########################################################
+
+@app.route("/ng-log", methods=["GET"])
+def view_ng_log():
+    """Lists all kwh the user has entered. User can enter and edit data on this
+    page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        ng_logs = NGLog.query.filter(
+            NGLog.residence.has(Residence.user_id == user_id)
+            ).order_by(NGLog.start_date.desc()).all()
+
+        residences = Residence.query.filter_by(user_id=user_id).order_by(
+            Residence.is_default.desc(), Residence.residence_id.desc()).all()
+
+        return render_template("ng-list.html",
+                               ng_logs=ng_logs,
+                               residences=residences)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
+
+
 @app.route("/add-ng", methods=["POST"])
 def add_ng():
     """Add natural gas data for the user."""
@@ -354,6 +406,32 @@ def edit_ng():
     db.session.commit()
 
     return redirect("/ng-log")
+
+
+###  Trip Data ################################################################
+
+@app.route("/trip-log", methods=["GET"])
+def view_trip_log():
+    """Lists all trips the user has entered. User can enter and edit data on
+    this page."""
+
+    user_id = session.get("user_id")
+
+    if user_id:
+
+        trip_logs = TripLog.query.filter_by(user_id=user_id).order_by(
+            TripLog.date.desc(), TripLog.trip_id).all()
+
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
+
+        return render_template("trip-list.html",
+                               trip_logs=trip_logs,
+                               usercars=usercars)
+
+    # return to homepage when not logged in
+    else:
+        return redirect("/")
 
 
 @app.route("/add-trip", methods=["POST"])
@@ -430,85 +508,7 @@ def get_distance():
     return str(round(distance_miles, 2))
 
 
-###  Viewing, Editing, Deleting Log Data ######################################
-
-
-@app.route("/kwh-log", methods=["GET"])
-def view_kwh_log():
-    """Lists all kwh the user has entered. User can enter and edit data on this
-    page."""
-
-    user_id = session.get("user_id")
-
-    if user_id:
-
-        electricity_logs = ElectricityLog.query.filter(
-            ElectricityLog.residence.has(Residence.user_id == user_id)
-            ).order_by(ElectricityLog.start_date.desc()).all()
-
-        residences = Residence.query.filter_by(user_id=user_id).order_by(
-            Residence.is_default.desc(), Residence.residence_id.desc()).all()
-
-        return render_template("kwh-list.html",
-                               electricity_logs=electricity_logs,
-                               residences=residences)
-
-    # return to homepage when not logged in
-    else:
-        return redirect("/")
-
-
-@app.route("/ng-log", methods=["GET"])
-def view_ng_log():
-    """Lists all kwh the user has entered. User can enter and edit data on this
-    page."""
-
-    user_id = session.get("user_id")
-
-    if user_id:
-
-        ng_logs = NGLog.query.filter(
-            NGLog.residence.has(Residence.user_id == user_id)
-            ).order_by(NGLog.start_date.desc()).all()
-
-        residences = Residence.query.filter_by(user_id=user_id).order_by(
-            Residence.is_default.desc(), Residence.residence_id.desc()).all()
-
-        return render_template("ng-list.html",
-                               ng_logs=ng_logs,
-                               residences=residences)
-
-    # return to homepage when not logged in
-    else:
-        return redirect("/")
-
-
-@app.route("/trip-log", methods=["GET"])
-def view_trip_log():
-    """Lists all trips the user has entered. User can enter and edit data on
-    this page."""
-
-    user_id = session.get("user_id")
-
-    if user_id:
-
-        trip_logs = TripLog.query.filter_by(user_id=user_id).order_by(
-            TripLog.date.desc(), TripLog.trip_id).all()
-
-        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
-            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
-
-        return render_template("trip-list.html",
-                               trip_logs=trip_logs,
-                               usercars=usercars)
-
-    # return to homepage when not logged in
-    else:
-        return redirect("/")
-
-
 ###  Homepage Charts ##########################################################
-
 
 @app.route("/co2-per-datatype.json", methods=["GET"])
 def get_co2_per_datatype():

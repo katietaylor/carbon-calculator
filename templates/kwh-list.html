@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %} Carb Log {% endblock %}
+{% block title %} Electricity Log {% endblock %}
 
 {% block content %}
 
 <h1>Electricity Data</h1>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addKwhModal">
+  Add Electricty Data
+</button><br><br>
+
+
 {% if electricity_logs %}
     <table class="table table-striped">
         <tr>
             <th>Begin Date</th>
             <th>End Date</th> 
-            <th>kilowatt hours</th>
+            <th>killowatt hours</th>
             <th>Residence</th>
             <th>Pounds of CO2</th>
+            <th></th>
         </tr>
         {% for log in electricity_logs %}
         <tr>
@@ -21,6 +29,15 @@
             <td>{{ log.kwh }}</td>
             <td>{{ log.residence.name_or_address }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-kwh-log btn btn-secondary btn-sm"
+                data-toggle="modal"
+                data-target="#editKwhModal"
+                data-id="{{ log.elect_id }}"
+                data-start-date="{{ log.start_date }}"
+                data-end-date="{{ log.end_date }}"
+                data-kwh="{{ log.kwh }}"
+                data-residence="{{ log.residence.name_or_address }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -28,6 +45,94 @@
     <h2>No electricy data added yet</h2>
 {% endif %}
 
+<!-- Add Modal -->
+<div class="modal fade" id="addKwhModal" tabindex="-1" role="dialog" aria-labelledby="addKwhModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addKwhModalLabel">Add Electricty Data</h4>
+      </div>
+      
+      <form action="/add-kwh" method="POST">
+      <!-- form for adding new kwh -->
+      <div class="modal-body">
+          Begin Date: <input type="date" name="start_date" required> <br>
+          End Date: <input type="date" name="end_date" required> <br>
+          kwh <input type="number" name="kwh" required> <br>
+
+          Residence <select name="residence">
+          {% for residence in residences %}
+              <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+          {% endfor %}
+          </select><br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" value="Add kwh">Add</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editKwhModal" tabindex="-1" role="dialog" aria-labelledby="editKwhModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="editKwhModalLabel">Edit Electricty Data</h4>
+      </div>
+      
+      <form action="/edit-kwh" id="edit-kwh" method="POST">
+      <!-- form for editing new kwh -->
+      <div class="modal-body">
+        <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
+        Begin Date: <input type="date" name="start_date" id="e-start-date" required> <br>
+        End Date: <input type="date" name="end_date" id="e-end-date" required> <br>
+        kwh <input type="number" name="kwh" id="kwh" required> <br>
+        Residence <select name="residence" id="e-residence">
+        {% for residence in residences %}
+            <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+        {% endfor %}
+        </select><br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submit-kwh-edit" value="Edit kwh">Edit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    
+    $(".edit-kwh-log").on("click", editResidence);  
+    
+    function editResidence() {
+        var electId = $(this).data("id");
+        var currentStartDate = $(this).data("startDate");
+        var currentEndDate = $(this).data("endDate");
+        var currentKwh = $(this).data("kwh");
+        var currentResidence = $(this).data("residence");
+
+        $("#edit-kwh").show();
+
+        $("#elect-id").val(electId);
+        $("#e-start-date").val(currentStartDate);
+        $("#e-end-date").val(currentEndDate);
+        $("#kwh").val(currentKwh);
+        $("#e-residence").val(currentResidence);
+    }
+
+    $("#submit-kwh-edit").on("submit", function () {
+        $("#edit-kwh").hide();
+    })
+
+</script>
 
 
 

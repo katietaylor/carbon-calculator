@@ -4,6 +4,7 @@
   <title>{% block title %} Put your title here {% endblock %}</title>
   <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
 </head>
 
@@ -18,12 +19,11 @@
     </form>
 {% endif %}
 
-<a href="/">Home</a><nbsp> | <nbsp>
+<a href="/">Dashboard</a><nbsp> | <nbsp>
 <a href="/profile">Profile</a><nbsp> | <nbsp>
-<a href="/carbon-log">Add Data</a><nbsp> | <nbsp>
-<a href="/kwh-log">View Electricity Data</a><nbsp> | <nbsp>
-<a href="/ng-log">View Natural Gas Data</a><nbsp> | <nbsp>
-<a href="/trip-log">View Trip Data</a><nbsp>
+<a href="/kwh-log">Electricity Data</a><nbsp> | <nbsp>
+<a href="/ng-log">Natural Gas Data</a><nbsp> | <nbsp>
+<a href="/trip-log">Trip Data</a><nbsp>
 
   {% block content %} put your content here {% endblock %}
 

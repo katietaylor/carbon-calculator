@@ -46,10 +46,6 @@ class LoggedOutIntegrationTest(TestCase):
         resp = self.client.get("/profile")
         self.assertEqual(302, resp.status_code)
 
-    def test_carbonlog_page(self):
-        resp = self.client.get("/carbon-log")
-        self.assertEqual(302, resp.status_code)
-
     def test_kwhlog_page(self):
         resp = self.client.get("/kwh-log")
         self.assertEqual(302, resp.status_code)
@@ -100,26 +96,6 @@ class BasicIntegrationTest(TestCase):
         self.assertIn("Beach House", resp.data)
         self.assertIn("Prius", resp.data)
         self.assertIn("4Runner", resp.data)
-
-    def test_carbonlog_page_kwh(self):
-        resp = self.client.get("/carbon-log")
-        self.assertEqual(200, resp.status_code)
-        self.assertIn("188", resp.data)
-        self.assertIn("Home", resp.data)
-        self.assertIn("116.9", resp.data)
-
-    def test_carbonlog_page_ng(self):
-        resp = self.client.get("/carbon-log")
-        self.assertEqual(200, resp.status_code)
-        self.assertIn("30", resp.data)
-        self.assertIn("350.6", resp.data)
-
-    def test_carbonlog_page_trip(self):
-        resp = self.client.get("/carbon-log")
-        self.assertEqual(200, resp.status_code)
-        self.assertIn("100", resp.data)
-        self.assertIn("Prius", resp.data)
-        self.assertIn("42.5", resp.data)
 
     def test_kwhlog_page(self):
         resp = self.client.get("/kwh-log")

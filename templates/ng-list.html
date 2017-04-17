@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %} Carb Log {% endblock %}
+{% block title %} Natural Gas Log {% endblock %}
 
 {% block content %}
+
+<h1>Natural Gas Data</h1>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addNgModal">
+  Add Natural Gas Data
+</button><br><br>
 
 {% if ng_logs %}
     <table class="table table-striped">
@@ -12,6 +19,7 @@
             <th>Therms of NG</th>
             <th>Residence</th>
             <th>Pounds of CO2</th>
+            <th></th>
         </tr>
         {% for log in ng_logs %}
         <tr>
@@ -20,6 +28,15 @@
             <td>{{ log.therms }}</td>
             <td>{{ log.residence.name_or_address }}</td>
             <td>{{ log.co2_calc() }}</td>
+            <td><button type="button" class="edit-ng-log btn btn-secondary btn-sm"
+                data-toggle="modal"
+                data-target="#editNgModal" 
+                data-id="{{ log.ng_id }}"
+                data-start-date="{{ log.start_date }}"
+                data-end-date="{{ log.end_date }}"
+                data-therms="{{ log.therms }}"
+                data-residence="{{ log.residence.name_or_address }}">
+                Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -27,7 +44,93 @@
     <h2>No natural gas data added yet</h2>
 {% endif %}
 
+<!-- Modal -->
+<div class="modal fade" id="addNgModal" tabindex="-1" role="dialog" aria-labelledby="addNgModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addNgModalLabel">Add Natural Gas Data</h4>
+      </div>
+      
+      <form action="/add-ng" method="POST">
+      <!-- form for adding new ng -->
+      <div class="modal-body">
+          Begin Date: <input type="date" name="start_date" required> <br>
+          End Date: <input type="date" name="end_date" required> <br>
+          therms of natural gas <input type="number" name="therms" required> <br>
+    
+          Residence <select name="residence">
+          {% for residence in residences %}
+              <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+          {% endfor %}
+          </select><br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" value="Add NG">Add</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editNgModal" tabindex="-1" role="dialog" aria-labelledby="editNgModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="editKwhModalLabel">Edit Natural Gas Data</h4>
+      </div>
+      
+      <form action="/edit-ng" id="edit-ng" method="POST">
+      <!-- form for editing new kwh -->
+      <div class="modal-body">
+        <input type="text" name="ng_id" id="ng-id" value="" hidden> <br>
+        Begin Date: <input type="date" name="start_date" id="ng-start-date" required> <br>
+        End Date: <input type="date" name="end_date" id="ng-end-date" required> <br>
+        therms <input type="number" name="therms" id="therms" required> <br>
+        Residence <select name="residence" id="ng-residence">
+        {% for residence in residences %}
+            <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+        {% endfor %}
+        </select><br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submit-ng-edit" value="Edit NG">Edit</button>
+      </div>
+      </form>
 
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    
+    $(".edit-ng-log").on("click", editResidence);  
+    
+    function editResidence() {
+        var ngId = $(this).data("id");
+        var currentStartDate = $(this).data("startDate");
+        var currentEndDate = $(this).data("endDate");
+        var currentTherms = $(this).data("therms");
+        var currentResidence = $(this).data("residence");
+
+        $("#edit-ng").show();
+
+        $("#ng-id").val(ngId);
+        $("#ng-start-date").val(currentStartDate);
+        $("#ng-end-date").val(currentEndDate);
+        $("#therms").val(currentTherms);
+        $("#ng-residence").val(currentResidence);
+    }
+
+    $("#submit-ng-edit").on("submit", function () {
+        $("#edit-ng").hide();
+    })
+
+</script>
 
 {% endblock %}

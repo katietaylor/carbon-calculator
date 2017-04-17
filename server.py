@@ -256,40 +256,6 @@ def get_car_data():
 
 ###  kWh, NG, Trans Carbon Log ################################################
 
-@app.route("/carbon-log", methods=["GET"])
-def view_carbon_log():
-    """Carbon data entry page."""
-
-    user_id = session.get("user_id")
-
-    if user_id:
-
-        electricity_logs = ElectricityLog.query.filter(
-            ElectricityLog.residence.has(Residence.user_id == user_id)).limit(5).all()
-
-        ng_logs = NGLog.query.filter(
-            NGLog.residence.has(Residence.user_id == user_id)).limit(5).all()
-
-        trip_logs = TripLog.query.filter_by(user_id=user_id).limit(5).all()
-
-        residences = Residence.query.filter_by(user_id=user_id).order_by(
-            Residence.is_default.desc(), Residence.residence_id.desc()).all()
-
-        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
-            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
-
-        return render_template("carbon-log.html",
-                               electricity_logs=electricity_logs,
-                               residences=residences,
-                               ng_logs=ng_logs,
-                               trip_logs=trip_logs,
-                               usercars=usercars)
-
-    # return to homepage when not logged in
-    else:
-        return redirect("/")
-
-
 @app.route("/add-kwh", methods=["POST"])
 def add_kwh():
     """User kwh data for the user."""
@@ -315,7 +281,7 @@ def add_kwh():
     db.session.add(new_kwh)
     db.session.commit()
 
-    return redirect("/carbon-log")
+    return redirect("/kwh-log")
 
 
 @app.route("/edit-kwh", methods=["POST"])
@@ -339,7 +305,7 @@ def edit_kwh():
 
     db.session.commit()
 
-    return redirect("/carbon-log")
+    return redirect("/kwh-log")
 
 
 @app.route("/add-ng", methods=["POST"])
@@ -363,7 +329,7 @@ def add_ng():
     db.session.add(new_therms)
     db.session.commit()
 
-    return redirect("/carbon-log")
+    return redirect("/ng-log")
 
 
 @app.route("/edit-ng", methods=["POST"])
@@ -387,7 +353,7 @@ def edit_ng():
 
     db.session.commit()
 
-    return redirect("/carbon-log")
+    return redirect("/ng-log")
 
 
 @app.route("/add-trip", methods=["POST"])
@@ -397,12 +363,19 @@ def add_trip():
     date = request.form.get("date")
     miles = float(request.form.get("miles"))
     usercar_id = request.form.get("car")
+    is_roundtrip = request.form.get("roundtrip")
+
+    if is_roundtrip is None:
+        is_roundtrip = False
+
+    if is_roundtrip:
+        miles = miles * 2
 
     user_id = session.get("user_id")
 
     TripLog.create(user_id, usercar_id, date, miles)
 
-    return redirect("/carbon-log")
+    return redirect("/trip-log")
 
 
 @app.route("/edit-trip", methods=["POST"])
@@ -422,7 +395,7 @@ def edit_trip():
 
     db.session.commit()
 
-    return redirect("/carbon-log")
+    return redirect("/trip-log")
 
 
 @app.route("/get-distance", methods=["GET"])
@@ -473,8 +446,12 @@ def view_kwh_log():
             ElectricityLog.residence.has(Residence.user_id == user_id)
             ).order_by(ElectricityLog.start_date.desc()).all()
 
+        residences = Residence.query.filter_by(user_id=user_id).order_by(
+            Residence.is_default.desc(), Residence.residence_id.desc()).all()
+
         return render_template("kwh-list.html",
-                               electricity_logs=electricity_logs)
+                               electricity_logs=electricity_logs,
+                               residences=residences)
 
     # return to homepage when not logged in
     else:
@@ -494,8 +471,12 @@ def view_ng_log():
             NGLog.residence.has(Residence.user_id == user_id)
             ).order_by(NGLog.start_date.desc()).all()
 
+        residences = Residence.query.filter_by(user_id=user_id).order_by(
+            Residence.is_default.desc(), Residence.residence_id.desc()).all()
+
         return render_template("ng-list.html",
-                               ng_logs=ng_logs)
+                               ng_logs=ng_logs,
+                               residences=residences)
 
     # return to homepage when not logged in
     else:
@@ -514,8 +495,12 @@ def view_trip_log():
         trip_logs = TripLog.query.filter_by(user_id=user_id).order_by(
             TripLog.date.desc(), TripLog.trip_id).all()
 
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
+
         return render_template("trip-list.html",
-                               trip_logs=trip_logs)
+                               trip_logs=trip_logs,
+                               usercars=usercars)
 
     # return to homepage when not logged in
     else:

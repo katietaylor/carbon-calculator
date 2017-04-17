@@ -3,6 +3,7 @@
 {% block title %} Profile {% endblock %}
 
 {% block content %}
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <h1>{{ name }}'s Profile </h1>
 
@@ -24,7 +25,9 @@
             <td>{{ residence.zipcode_id }}</td>
             <td>{{ residence.number_of_residents }}</td>
             <td>{{ residence.is_default }}</td>
-            <td><button type="button" class="edit-residence" 
+            <td><button type="button" class="edit-residence btn btn-secondary btn-sm"
+                data-toggle="modal"
+                data-target="#editResidenceModal"
                 data-id="{{ residence.residence_id }}"
                 data-residence-name="{{ residence.name_or_address }}"
                 data-zipcode="{{ residence.zipcode_id }}"
@@ -39,28 +42,63 @@
 {% endif %}
 <br>
 
-<!-- form for adding new residence (will be a bootstrap modal) -->
-<form action="/add-residence" id="add-residence" method="POST">
-    House Name or Address: <input type="text" name="residence_name"> <br>
-    zipcode: <input type="text" name="zipcode"> <br>
-    number of residents? <input type="text" name="residents"> <br>
-    set as default?: <input type="checkbox" name="default"> <br>
 
-    <input type="submit" value="Add Residence">
-</form><br>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addResidenceModal">
+  Add New Residence
+</button>
 
-<!-- form for editing existing residence (will be a bootstrap modal) -->
-<form action="/edit-residence" id="edit-residence" method="POST" hidden>
-    <br>
-    <input type="text" name="residence_id" id="residenceId" value="" hidden> <br>
-    House Name or Address: <input type="text" name="residence_name" id="residenceName"> <br>
-    zipcode: <input type="text" name="zipcode" id="zipcode"> <br>
-    number of residents? <input type="text" name="residents" id="residents"> <br>
-    set as default?: <input type="checkbox" name="default" id="isDefault"> <br>
+<!-- Add Modal -->
+<div class="modal fade" id="addResidenceModal" tabindex="-1" role="dialog" aria-labelledby="addResidenceModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addResidenceModalLabel">Add New Residence</h4>
+      </div>
+      
+      <form action="/add-residence" id="add-residence" method="POST">
+      <!-- form for adding new Residence -->
+      <div class="modal-body">
+        House Name or Address: <input type="text" name="residence_name"> <br>
+        zipcode: <input type="text" name="zipcode"> <br>
+        number of residents? <input type="text" name="residents"> <br>
+        set as default?: <input type="checkbox" name="default"> <br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" value="Add Residence">Add</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-    <input type="submit" id="submit-residence-edit" value="Edit Residence">
-</form>
-
+<!-- Edit Modal -->
+<div class="modal fade" id="editResidenceModal" tabindex="-1" role="dialog" aria-labelledby="editResidenceModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="editResidenceModalLabel">Edit Residence</h4>
+      </div>
+      <form action="/edit-residence" id="edit-residence" method="POST">
+      <!-- form for editing residence -->
+      <div class="modal-body">
+        <input type="text" name="residence_id" id="residenceId" value="" hidden> <br>
+        House Name or Address: <input type="text" name="residence_name" id="residenceName"> <br>
+        zipcode: <input type="text" name="zipcode" id="zipcode"> <br>
+        number of residents? <input type="text" name="residents" id="residents"> <br>
+        set as default?: <input type="checkbox" name="default" id="isDefault"> <br>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submit-residence-edit" value="Edit Residence">Edit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
     

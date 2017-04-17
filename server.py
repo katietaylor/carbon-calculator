@@ -21,6 +21,13 @@ app.jinja_env.undefined = StrictUndefined  # Undefined variable in Jinja2 will r
 ###  Users, Login, Signup, Logout #############################################
 
 
+@app.route("/map", methods=["GET"])
+def map():
+    """Placeholder for map testing."""
+
+    return render_template("map.html")
+
+
 @app.route("/", methods=["GET"])
 def homepage():
     """Renders login template if the user is not signed in and the homepage if

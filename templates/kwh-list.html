@@ -11,6 +11,20 @@
   Add Electricty Data
 </button><br><br>
 
+<table id="summary-table" class="table-condensed">
+    <tr>
+        <th></th>
+        <th>CO2 Total</th> 
+        <th>CO2 Average per Month</th>
+        <th>CO2 Average per Day</th>
+    </tr>
+    <tr class="yr-row">
+        <td class="summary-yr"></td>
+        <td class="yr-total"></td>
+        <td class="mthly-avg"></td>
+        <td class="dly-avg"></td>
+    </tr>
+ </table>
 
 {% if electricity_logs %}
     <table class="table table-striped">
@@ -131,6 +145,17 @@
     $("#submit-kwh-edit").on("submit", function () {
         $("#edit-kwh").hide();
     })
+
+    function populateSummaryTable() {
+        var summaryTable = $("#summary-table");
+
+        // <tr class="yr-row">
+            // <td class="summary-yr"></td>
+            // <td class="yr-total"></td>
+            // <td class="mthly-avg"></td>
+            // <td class="dly-avg"></td>
+        // </tr>
+    }
 
 </script>
 

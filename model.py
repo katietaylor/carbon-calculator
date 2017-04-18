@@ -115,8 +115,8 @@ class UserCar(db.Model):
     is_default = db.Column(db.Boolean, nullable=True)
 
     def __repr__(self):
-        return "<User Car=%s, User Id=%s, Car Id=%s>" % \
-            (self.usercar_id, self.user_id, self.car_id)
+        return "<User Car=%s, User Id=%s, Make=%s, Model=%s, Year=%s>" % \
+            (self.usercar_id, self.user_id, self.make, self.model, self.year)
 
     @classmethod
     def create(cls, user_id, make, model, year, cylinders, transmission,
@@ -134,6 +134,31 @@ class UserCar(db.Model):
 
         db.session.add(new_car)
         db.session.commit()
+
+    def calculate_avg_grams_co2_mile(self):
+        """calculate the average grams of co2 per mile for a given usercar."""
+
+        make = self.make
+        model = self.model
+        year = self.year
+        cylinders = self.cylinders
+        transmission = self.transmission
+
+        # get all CO2 factors that meet the car search criteria
+        grams_co2_mile = db.session.query(Car.grams_co2_mile).filter_by(
+            make=make, model=model, year=year)
+
+        if cylinders:
+            grams_co2_mile = grams_co2_mile.filter_by(cylinders=cylinders)
+        if transmission:
+            grams_co2_mile = grams_co2_mile.filter_by(transmission=transmission)
+
+        # convert list of tuples just a list of values
+        grams_co2_mile = [factor[0] for factor in grams_co2_mile.all()]
+
+        avg_grams_co2_mile = sum(grams_co2_mile) / len(grams_co2_mile)
+
+        return avg_grams_co2_mile
 
 
 class TransitType(db.Model):
@@ -186,10 +211,8 @@ class TripLog(db.Model):
         db.session.add(new_trip)
         db.session.commit()
 
-    def co2_calc(self):
-        """Calculate the CO2 emissions for a car trip."""
-
-        grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
+    def calculate_avg_grams_co2_mile_factor(self):
+        """calculate the average grams of co2 per mile for a given car."""
 
         make = self.usercar.make
         model = self.usercar.model
@@ -210,6 +233,16 @@ class TripLog(db.Model):
         grams_co2_mile = [factor[0] for factor in grams_co2_mile.all()]
 
         avg_grams_co2_mile = sum(grams_co2_mile) / len(grams_co2_mile)
+
+        return avg_grams_co2_mile
+
+    def co2_calc(self, avg_grams_co2_mile=None):
+        """Calculate the CO2 emissions for a car trip."""
+
+        grams_to_lbs = 0.00220  # 0.00220 pounds in a gram
+
+        if not avg_grams_co2_mile:
+            avg_grams_co2_mile = self.calculate_avg_grams_co2_mile_factor()
 
         co2 = self.miles * avg_grams_co2_mile * grams_to_lbs
         return co2

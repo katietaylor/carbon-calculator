@@ -23,17 +23,17 @@
         </tr>
         {% for log in trip_logs %}
         <tr>
-            <td>{{ log.date }}</td>
-            <td>{{ log.miles }}</td>
-            <td>{{ log.usercar.make }} {{ log.usercar.model }} {{ log.usercar.year }}</td>
-            <td>{{ log.co2_calc() }}</td>
+            <td>{{ log[0].date }}</td>
+            <td>{{ log[0].miles }}</td>
+            <td>{{ log[0].usercar.make }} {{ log[0].usercar.model }} {{ log[0].usercar.year }}</td>
+            <td>{{ log[1] }}</td>
             <td><button type="button" class="edit-trip-log btn btn-secondary btn-sm"
                 data-toggle="modal"
                 data-target="#editTripModal"
-                data-id="{{ log.trip_id }}"
-                data-date="{{ log.date }}"
-                data-distance="{{ log.miles }}"
-                data-usercar-id="{{ log.usercar.usercar_id }}">
+                data-id="{{ log[0].trip_id }}"
+                data-date="{{ log[0].date }}"
+                data-distance="{{ log[0].miles }}"
+                data-usercar-id="{{ log[0].usercar.usercar_id }}">
                 Edit</button></td>
         </tr>
         {% endfor %}

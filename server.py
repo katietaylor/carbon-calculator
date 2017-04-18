@@ -418,8 +418,25 @@ def view_trip_log():
         usercars = UserCar.query.filter_by(user_id=user_id).order_by(
             UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
 
+        # pre-load all of the avgerage co2 factors for the usercars
+        avg_grams_co2_mile_factors = {}
+        for usercar in usercars:
+            if not avg_grams_co2_mile_factors.get(usercar.usercar_id):
+                avg_grams_co2_mile_factors[usercar.usercar_id] = \
+                    usercar.calculate_avg_grams_co2_mile()
+
+        # calculate co2 for each trip the user has entered
+        trip_co2s = []
+        for trip in trip_logs:
+            avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
+            co2 = trip.co2_calc(avg_grams_co2_mile_factor)
+            trip_co2s.append(co2)
+
+        # combine the trip objects with the co2 results for passing into jinja
+        trips_and_co2 = zip(trip_logs, trip_co2s)
+
         return render_template("trip-list.html",
-                               trip_logs=trip_logs,
+                               trip_logs=trips_and_co2,
                                usercars=usercars)
 
     # return to homepage when not logged in

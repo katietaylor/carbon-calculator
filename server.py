@@ -326,6 +326,12 @@ def edit_kwh():
     return redirect("/kwh-log")
 
 
+@app.route("/electricity-summary.json")
+def get_electricity_summary():
+    """Get the electricity summary data and return as json to be displayed in
+    a table and graph on the electricity page."""
+
+
 ###  Natural Gas Data #########################################################
 
 @app.route("/ng-log", methods=["GET"])
@@ -616,9 +622,9 @@ def get_co2_other_location():
 
         # percent change = (current - new) / current * 100
         try:
-            percent_change = round(abs(
+            percent_change = int(abs(
                 kwh_co2_per_year - kwh_co2_per_year_other_location
-                ) / kwh_co2_per_year * 100, 2)
+                ) / kwh_co2_per_year * 100)
         except ZeroDivisionError:
             percent_change = None
 
@@ -719,9 +725,9 @@ def get_co2_other_car():
 
         # percent change = (current - new) / current * 100
         try:
-            percent_change = round(abs(
+            percent_change = int(abs(
                 trip_co2_per_year - trip_co2_per_year_other_car
-                ) / trip_co2_per_year * 100, 2)
+                ) / trip_co2_per_year * 100)
         except ZeroDivisionError:
             percent_change = None
 
@@ -744,6 +750,27 @@ def get_co2_other_car():
                     "new_daily_rate": co2_daily_rate_other_car,
                     "comparison_statement": statement
                     })
+
+
+@app.route("/co2-day-of-week.json", methods=["GET"])
+def get_co2_by_day_of_week():
+    """Get the total CO2 for each day of the week from each source given a date
+    range."""
+
+    user_id = session.get("user_id")
+    year = request.args.get("year")
+
+    start_date = "1/1/%s" % (year)
+    end_date = "12/31/%s" % (year)
+
+    trip_co2_by_day_of_week = TripLog.calculate_total_co2_per_day_of_week(
+        user_id, start_date, end_date)
+
+    kwh_co2_by_day_of_week = ElectricityLog.calculate_total_co2_per_day_of_week(
+        user_id, start_date, end_date)
+
+    return jsonify({"trip": trip_co2_by_day_of_week.values(),
+                    "kwh": kwh_co2_by_day_of_week.values()})
 
 
 ###  Helper Functions #########################################################

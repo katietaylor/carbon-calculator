@@ -151,6 +151,89 @@ function updateCo2LineGraph() {
 updateCo2LineGraph();
 $("#trend-year").on("change", updateCo2LineGraph);
 
+// Weekday Bar Graph ###########################################################
+
+var weekdayCo2BarChart;
+function updateWeekdayCo2BarChart(response) {
+
+    // Make bar of percent of different CO2 source types
+    var ctx_bar = $("#weekdayBarChart");
+    var yearData = {};
+
+    if (weekdayCo2BarChart) {
+        weekdayCo2BarChart.destroy();
+    }
+    
+    yearData.year = $("#weekday-year").val();
+
+    $.get("/co2-day-of-week.json", yearData, function (response) {
+
+        var data = {
+            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+                     "Saturday", "Sunday"],
+            datasets: [
+                {
+                    label: "Electricity Footprint",
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1,
+                    data: response.kwh,
+                },
+                {
+                    label: "Trip Footprint",
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1,
+                    data: response.trip,
+                }
+            ]
+        };
+    
+
+        weekdayCo2BarChart = new Chart(ctx_bar, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
+    });
+}
+
+updateWeekdayCo2BarChart();
+$("#weekday-year").on("change", updateWeekdayCo2BarChart);
+
 
 // Get Zipcode ################################################################
 

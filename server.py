@@ -1,5 +1,6 @@
 """Carbon Calculator App"""
 
+from datetime import datetime, date, timedelta
 from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
@@ -7,9 +8,9 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, User, Residence, ElectricityLog, NGLog,
                    UserCar, Car, TripLog)
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import func
 import requests
 import os
-from datetime import datetime, date
 
 # source misc/secrets.sh in terminal before running server
 
@@ -330,6 +331,48 @@ def edit_kwh():
 def get_electricity_summary():
     """Get the electricity summary data and return as json to be displayed in
     a table and graph on the electricity page."""
+
+    user_id = session.get("user_id")
+
+    first_entry_date = db.session.query(func.min(ElectricityLog.start_date)) \
+        .filter(ElectricityLog.residence.has(Residence.user_id == user_id)).one()
+    end_date = date.today()
+
+    days = (end_date - first_entry_date[0]).days
+    months = days / 30
+
+    days_in_current_year = days_btw_today_and_jan1()
+    months_in_current_year = days_in_current_year / 30
+
+    # summary for all data entered
+    total_data = {}
+    total_data["total"] = ElectricityLog.sum_kwh_co2(user_id)
+    total_data["daily_avg"] = total_data["total"] / days
+    total_data["monthly_avg"] = total_data["total"] / months
+
+    # summary per year
+    years = ElectricityLog.get_kwh_years(user_id)
+
+    data = {}
+    data["all_data"] = total_data
+
+    for year in years:
+        year_data = {}
+        Jan_1 = "1/1/%s" % (year)
+        Dec_31 = "12/31/%s" % (year)
+
+        year_data["total"] = ElectricityLog.sum_kwh_co2(user_id, Jan_1, Dec_31)
+
+        if year != datetime.now().year:
+            year_data["daily_avg"] = total_data["total"] / 365
+            year_data["monthly_avg"] = total_data["total"] / 12
+        else:
+            year_data["daily_avg"] = total_data["total"] / days_in_current_year
+            year_data["monthly_avg"] = total_data["total"] / months_in_current_year
+
+        data[year] = year_data
+
+    return jsonify(data)
 
 
 ###  Natural Gas Data #########################################################

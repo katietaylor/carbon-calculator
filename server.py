@@ -354,10 +354,8 @@ def get_electricity_summary():
     # summary per year
     years = ElectricityLog.get_kwh_years(user_id)
     years = years[::-1]
-    print "\n \n \n", years, "\n \n \n"
 
     data = []
-    # data["Total"] = total_data
 
     for year in years:
         year_data = {}

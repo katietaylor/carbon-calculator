@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, date, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
@@ -343,7 +343,7 @@ class TripLog(db.Model):
             start_date = db.session.query(func.min(cls.date)).filter(
                 cls.user_id == user_id).one()
         if not end_date:
-            end_date = datetime.date.today()
+            end_date = date.today()
 
         trips = cls.query.filter(cls.user_id == user_id,
                                  cls.date >= start_date,
@@ -357,7 +357,7 @@ class TripLog(db.Model):
                 trip.date.weekday()) + trip.co2_calc()
 
         # find number of day types in the date range and divide by that
-        one_day = datetime.timedelta(days=1)
+        one_day = timedelta(days=1)
         current_date = start_date[0]
         num_of_days_by_day_of_week = {}
 
@@ -386,6 +386,58 @@ class TripLog(db.Model):
                 trip.date.weekday()) + trip.co2_calc()
 
         return co2_by_day_of_week
+
+    @classmethod
+    def get_trip_summary(cls, user_id):
+        """Get the electricity summary data and return as json to be displayed in
+        a table and graph on the electricity page."""
+
+        first_entry_date = db.session.query(func.min(cls.date)) \
+            .filter(cls.user_id == user_id).one()
+        end_date = date.today()
+
+        days = (end_date - first_entry_date[0]).days
+        months = days / 30
+
+        days_in_current_year = days_btw_today_and_jan1()
+        months_in_current_year = days_in_current_year / 30
+
+        # summary for all data entered
+        total_data = {}
+        total_data["row_label"] = "Total"
+        total_data["total"] = round(cls.sum_trip_co2(user_id), 2)
+        total_data["daily_avg"] = round(total_data["total"] / days, 2)
+        total_data["monthly_avg"] = round(total_data["total"] / months, 2)
+
+        # summary per year
+        years = cls.get_trip_years(user_id)
+        years = years[::-1]
+
+        data = []
+
+        for year in years:
+            year_data = {}
+            Jan_1 = "1/1/%s" % (year)
+            Dec_31 = "12/31/%s" % (year)
+
+            year_data["row_label"] = year
+            year_data["total"] = round(cls.sum_trip_co2(
+                user_id, Jan_1, Dec_31), 2)
+
+            if year != datetime.now().year:
+                year_data["daily_avg"] = round(year_data["total"] / 365, 2)
+                year_data["monthly_avg"] = round(year_data["total"] / 12, 2)
+            else:
+                year_data["daily_avg"] = round(
+                    year_data["total"] / days_in_current_year, 2)
+                year_data["monthly_avg"] = round(
+                    year_data["total"] / months_in_current_year, 2)
+
+            data.append(year_data)
+
+        data.append(total_data)
+
+        return data
 
 
 class Residence(db.Model):
@@ -570,6 +622,59 @@ class ElectricityLog(db.Model):
 
         return co2_by_day_of_week
 
+    @classmethod
+    def get_electricity_summary(cls, user_id):
+        """Get the electricity summary data and return as json to be displayed in
+        a table and graph on the electricity page."""
+
+        first_entry_date = db.session.query(func.min(cls.start_date)) \
+            .filter(cls.residence.has(Residence.user_id == user_id)
+                    ).one()
+        end_date = date.today()
+
+        days = (end_date - first_entry_date[0]).days
+        months = days / 30
+
+        days_in_current_year = days_btw_today_and_jan1()
+        months_in_current_year = days_in_current_year / 30
+
+        # summary for all data entered
+        total_data = {}
+        total_data["row_label"] = "Total"
+        total_data["total"] = round(cls.sum_kwh_co2(user_id), 2)
+        total_data["daily_avg"] = round(total_data["total"] / days, 2)
+        total_data["monthly_avg"] = round(total_data["total"] / months, 2)
+
+        # summary per year
+        years = cls.get_kwh_years(user_id)
+        years = years[::-1]
+
+        data = []
+
+        for year in years:
+            year_data = {}
+            Jan_1 = "1/1/%s" % (year)
+            Dec_31 = "12/31/%s" % (year)
+
+            year_data["row_label"] = year
+            year_data["total"] = round(cls.sum_kwh_co2(
+                user_id, Jan_1, Dec_31), 2)
+
+            if year != datetime.now().year:
+                year_data["daily_avg"] = round(year_data["total"] / 365, 2)
+                year_data["monthly_avg"] = round(year_data["total"] / 12, 2)
+            else:
+                year_data["daily_avg"] = round(
+                    year_data["total"] / days_in_current_year, 2)
+                year_data["monthly_avg"] = round(
+                    year_data["total"] / months_in_current_year, 2)
+
+            data.append(year_data)
+
+        data.append(total_data)
+
+        return data
+
 
 class NGLog(db.Model):
     """Log of user natural gas usage."""
@@ -631,6 +736,59 @@ class NGLog(db.Model):
         ng_years = sorted(set(map(date_to_year, ngs)))
 
         return ng_years
+
+    @classmethod
+    def get_ng_summary(cls, user_id):
+        """Get the natural gas summary data and return as json to be displayed
+        in a table and graph on the electricity page."""
+
+        first_entry_date = db.session.query(func.min(cls.start_date)) \
+            .filter(cls.residence.has(Residence.user_id == user_id)
+                    ).one()
+        end_date = date.today()
+
+        days = (end_date - first_entry_date[0]).days
+        months = days / 30
+
+        days_in_current_year = days_btw_today_and_jan1()
+        months_in_current_year = days_in_current_year / 30
+
+        # summary for all data entered
+        total_data = {}
+        total_data["row_label"] = "Total"
+        total_data["total"] = round(cls.sum_ng_co2(user_id), 2)
+        total_data["daily_avg"] = round(total_data["total"] / days, 2)
+        total_data["monthly_avg"] = round(total_data["total"] / months, 2)
+
+        # summary per year
+        years = cls.get_ng_years(user_id)
+        years = years[::-1]
+
+        data = []
+
+        for year in years:
+            year_data = {}
+            Jan_1 = "1/1/%s" % (year)
+            Dec_31 = "12/31/%s" % (year)
+
+            year_data["row_label"] = year
+            year_data["total"] = round(cls.sum_ng_co2(
+                user_id, Jan_1, Dec_31), 2)
+
+            if year != datetime.now().year:
+                year_data["daily_avg"] = round(year_data["total"] / 365, 2)
+                year_data["monthly_avg"] = round(year_data["total"] / 12, 2)
+            else:
+                year_data["daily_avg"] = round(
+                    year_data["total"] / days_in_current_year, 2)
+                year_data["monthly_avg"] = round(
+                    year_data["total"] / months_in_current_year, 2)
+
+            data.append(year_data)
+
+        data.append(total_data)
+
+        return data
 
 ##############################################################################
 # Helper functions
@@ -742,6 +900,14 @@ def initialize_test_data():
 
     db.session.add_all([triplog_1, triplog_2, elect_log_1, elect_log_2, ng_log])
     db.session.commit()
+
+
+def days_btw_today_and_jan1():
+    now = datetime.now()
+    today = date(now.year, now.month, now.day)
+    jan_first = date(now.year, 1, 1)
+
+    return (today - jan_first).days
 
 
 def init_app():

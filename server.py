@@ -266,9 +266,12 @@ def view_kwh_log():
         residences = Residence.query.filter_by(user_id=user_id).order_by(
             Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
+        summary = ElectricityLog.get_electricity_summary(user_id)
+
         return render_template("kwh-list.html",
                                electricity_logs=electricity_logs,
-                               residences=residences)
+                               residences=residences,
+                               summary=summary)
 
     # return to homepage when not logged in
     else:
@@ -327,58 +330,6 @@ def edit_kwh():
     return redirect("/kwh-log")
 
 
-@app.route("/electricity-summary.json")
-def get_electricity_summary():
-    """Get the electricity summary data and return as json to be displayed in
-    a table and graph on the electricity page."""
-
-    user_id = session.get("user_id")
-
-    first_entry_date = db.session.query(func.min(ElectricityLog.start_date)) \
-        .filter(ElectricityLog.residence.has(Residence.user_id == user_id)).one()
-    end_date = date.today()
-
-    days = (end_date - first_entry_date[0]).days
-    months = days / 30
-
-    days_in_current_year = days_btw_today_and_jan1()
-    months_in_current_year = days_in_current_year / 30
-
-    # summary for all data entered
-    total_data = {}
-    total_data["row_label"] = "Total"
-    total_data["total"] = round(ElectricityLog.sum_kwh_co2(user_id), 2)
-    total_data["daily_avg"] = round(total_data["total"] / days, 2)
-    total_data["monthly_avg"] = round(total_data["total"] / months, 2)
-
-    # summary per year
-    years = ElectricityLog.get_kwh_years(user_id)
-    years = years[::-1]
-
-    data = []
-
-    for year in years:
-        year_data = {}
-        Jan_1 = "1/1/%s" % (year)
-        Dec_31 = "12/31/%s" % (year)
-
-        year_data["row_label"] = year
-        year_data["total"] = round(ElectricityLog.sum_kwh_co2(user_id, Jan_1, Dec_31), 2)
-
-        if year != datetime.now().year:
-            year_data["daily_avg"] = round(year_data["total"] / 365, 2)
-            year_data["monthly_avg"] = round(year_data["total"] / 12, 2)
-        else:
-            year_data["daily_avg"] = round(year_data["total"] / days_in_current_year, 2)
-            year_data["monthly_avg"] = round(year_data["total"] / months_in_current_year, 2)
-
-        data.append(year_data)
-
-    data.append(total_data)
-
-    return jsonify(data)
-
-
 ###  Natural Gas Data #########################################################
 
 @app.route("/ng-log", methods=["GET"])
@@ -397,9 +348,12 @@ def view_ng_log():
         residences = Residence.query.filter_by(user_id=user_id).order_by(
             Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
+        summary = NGLog.get_ng_summary(user_id)
+
         return render_template("ng-list.html",
                                ng_logs=ng_logs,
-                               residences=residences)
+                               residences=residences,
+                               summary=summary)
 
     # return to homepage when not logged in
     else:
@@ -488,9 +442,12 @@ def view_trip_log():
         # combine the trip objects with the co2 results for passing into jinja
         trips_and_co2 = zip(trip_logs, trip_co2s)
 
+        summary = TripLog.get_trip_summary(user_id)
+
         return render_template("trip-list.html",
                                trip_logs=trips_and_co2,
-                               usercars=usercars)
+                               usercars=usercars,
+                               summary=summary)
 
     # return to homepage when not logged in
     else:

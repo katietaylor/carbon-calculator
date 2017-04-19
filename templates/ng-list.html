@@ -6,6 +6,23 @@
 
 <h1>Natural Gas Data</h1>
 
+ <table class="table-condensed">
+    <tr>
+        <th></th>
+        <th>CO2 Total</th> 
+        <th>CO2 Average per Month</th>
+        <th>CO2 Average per Day</th>
+    </tr>
+    {% for year in summary %}
+    <tr>
+        <td><strong>{{ year["row_label"] }}</strong></td> 
+        <td>{{ year["total"] }}</td>
+        <td>{{ year["monthly_avg"] }}</td> 
+        <td>{{ year["daily_avg"] }}</td> 
+    </tr>
+    {% endfor %}
+ </table><br>
+
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addNgModal">
   Add Natural Gas Data

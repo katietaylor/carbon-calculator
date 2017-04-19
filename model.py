@@ -2,6 +2,7 @@ from datetime import datetime, date, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
+from collections import OrderedDict
 
 db = SQLAlchemy()
 
@@ -413,7 +414,7 @@ class TripLog(db.Model):
         years = cls.get_trip_years(user_id)
         years = years[::-1]
 
-        data = []
+        data = OrderedDict()
 
         for year in years:
             year_data = {}
@@ -433,9 +434,9 @@ class TripLog(db.Model):
                 year_data["monthly_avg"] = round(
                     year_data["total"] / months_in_current_year, 2)
 
-            data.append(year_data)
+            data[year] = year_data
 
-        data.append(total_data)
+        data["Total"] = total_data
 
         return data
 
@@ -649,7 +650,7 @@ class ElectricityLog(db.Model):
         years = cls.get_kwh_years(user_id)
         years = years[::-1]
 
-        data = []
+        data = OrderedDict()
 
         for year in years:
             year_data = {}
@@ -669,9 +670,9 @@ class ElectricityLog(db.Model):
                 year_data["monthly_avg"] = round(
                     year_data["total"] / months_in_current_year, 2)
 
-            data.append(year_data)
+            data[year] = year_data
 
-        data.append(total_data)
+        data["Total"] = total_data
 
         return data
 
@@ -764,7 +765,7 @@ class NGLog(db.Model):
         years = cls.get_ng_years(user_id)
         years = years[::-1]
 
-        data = []
+        data = OrderedDict()
 
         for year in years:
             year_data = {}
@@ -784,9 +785,9 @@ class NGLog(db.Model):
                 year_data["monthly_avg"] = round(
                     year_data["total"] / months_in_current_year, 2)
 
-            data.append(year_data)
+            data[year] = year_data
 
-        data.append(total_data)
+        data["Total"] = total_data
 
         return data
 

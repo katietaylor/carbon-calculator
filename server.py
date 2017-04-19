@@ -40,12 +40,39 @@ def homepage():
         usercars = UserCar.query.filter_by(user_id=user_id).order_by(
             UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
 
+        electricity_summary = ElectricityLog.get_electricity_summary(user_id)
+        ng_summary = NGLog.get_ng_summary(user_id)
+        trip_summary = TripLog.get_trip_summary(user_id)
+
+        summary = {}
+        summary["kwh"] = electricity_summary
+        summary["ng"] = ng_summary
+        summary["trip"] = trip_summary
+
         return render_template("homepage.html",
                                years=sorted(years, reverse=True),
-                               makes=makes, usercars=usercars)
+                               makes=makes, usercars=usercars,
+                               summary=summary)
 
     else:
         return render_template("login-register.html")
+
+
+@app.route("/temp-json", methods=["GET"])
+def super_summary():
+
+    user_id = session.get("user_id")
+
+    electricity_summary = ElectricityLog.get_electricity_summary(user_id)
+    ng_summary = NGLog.get_ng_summary(user_id)
+    trip_summary = TripLog.get_trip_summary(user_id)
+
+    summary = {}
+    summary["kwh"] = electricity_summary
+    summary["ng"] = ng_summary
+    summary["trip"] = trip_summary
+
+    return jsonify(summary)
 
 
 @app.route("/process-login", methods=["POST"])
@@ -795,6 +822,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

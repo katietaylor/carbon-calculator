@@ -18,12 +18,6 @@
         <th>CO2 Average per Month</th>
         <th>CO2 Average per Day</th>
     </tr>
-    <tr class="yr-row">
-        <td class="summary-yr"></td>
-        <td class="yr-total"></td>
-        <td class="mthly-avg"></td>
-        <td class="dly-avg"></td>
-    </tr>
  </table>
 
 {% if electricity_logs %}
@@ -144,18 +138,24 @@
 
     $("#submit-kwh-edit").on("submit", function () {
         $("#edit-kwh").hide();
-    })
+    });
 
     function populateSummaryTable() {
         var summaryTable = $("#summary-table");
 
-        // <tr class="yr-row">
-            // <td class="summary-yr"></td>
-            // <td class="yr-total"></td>
-            // <td class="mthly-avg"></td>
-            // <td class="dly-avg"></td>
-        // </tr>
+        $.get("/electricity-summary.json", function (response) {
+            $.each(response, function(i, year) {
+                summaryTable.append("<tr>" + 
+                                      "<td><strong>" + year.row_label + "</strong></td>" + 
+                                      "<td>" + year.total + "</td>" +
+                                      "<td>" + year.monthly_avg + "</td>" + 
+                                      "<td>" + year.daily_avg + "</td>" + 
+                                    "</tr>");
+            });
+        });
     }
+
+populateSummaryTable();
 
 </script>
 

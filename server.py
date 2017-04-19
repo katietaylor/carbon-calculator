@@ -346,31 +346,37 @@ def get_electricity_summary():
 
     # summary for all data entered
     total_data = {}
-    total_data["total"] = ElectricityLog.sum_kwh_co2(user_id)
-    total_data["daily_avg"] = total_data["total"] / days
-    total_data["monthly_avg"] = total_data["total"] / months
+    total_data["row_label"] = "Total"
+    total_data["total"] = round(ElectricityLog.sum_kwh_co2(user_id), 2)
+    total_data["daily_avg"] = round(total_data["total"] / days, 2)
+    total_data["monthly_avg"] = round(total_data["total"] / months, 2)
 
     # summary per year
     years = ElectricityLog.get_kwh_years(user_id)
+    years = years[::-1]
+    print "\n \n \n", years, "\n \n \n"
 
-    data = {}
-    data["all_data"] = total_data
+    data = []
+    # data["Total"] = total_data
 
     for year in years:
         year_data = {}
         Jan_1 = "1/1/%s" % (year)
         Dec_31 = "12/31/%s" % (year)
 
-        year_data["total"] = ElectricityLog.sum_kwh_co2(user_id, Jan_1, Dec_31)
+        year_data["row_label"] = year
+        year_data["total"] = round(ElectricityLog.sum_kwh_co2(user_id, Jan_1, Dec_31), 2)
 
         if year != datetime.now().year:
-            year_data["daily_avg"] = total_data["total"] / 365
-            year_data["monthly_avg"] = total_data["total"] / 12
+            year_data["daily_avg"] = round(year_data["total"] / 365, 2)
+            year_data["monthly_avg"] = round(year_data["total"] / 12, 2)
         else:
-            year_data["daily_avg"] = total_data["total"] / days_in_current_year
-            year_data["monthly_avg"] = total_data["total"] / months_in_current_year
+            year_data["daily_avg"] = round(year_data["total"] / days_in_current_year, 2)
+            year_data["monthly_avg"] = round(year_data["total"] / months_in_current_year, 2)
 
-        data[year] = year_data
+        data.append(year_data)
+
+    data.append(total_data)
 
     return jsonify(data)
 

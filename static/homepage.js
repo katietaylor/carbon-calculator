@@ -1,8 +1,15 @@
 
-var options = {
-  responsive: true
-};
+// COLOR PALETTE ##############################################################
 
+var electricityPrimary = "rgba(75,192,192,1)";
+var electricitySecondary = "rgba(75,192,192,0.4)";
+
+var ngPrimary = 'rgba(54, 162, 235, 1)';
+var ngSecondary = 'rgba(54, 162, 235, 0.2)';
+var tripSecondary = 'rgba(255, 206, 86, 0.2)';
+var tripPrimary = 'rgba(255, 206, 86, 1)';
+var newPrimary = 'rgba(255,99,132,1)';
+var newSecondary = 'rgba(255, 99, 132, 0.4)';
 
 // DONUT CHART ################################################################
 
@@ -28,21 +35,23 @@ function updateCo2Donut() {
                 {
                     data: response,
                     backgroundColor: [
-                        "#FF6384",
-                        "#36A2EB",
-                        "#FFCE56"
+                        tripPrimary,
+                        electricityPrimary,
+                        ngPrimary
                     ],
                     hoverBackgroundColor: [
-                        "#FF6384",
-                        "#36A2EB",
-                        "#FFCE56"
+                        tripPrimary,
+                        electricityPrimary,
+                        ngPrimary
                     ]
                 }]
             };
         myDonutChart = new Chart(ctx_donut, {
             type: 'doughnut',
             data: data,
-            options: options
+            options: {
+                response: true
+            }
         });
         
     });
@@ -75,18 +84,18 @@ function updateCo2LineGraph() {
                     label: "Trips",
                     fill: false,
                     lineTension: 0.1,
-                    backgroundColor: "rgba(75,192,192,0.4)",
-                    borderColor: "rgba(75,192,192,1)",
+                    backgroundColor: tripSecondary,
+                    borderColor: tripPrimary,
                     borderCapStyle: 'butt',
                     borderDash: [],
                     borderDashOffset: 0.0,
                     borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBorderColor: tripPrimary,
                     pointBackgroundColor: "#fff",
                     pointBorderWidth: 1,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBackgroundColor: tripPrimary,
+                    pointHoverBorderColor: tripPrimary,
                     pointHoverBorderWidth: 2,
                     pointRadius: 1,
                     pointHitRadius: 10,
@@ -97,18 +106,18 @@ function updateCo2LineGraph() {
                     label: "Electricity",
                     fill: false,
                     lineTension: 0.1,
-                    backgroundColor: "#36A2EB",
-                    borderColor: "#36A2EB",
+                    backgroundColor: electricitySecondary,
+                    borderColor: electricityPrimary,
                     borderCapStyle: 'butt',
                     borderDash: [],
                     borderDashOffset: 0.0,
                     borderJoinStyle: 'miter',
-                    pointBorderColor: "#36A2EB",
+                    pointBorderColor: electricityPrimary,
                     pointBackgroundColor: "#fff",
                     pointBorderWidth: 1,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "#36A2EB",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBackgroundColor: electricityPrimary,
+                    pointHoverBorderColor: electricityPrimary,
                     pointHoverBorderWidth: 2,
                     pointRadius: 1,
                     pointHitRadius: 10,
@@ -119,18 +128,18 @@ function updateCo2LineGraph() {
                     label: "Natural Gas",
                     fill: false,
                     lineTension: 0.1,
-                    backgroundColor: "#FFCE56",
-                    borderColor: "#FFCE56",
+                    backgroundColor: ngSecondary,
+                    borderColor: ngPrimary,
                     borderCapStyle: 'butt',
                     borderDash: [],
                     borderDashOffset: 0.0,
                     borderJoinStyle: 'miter',
-                    pointBorderColor: "#FFCE56",
+                    pointBorderColor: ngPrimary,
                     pointBackgroundColor: "#fff",
                     pointBorderWidth: 1,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "#FFCE56",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBackgroundColor: ngPrimary,
+                    pointHoverBorderColor: ngPrimary,
                     pointHoverBorderWidth: 2,
                     pointRadius: 1,
                     pointHitRadius: 10,
@@ -143,7 +152,9 @@ function updateCo2LineGraph() {
         myLineChart = new Chart(ctx_line, {
             type: 'line',
             data: data,
-            options: options
+            options: {
+                response: true
+            }
         });
         
     });
@@ -175,22 +186,22 @@ function updateWeekdayCo2BarChart(response) {
                 {
                     label: "Electricity Footprint",
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)'
+                        electricitySecondary,
+                        electricitySecondary,
+                        electricitySecondary,
+                        electricitySecondary,
+                        electricitySecondary,
+                        electricitySecondary,
+                        electricitySecondary
                     ],
                     borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)'
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary
                     ],
                     borderWidth: 1,
                     data: response.kwh,
@@ -198,23 +209,23 @@ function updateWeekdayCo2BarChart(response) {
                 {
                     label: "Trip Footprint",
                     backgroundColor: [
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(255, 206, 86, 0.2)'
+                        tripSecondary,
+                        tripSecondary,
+                        tripSecondary,
+                        tripSecondary,
+                        tripSecondary,
+                        tripSecondary,
+                        tripSecondary
                     ],
                     borderColor: [
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)'
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary
                     ],
                     borderWidth: 1,
                     data: response.trip,
@@ -226,7 +237,9 @@ function updateWeekdayCo2BarChart(response) {
         weekdayCo2BarChart = new Chart(ctx_bar, {
             type: 'bar',
             data: data,
-            options: options
+            options: {
+                response: true
+            }
         });
     });
 }
@@ -317,32 +330,32 @@ function updateLocationBarChart(response) {
             {
                 label: "Current Location",
                 backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary,
+                    electricitySecondary
                 ],
                 borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)'
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary
                 ],
                 borderWidth: 1,
                 data: response.current_monthly_co2,
@@ -351,32 +364,32 @@ function updateLocationBarChart(response) {
             {
                 label: "New Location",
                 backgroundColor: [
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary
                 ],
                 borderColor: [
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)'
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary
                 ],
                 borderWidth: 1,
                 data: response.new_monthly_co2,
@@ -387,7 +400,9 @@ function updateLocationBarChart(response) {
     locationBarChart = new Chart(ctx_bar, {
         type: 'bar',
         data: data,
-        options: options
+        options: {
+            response: true
+        }
     });
         
 }
@@ -429,7 +444,7 @@ function compareCars(evt) {
         data: data,
         success: function(response) {
             $("#car-comparison").show();
-            
+
             $("#currentCar-yr-total").html(response.current_yearly_co2);
             $("#newCar-yr-total").html(response.new_yearly_co2);
             $("#currentCar-dly-rate").html(response.current_daily_rate);
@@ -461,66 +476,65 @@ function updateCarBarChart(response) {
             {
                 label: "Current Car",
                 backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary,
+                    tripSecondary
                 ],
                 borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)'
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary
                 ],
                 borderWidth: 1,
                 data: response.current_monthly_co2,
             },
-
             {
                 label: "New Car",
                 backgroundColor: [
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary,
+                    newSecondary
                 ],
                 borderColor: [
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 206, 86, 1)'
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary
                 ],
                 borderWidth: 1,
                 data: response.new_monthly_co2,
@@ -531,7 +545,9 @@ function updateCarBarChart(response) {
     carBarChart = new Chart(ctx_bar, {
         type: 'bar',
         data: data,
-        options: options
+        options: {
+            response: true
+        }
     });
         
 }

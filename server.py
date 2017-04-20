@@ -35,44 +35,28 @@ def homepage():
                      ElectricityLog.get_kwh_years(user_id),
                      NGLog.get_ng_years(user_id)
                      )
+        this_year = date.today().year
 
         makes = Car.get_unique_makes()
         usercars = UserCar.query.filter_by(user_id=user_id).order_by(
             UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
 
-        electricity_summary = ElectricityLog.get_electricity_summary(user_id)
-        ng_summary = NGLog.get_ng_summary(user_id)
-        trip_summary = TripLog.get_trip_summary(user_id)
+        co2_per_yr = get_yearly_totals(user_id)
 
-        summary = {}
-        summary["kwh"] = electricity_summary
-        summary["ng"] = ng_summary
-        summary["trip"] = trip_summary
+        if co2_per_yr.get(this_year):
+            trees_to_offset = int(round(
+                co2_per_yr[this_year]["yr_projected"] / TREE_POUNDS_CO2_PER_YEAR))
+        else:
+            trees_to_offset = 0
 
         return render_template("homepage.html",
                                years=sorted(years, reverse=True),
                                makes=makes, usercars=usercars,
-                               summary=summary)
+                               co2_per_yr=co2_per_yr, this_year=this_year,
+                               trees=trees_to_offset)
 
     else:
         return render_template("login-register.html")
-
-
-@app.route("/temp-json", methods=["GET"])
-def super_summary():
-
-    user_id = session.get("user_id")
-
-    electricity_summary = ElectricityLog.get_electricity_summary(user_id)
-    ng_summary = NGLog.get_ng_summary(user_id)
-    trip_summary = TripLog.get_trip_summary(user_id)
-
-    summary = {}
-    summary["kwh"] = electricity_summary
-    summary["ng"] = ng_summary
-    summary["trip"] = trip_summary
-
-    return jsonify(summary)
 
 
 @app.route("/process-login", methods=["POST"])
@@ -293,7 +277,10 @@ def view_kwh_log():
         residences = Residence.query.filter_by(user_id=user_id).order_by(
             Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
-        summary = ElectricityLog.get_electricity_summary(user_id)
+        if electricity_logs:
+            summary = ElectricityLog.get_electricity_summary(user_id)
+        else:
+            summary = None
 
         return render_template("kwh-list.html",
                                electricity_logs=electricity_logs,
@@ -375,7 +362,10 @@ def view_ng_log():
         residences = Residence.query.filter_by(user_id=user_id).order_by(
             Residence.is_default.desc(), Residence.residence_id.desc()).all()
 
-        summary = NGLog.get_ng_summary(user_id)
+        if ng_logs:
+            summary = NGLog.get_ng_summary(user_id)
+        else:
+            summary = None
 
         return render_template("ng-list.html",
                                ng_logs=ng_logs,
@@ -469,7 +459,10 @@ def view_trip_log():
         # combine the trip objects with the co2 results for passing into jinja
         trips_and_co2 = zip(trip_logs, trip_co2s)
 
-        summary = TripLog.get_trip_summary(user_id)
+        if trip_logs:
+            summary = TripLog.get_trip_summary(user_id)
+        else:
+            summary = None
 
         return render_template("trip-list.html",
                                trip_logs=trips_and_co2,
@@ -556,6 +549,39 @@ def get_distance():
 
 
 ###  Homepage Charts ##########################################################
+
+@app.route("/year-comparison-json", methods=["GET"])
+def get_year_comparison_data():
+
+    user_id = session.get("user_id")
+
+    years = [2017, 2016, 2015, 2014]
+    this_year = date.today().year
+    days_this_year = days_btw_today_and_jan1()
+
+    trip_co2 = TripLog.get_co2_per_yr(user_id)
+    kwh_co2 = ElectricityLog.get_co2_per_yr(user_id)
+    ng_co2 = NGLog.get_co2_per_yr(user_id)
+
+    co2_per_yr = []
+
+    for year in years:
+        total = 0
+        if trip_co2.get(year):
+            total += trip_co2[year]["total"]
+        if kwh_co2.get(year):
+            total += kwh_co2[year]["total"]
+        if ng_co2.get(year):
+            total += ng_co2[year]["total"]
+
+        if year != this_year:
+            co2_per_yr.append(round(total, 2))
+        else:
+            yr_projected = round(total / days_this_year, 2) * 365
+            co2_per_yr.append(yr_projected)
+
+    return jsonify(co2_per_yr)
+
 
 @app.route("/co2-per-datatype.json", methods=["GET"])
 def get_co2_per_datatype():
@@ -806,12 +832,53 @@ def get_co2_by_day_of_week():
 
 ###  Helper Functions #########################################################
 
+TREE_POUNDS_CO2_PER_YEAR = 48
+
+
 def days_btw_today_and_jan1():
     now = datetime.now()
     today = date(now.year, now.month, now.day)
     jan_first = date(now.year, 1, 1)
 
     return (today - jan_first).days
+
+
+def get_yearly_totals(user_id):
+
+    years = set()
+    years.update(TripLog.get_trip_years(user_id),
+                 ElectricityLog.get_kwh_years(user_id),
+                 NGLog.get_ng_years(user_id)
+                 )
+    this_year = date.today().year
+    days_this_year = days_btw_today_and_jan1()
+
+    trip_co2 = TripLog.get_co2_per_yr(user_id)
+    kwh_co2 = ElectricityLog.get_co2_per_yr(user_id)
+    ng_co2 = NGLog.get_co2_per_yr(user_id)
+
+    co2_per_yr = {}
+
+    for year in years:
+        total = 0
+        if trip_co2.get(year):
+            total += trip_co2[year]["total"]
+        if kwh_co2.get(year):
+            total += kwh_co2[year]["total"]
+        if ng_co2.get(year):
+            total += ng_co2[year]["total"]
+
+        if year != this_year:
+            daily_avg = round(total / 365, 2)
+            co2_per_yr[year] = {"total": round(total, 2),
+                                "daily_avg": daily_avg}
+        else:
+            daily_avg = round(total / days_this_year, 2)
+            co2_per_yr[year] = {"total": round(total, 2),
+                                "daily_avg": daily_avg,
+                                "yr_projected": daily_avg * 365}
+
+    return co2_per_yr
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
@@ -822,6 +889,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

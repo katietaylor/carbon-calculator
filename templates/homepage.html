@@ -9,66 +9,17 @@
     <div>{{ message }}</div>
 {% endfor %}
 
-<table class="table">
-    <tr>
-        <th></th>
-        <th colspan = "3">Electricity</th>
-        <th colspan = "3">Natural Gas</th>
-        <th colspan = "3">Trips</th>
-        <th colspan = "3">Total</th>
-        
-    </tr>
-    <tr>
-        <th></th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-    </tr>
-    {% for year in years %}
-    <tr>
-        <td><strong>{{ year }}</strong></td> 
-        {% if summary["kwh"].get(year) %}
-            <td>{{ summary["kwh"][year]["total"] }}</td>
-            <td>{{ summary["kwh"][year]["monthly_avg"] }}</td> 
-            <td>{{ summary["kwh"][year]["daily_avg"] }}</td> 
-        {% else %}
-            <td>--</td>
-            <td>--</td> 
-            <td>--</td> 
-        {% endif %}
+{% if co2_per_yr.get(this_year) %}
+    <h3>Your Carbon Footprint is {{ co2_per_yr[this_year]["yr_projected"] }} pounds per year.</h3>
 
-        {% if summary["ng"].get(year) %}
-            <td>{{ summary["ng"][year]["total"] }}</td>
-            <td>{{ summary["ng"][year]["monthly_avg"] }}</td> 
-            <td>{{ summary["ng"][year]["daily_avg"] }}</td> 
-        {% else %}
-            <td>--</td>
-            <td>--</td> 
-            <td>--</td> 
-        {% endif %}
+    <h4>It takes {{ trees }} trees to offset that much CO2</h4>
+{% endif %}
 
-        {% if summary["trip"].get(year) %}
-            <td>{{ summary["trip"][year]["total"] }}</td>
-            <td>{{ summary["trip"][year]["monthly_avg"] }}</td> 
-            <td>{{ summary["trip"][year]["daily_avg"] }}</td> 
-        {% else %}
-            <td>--</td>
-            <td>--</td> 
-            <td>--</td> 
-        {% endif %}
 
-    </tr>
-    {% endfor %}
- </table><br>
+<div id="co2-per-year">
+    <h3>Your Carbon Footprint per Year</h3>
+    <canvas id="yearBarChart"></canvas>
+</div>
 
 <div id="co2-by-source-chart"> 
     <h3>How much does each CO2 source contribute to your total footprint?</h3>

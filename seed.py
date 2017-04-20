@@ -1,7 +1,7 @@
 """Utility file to seed carbon_calc database."""
 
 from sqlalchemy import func
-from model import Region, Zipcode, Car, TransitType, ElectricityLog, NGLog
+from model import Region, Zipcode, Car, TransitType, ElectricityLog, NGLog, TripLog
 from model import connect_to_db, db
 from server import app
 import csv
@@ -129,7 +129,7 @@ def load_daily_ng(residence_id, csv_file):
 
 
 def load_bill_ng(residence_id, csv_file):
-    """Load ng into database."""
+    """Load trips into database."""
 
     print "\n Load Natural Gas \n"
 
@@ -142,6 +142,25 @@ def load_bill_ng(residence_id, csv_file):
                            end_date=row["END DATE"]
                            )
             db.session.add(ng_log)
+    db.session.commit()
+
+
+def load_trips(csv_file):
+    """Load ng into database."""
+
+    print "\n Load Trips \n"
+
+    with open(csv_file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            trip_log = TripLog(user_id=row["user_id"],
+                               usercar_id=row["usercar_id"],
+                               transportation_type=row["transportation_type"],
+                               date=row["date"],
+                               miles=row["miles"],
+                               number_of_passengers=row["number_of_passengers"],
+                               )
+            db.session.add(trip_log)
     db.session.commit()
 
 
@@ -163,5 +182,6 @@ if __name__ == "__main__":
     # load_zipcodes()
     # load_cars()
     # load_transit_type()
-    load_daily_kwh(1, "seed-data/PGEData/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
-    load_bill_ng(1, "seed-data/PGEData/pge_gas_billing_data_2078453600_2010-07-15_to_2017-03-13.csv")
+    # load_daily_kwh(3, "seed-data/user-2/pge_electric_interval_data_2078453646_2011-12-31_to_2017-04-01.csv")
+    # load_bill_ng(3, "seed-data/user-2/pge_gas_billing_data_2078453600_2010-07-15_to_2017-03-13.csv")
+    load_trips("seed-data/user-2/TripData-regular commute.csv")

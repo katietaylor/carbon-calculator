@@ -11,6 +11,89 @@ var tripPrimary = 'rgba(255, 206, 86, 1)';
 var newPrimary = 'rgba(255,99,132,1)';
 var newSecondary = 'rgba(255, 99, 132, 0.4)';
 
+
+
+// Yearly Bar Graph ###########################################################
+
+var yearCo2BarChart;
+function updateYearCo2BarChart(response) {
+
+    // Make bar of percent of different CO2 source types
+    var ctx_bar = $("#yearBarChart");
+    var yearData = {};
+
+    if (yearCo2BarChart) {
+        yearCo2BarChart.destroy();
+    }
+
+    $.get("/year-comparison-json", function (response) {
+
+        var data = {
+            labels: ["2017", "2016", "2015", "2014"],
+            datasets: [
+                {
+                    label: "Total CO2",
+                    backgroundColor: [
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)',
+                        'rgba(168,219,168, 1)',
+                    ],
+                    borderWidth: 1,
+                    data: response,
+                },
+            ]
+        };
+        yearCo2BarChart = new Chart(ctx_bar, {
+            type: 'bar',
+            data: data,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    });
+}
+
+updateYearCo2BarChart();
+
+
+// Get Zipcode ################################################################
+
+$("#new-location-button").on("click", getZipcode);
+    
+function getZipcode(evt) {
+    evt.preventDefault();
+
+    var city = $("#city");
+    var state = $("#state");
+
+    var data = {};
+        data.city = city.val();
+        data.state = state.val();
+
+    $.ajax({
+        url: "/get-zipcode",
+        data: data,
+        success: function(response) {
+            // change the distance in the dom to the response
+            $("#zipcode").val(response);
+            compareLocations();
+        }
+    });
+}
+
 // DONUT CHART ################################################################
 
 var myDonutChart;
@@ -360,7 +443,6 @@ function updateLocationBarChart(response) {
                 borderWidth: 1,
                 data: response.current_monthly_co2,
             },
-
             {
                 label: "New Location",
                 backgroundColor: [

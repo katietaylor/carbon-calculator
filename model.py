@@ -269,6 +269,30 @@ class TripLog(db.Model):
 
         return round(total_co2, 2)
 
+    @classmethod
+    def get_co2_per_yr(cls, user_id):
+        """Sum the CO2 emissions from all of the trips for every year that data
+        has been entered."""
+
+        years = cls.get_trip_years(user_id)
+        this_year = date.today().year
+        days_this_year = days_btw_today_and_jan1()
+        co2_per_yr = {}
+
+        for year in years:
+            start_date = "1/1/%s" % (year)
+            end_date = "12/31/%s" % (year)
+            co2 = cls.sum_trip_co2(user_id, start_date, end_date)
+
+            if year != this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / 365}
+            elif year == this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / days_this_year}
+
+        return co2_per_yr
+
     def co2_calc_other_car(self, make, model, year, cylinders, transmission):
         """Calculate the CO2 emissions for kwh entry at a different location."""
 
@@ -555,6 +579,30 @@ class ElectricityLog(db.Model):
 
         return round(total_co2, 2)
 
+    @classmethod
+    def get_co2_per_yr(cls, user_id):
+        """Sum the CO2 emissions from all of the trips for every year that data
+        has been entered."""
+
+        years = cls.get_kwh_years(user_id)
+        this_year = date.today().year
+        days_this_year = days_btw_today_and_jan1()
+        co2_per_yr = {}
+
+        for year in years:
+            start_date = "1/1/%s" % (year)
+            end_date = "12/31/%s" % (year)
+            co2 = cls.sum_kwh_co2(user_id, start_date, end_date)
+
+            if year != this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / 365}
+            elif year == this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / days_this_year}
+
+        return co2_per_yr
+
     def co2_calc_other_location(self, zipcode):
         """Calculate the CO2 emissions for kwh entry at a different location."""
 
@@ -720,6 +768,30 @@ class NGLog(db.Model):
             total_co2 += cls.co2_calc(ng)
 
         return round(total_co2, 2)
+
+    @classmethod
+    def get_co2_per_yr(cls, user_id):
+        """Sum the CO2 emissions from all of the ng for every year that data
+        has been entered."""
+
+        years = cls.get_ng_years(user_id)
+        this_year = date.today().year
+        days_this_year = days_btw_today_and_jan1()
+        co2_per_yr = {}
+
+        for year in years:
+            start_date = "1/1/%s" % (year)
+            end_date = "12/31/%s" % (year)
+            co2 = cls.sum_ng_co2(user_id, start_date, end_date)
+
+            if year != this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / 365}
+            elif year == this_year:
+                co2_per_yr[year] = {"total": co2,
+                                    "daily_avg": co2 / days_this_year}
+
+        return co2_per_yr
 
     @classmethod
     def get_ng_years(cls, user_id):

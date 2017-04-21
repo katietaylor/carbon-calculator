@@ -395,8 +395,8 @@ class TripLog(db.Model):
 
         for trip in trips:
             avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
-            co2_by_day_of_week[trip.date.weekday()] = co2_by_day_of_week.get(
-                trip.date.weekday()) + trip.co2_calc(avg_grams_co2_mile_factor)
+            co2_by_day_of_week[trip.date.weekday()] += trip.co2_calc(
+                avg_grams_co2_mile_factor)
 
         return co2_by_day_of_week
 

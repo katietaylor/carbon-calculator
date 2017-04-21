@@ -107,7 +107,7 @@ def register_process():
     return redirect("/")
 
 
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["GET"])
 def logout_process():
     """Logs out users and redirects to homepage."""
 

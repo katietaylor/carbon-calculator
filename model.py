@@ -261,11 +261,22 @@ class TripLog(db.Model):
         if usercar_id:
             query = query.filter(cls.usercar_id == usercar_id)
 
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
+
+        # pre-load all of the avgerage co2 factors for the usercars
+        avg_grams_co2_mile_factors = {}
+        for usercar in usercars:
+            if not avg_grams_co2_mile_factors.get(usercar.usercar_id):
+                avg_grams_co2_mile_factors[usercar.usercar_id] = \
+                    usercar.calculate_avg_grams_co2_mile()
+
         trips = query.all()
 
         total_co2 = 0
         for trip in trips:
-            total_co2 += cls.co2_calc(trip)
+            avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
+            total_co2 += cls.co2_calc(trip, avg_grams_co2_mile_factor)
 
         return round(total_co2, 2)
 
@@ -359,41 +370,6 @@ class TripLog(db.Model):
         return trip_years
 
     @classmethod
-    def calculate_avg_co2_per_day_of_week(cls, user_id, start_date=None,
-                                          end_date=None):
-        """Calculate the CO2 from trips separated per day of the week to
-        determine what days tend to have the highest footprint"""
-
-        if not start_date:
-            start_date = db.session.query(func.min(cls.date)).filter(
-                cls.user_id == user_id).one()
-        if not end_date:
-            end_date = date.today()
-
-        trips = cls.query.filter(cls.user_id == user_id,
-                                 cls.date >= start_date,
-                                 cls.date <= end_date).all()
-
-        # 0 = Mon, 1 = Tue, 2 = Wed, 3 = Thur, 4 = Fri, 5 = Sat, 6 = Sun
-        co2_by_day_of_week = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
-
-        for trip in trips:
-            co2_by_day_of_week[trip.date.weekday()] = co2_by_day_of_week.get(
-                trip.date.weekday()) + trip.co2_calc()
-
-        # find number of day types in the date range and divide by that
-        one_day = timedelta(days=1)
-        current_date = start_date[0]
-        num_of_days_by_day_of_week = {}
-
-        while current_date <= end_date:
-            num_of_days_by_day_of_week[current_date.weekday()] = \
-                num_of_days_by_day_of_week.get(current_date.weekday(), 0) + 1
-            current_date = current_date + one_day
-
-        return co2_per_day
-
-    @classmethod
     def calculate_total_co2_per_day_of_week(cls, user_id, start_date="1/1/1900",
                                             end_date="1/1/2036"):
         """Calculate the CO2 from trips separated per day of the week to
@@ -406,9 +382,21 @@ class TripLog(db.Model):
         # 0 = Mon, 1 = Tue, 2 = Wed, 3 = Thur, 4 = Fri, 5 = Sat, 6 = Sun
         co2_by_day_of_week = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 
+        # pre-load all of the avgerage co2 factors for the usercars
+        avg_grams_co2_mile_factors = {}
+
+        usercars = UserCar.query.filter_by(user_id=user_id).order_by(
+            UserCar.is_default.desc(), UserCar.usercar_id.desc()).all()
+
+        for usercar in usercars:
+            if not avg_grams_co2_mile_factors.get(usercar.usercar_id):
+                avg_grams_co2_mile_factors[usercar.usercar_id] = \
+                    usercar.calculate_avg_grams_co2_mile()
+
         for trip in trips:
+            avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
             co2_by_day_of_week[trip.date.weekday()] = co2_by_day_of_week.get(
-                trip.date.weekday()) + trip.co2_calc()
+                trip.date.weekday()) + trip.co2_calc(avg_grams_co2_mile_factor)
 
         return co2_by_day_of_week
 

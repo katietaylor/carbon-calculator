@@ -1,17 +1,4 @@
 
-// COLOR PALETTE ##############################################################
-
-var electricityPrimary = "rgba(75,192,192,1)";
-var electricitySecondary = "rgba(75,192,192,0.6)";
-var ngPrimary = 'rgba(54, 162, 235, 1)';
-var ngSecondary = 'rgba(54, 162, 235, 0.6)';
-var tripSecondary = 'rgba(255, 206, 86, 0.8)';
-var tripPrimary = 'rgba(255, 206, 86, 1)';
-var newPrimary = 'rgba(255,99,132,1)';
-var newSecondary = 'rgba(255, 99, 132, 0.4)';
-
-
-
 // Yearly Bar Graph ###########################################################
 
 var yearCo2BarChart;

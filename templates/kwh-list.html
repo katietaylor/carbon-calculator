@@ -25,6 +25,22 @@
  </table><br>
  {% endif %}
 
+ <div id="co2-trend-chart">
+    <h3>Carbon footprint per month</h3>
+
+    <form action="/select-year">
+        <select name="year", id="trend-year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>
+    </form>
+    <div class="small-graph-canvas">
+        <canvas id="lineGraph"></canvas>
+    </div>
+</div>
+<br><br>
+
  <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addKwhModal">
   Add Electricty Data
@@ -128,44 +144,93 @@
 
 <script type="text/javascript">
     
-    $(".edit-kwh-log").on("click", editResidence);  
-    
-    function editResidence() {
-        var electId = $(this).data("id");
-        var currentStartDate = $(this).data("startDate");
-        var currentEndDate = $(this).data("endDate");
-        var currentKwh = $(this).data("kwh");
-        var currentResidence = $(this).data("residence");
+  $(".edit-kwh-log").on("click", editResidence);  
+  
+  function editResidence() {
+      var electId = $(this).data("id");
+      var currentStartDate = $(this).data("startDate");
+      var currentEndDate = $(this).data("endDate");
+      var currentKwh = $(this).data("kwh");
+      var currentResidence = $(this).data("residence");
 
-        $("#edit-kwh").show();
+      $("#edit-kwh").show();
 
-        $("#elect-id").val(electId);
-        $("#e-start-date").val(currentStartDate);
-        $("#e-end-date").val(currentEndDate);
-        $("#kwh").val(currentKwh);
-        $("#e-residence").val(currentResidence);
-    }
+      $("#elect-id").val(electId);
+      $("#e-start-date").val(currentStartDate);
+      $("#e-end-date").val(currentEndDate);
+      $("#kwh").val(currentKwh);
+      $("#e-residence").val(currentResidence);
+  }
 
-    $("#submit-kwh-edit").on("submit", function () {
-        $("#edit-kwh").hide();
-    });
+  $("#submit-kwh-edit").on("submit", function () {
+      $("#edit-kwh").hide();
+  });
 
-    function populateSummaryTable() {
-        var summaryTable = $("#summary-table");
+// LINE GRAPH ################################################################
+    var electricityPrimary = "rgba(75,192,192,1)";
+    var electricitySecondary = "rgba(75,192,192,0.6)";
 
-        $.get("/electricity-summary.json", function (response) {
-            $.each(response, function(i, year) {
-                summaryTable.append("<tr>" + 
-                                      "<td><strong>" + year.row_label + "</strong></td>" + 
-                                      "<td>" + year.total + "</td>" +
-                                      "<td>" + year.monthly_avg + "</td>" + 
-                                      "<td>" + year.daily_avg + "</td>" + 
-                                    "</tr>");
+    var myLineChart;
+    function updateCo2LineGraph() {
+
+        // Make Donut Chart of percent of different CO2 source types
+        var ctx_line = $("#lineGraph");
+        var yearData = {};
+        yearData.year = $("#trend-year").val();
+
+        if (myLineChart) {
+            myLineChart.destroy();
+        }
+        $.get("/co2-trend.json", yearData, function (response) {
+
+            var data = {
+                labels: ["January", "February", "March", "April", "May", "June",
+                         "July", "August", "September", "October", "November",
+                         "December"],
+                datasets: [
+                    {
+                        label: "Electricity",
+                        fill: false,
+                        lineTension: 0.1,
+                        backgroundColor: electricitySecondary,
+                        borderColor: electricityPrimary,
+                        borderCapStyle: 'butt',
+                        borderDash: [],
+                        borderDashOffset: 0.0,
+                        borderJoinStyle: 'miter',
+                        pointBorderColor: electricityPrimary,
+                        pointBackgroundColor: "#fff",
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: electricityPrimary,
+                        pointHoverBorderColor: electricityPrimary,
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 1,
+                        pointHitRadius: 10,
+                        data: response.kwh,
+                        spanGaps: false,
+                    },
+                ]
+            };
+            
+            myLineChart = new Chart(ctx_line, {
+                type: 'line',
+                data: data,
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
             });
+            
         });
     }
-
-// populateSummaryTable();
+    updateCo2LineGraph();
+    $("#trend-year").on("change", updateCo2LineGraph);
 
 </script>
 

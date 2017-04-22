@@ -282,10 +282,13 @@ def view_kwh_log():
         else:
             summary = None
 
+        years = reversed(ElectricityLog.get_kwh_years(user_id))
+
         return render_template("kwh-list.html",
                                electricity_logs=electricity_logs,
                                residences=residences,
-                               summary=summary)
+                               summary=summary,
+                               years=years)
 
     # return to homepage when not logged in
     else:
@@ -367,10 +370,13 @@ def view_ng_log():
         else:
             summary = None
 
+        years = reversed(NGLog.get_ng_years(user_id))
+
         return render_template("ng-list.html",
                                ng_logs=ng_logs,
                                residences=residences,
-                               summary=summary)
+                               summary=summary,
+                               years=years)
 
     # return to homepage when not logged in
     else:
@@ -464,10 +470,13 @@ def view_trip_log():
         else:
             summary = None
 
+        years = reversed(TripLog.get_trip_years(user_id))
+
         return render_template("trip-list.html",
                                trip_logs=trips_and_co2,
                                usercars=usercars,
-                               summary=summary)
+                               summary=summary,
+                               years=years)
 
     # return to homepage when not logged in
     else:
@@ -889,6 +898,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

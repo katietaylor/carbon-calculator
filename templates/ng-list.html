@@ -25,6 +25,21 @@
  </table><br>
 {% endif %}
 
+<div id="co2-trend-chart">
+    <h3>Carbon footprint per month</h3>
+
+    <form action="/select-year">
+        <select name="year", id="trend-year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>
+    </form>
+    <div class="small-graph-canvas">
+        <canvas id="lineGraph"></canvas>
+    </div>
+</div>
+
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addNgModal">
   Add Natural Gas Data
@@ -149,6 +164,71 @@
     $("#submit-ng-edit").on("submit", function () {
         $("#edit-ng").hide();
     })
+
+    var ngPrimary = 'rgba(54, 162, 235, 1)';
+    var ngSecondary = 'rgba(54, 162, 235, 0.6)';
+
+    var myLineChart;
+    function updateCo2LineGraph() {
+
+        // Make Donut Chart of percent of different CO2 source types
+        var ctx_line = $("#lineGraph");
+        var yearData = {};
+        yearData.year = $("#trend-year").val();
+
+        if (myLineChart) {
+            myLineChart.destroy();
+        }
+        $.get("/co2-trend.json", yearData, function (response) {
+
+            var data = {
+                labels: ["January", "February", "March", "April", "May", "June",
+                         "July", "August", "September", "October", "November",
+                         "December"],
+                datasets: [
+                    {
+                        label: "Natural Gas",
+                        fill: false,
+                        lineTension: 0.1,
+                        backgroundColor: ngSecondary,
+                        borderColor: ngPrimary,
+                        borderCapStyle: 'butt',
+                        borderDash: [],
+                        borderDashOffset: 0.0,
+                        borderJoinStyle: 'miter',
+                        pointBorderColor: ngPrimary,
+                        pointBackgroundColor: "#fff",
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: ngPrimary,
+                        pointHoverBorderColor: ngPrimary,
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 1,
+                        pointHitRadius: 10,
+                        data: response.ng,
+                        spanGaps: false,
+                    },
+                ]
+            };
+            
+            myLineChart = new Chart(ctx_line, {
+                type: 'line',
+                data: data,
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+        });
+    }
+    updateCo2LineGraph();
+    $("#trend-year").on("change", updateCo2LineGraph);
 
 </script>
 

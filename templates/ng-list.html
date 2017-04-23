@@ -91,7 +91,7 @@
     <h2>No natural gas data added yet</h2>
 {% endif %}
 
-<!-- Modal -->
+<!-- Add Modal -->
 <div class="modal fade" id="addNgModal" tabindex="-1" role="dialog" aria-labelledby="addNgModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -103,15 +103,26 @@
       <form action="/add-ng" method="POST">
       <!-- form for adding new ng -->
       <div class="modal-body">
-          Begin Date: <input type="date" name="start_date" required> <br>
-          End Date: <input type="date" name="end_date" required> <br>
-          therms of natural gas <input type="number" name="therms" required> <br>
-    
-          Residence <select name="residence">
+        <div class="form-group">
+          <label for="addStartDate">Begin Date</label>
+          <input type="date" name="start_date" id="addStartDate" required>
+        </div>
+        <div class="form-group">
+          <label for="addEndDate">End Date</label>
+          <input type="date" name="end_date" id="addEndDate" required>
+        </div>
+        <div class="form-group">
+          <label for="addTherms">Therms of NG</label>
+          <input type="number" name="therms" id="addTherms" required>
+        </div>
+        <div class="form-group">
+          <label for="addResidence">Residence</label>
+          <select name="residence" id="addResidence">
           {% for residence in residences %}
-              <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+            <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
           {% endfor %}
-          </select><br>
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -134,31 +145,42 @@
       <form action="/edit-ng" id="edit-ng" method="POST">
       <!-- form for editing new kwh -->
       <div class="modal-body">
-        <input type="text" name="ng_id" id="ng-id" value="" hidden> <br>
-        Begin Date: <input type="date" name="start_date" id="ng-start-date" required> <br>
-        End Date: <input type="date" name="end_date" id="ng-end-date" required> <br>
-        therms <input type="number" name="therms" id="therms" required> <br>
-        Residence <select name="residence" id="ng-residence">
-        {% for residence in residences %}
+        <input type="text" name="ng_id" id="ng-id" value="" hidden>
+        <div class="form-group">
+          <label for="editStartDate">Begin Date</label>
+          <input type="date" name="start_date" id="editStartDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editEndDate">End Date</label>
+          <input type="date" name="end_date" id="editEndDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editTherms">Therms of Natural Gas</label>
+          <input type="number" name="therms" id="editTherms" required>
+        </div>
+        <div class="form-group">
+          <label for="editResidence">Residence</label>
+          <select name="residence" id="editResidence">
+          {% for residence in residences %}
             <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
-        {% endfor %}
-        </select><br>
+          {% endfor %}
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary" id="submit-ng-edit" value="Edit NG">Edit</button>
       </div>
       </form>
-
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
     
-    $(".edit-ng-log").on("click", editResidence);  
+    $(".edit-ng-log").on("click", editNG);  
     
-    function editResidence() {
+    function editNG() {
         var ngId = $(this).data("id");
         var currentStartDate = $(this).data("startDate");
         var currentEndDate = $(this).data("endDate");
@@ -168,10 +190,10 @@
         $("#edit-ng").show();
 
         $("#ng-id").val(ngId);
-        $("#ng-start-date").val(currentStartDate);
-        $("#ng-end-date").val(currentEndDate);
-        $("#therms").val(currentTherms);
-        $("#ng-residence").val(currentResidence);
+        $("#editStartDate").val(currentStartDate);
+        $("#editEndDate").val(currentEndDate);
+        $("#editTherms").val(currentTherms);
+        $("#editResidence").val(currentResidence);
     }
 
     $("#submit-ng-edit").on("submit", function () {
@@ -220,7 +242,6 @@
                     },
                 ]
             };
-            
             myLineChart = new Chart(ctx_line, {
                 type: 'line',
                 data: data,
@@ -234,7 +255,6 @@
                     }
                 }
             });
-            
         });
     }
     updateCo2LineGraph();

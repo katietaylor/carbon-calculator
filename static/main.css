@@ -5,7 +5,6 @@
 }
 
 .small-graph-canvas {
-    width: 50%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -13,3 +12,39 @@
 .block-content {
     margin: 25px;
 }
+
+.year-dropdown {
+    text-align: left;
+}
+
+.btn-primary {
+    background-color: #77AD78;
+    border: #77AD78;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:active:focus {
+  background-color: green;
+  border-color: green;
+}
+
+.page-head {
+    margin-top: -25px;
+    margin-left: -30px;
+    margin-right: -25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 0;
+    color: white;
+    background-color: #77AD78;
+}
+
+.heading {
+    margin-left: 15px;
+    margin-top: -10px;
+}
+
+
+

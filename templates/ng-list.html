@@ -1,43 +1,56 @@
 {% extends 'base.html' %}
 
-{% block title %} Natural Gas Log {% endblock %}
+{% block title %} Natural Gas{% endblock %}
 
 {% block content %}
 
-<h1>Natural Gas Data</h1>
+<div class="container-fluid page-head">   
+  <div class="heading">
+    <h1>Natural Gas Data</h1>
+  </div>
+</div>
+<br>
 
-{% if ng_logs %}
- <table class="table-condensed">
-    <tr>
-        <th></th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-    </tr>
-    {% for year in summary %}
-    <tr>
-        <td><strong>{{ summary[year]["row_label"] }}</strong></td> 
-        <td>{{ summary[year]["total"] }}</td>
-        <td>{{ summary[year]["monthly_avg"] }}</td> 
-        <td>{{ summary[year]["daily_avg"] }}</td> 
-    </tr>
-    {% endfor %}
- </table><br>
-{% endif %}
-
-<div id="co2-trend-chart">
-    <h3>Carbon footprint per month</h3>
-
-    <form action="/select-year">
+<div class="row">
+  <div class="col-md-6">
+    <div class="summary">
+      {% if ng_logs %}
+      <div><h3>Carbon Footprint Summary</h3></div><br>
+      <table class="table table-responsive summary-table">
+        <tr>
+          <th></th>
+          <th>CO2 Total</th> 
+          <th>CO2 Avg per Month</th>
+          <th>CO2 Avg per Day</th>
+        </tr>
+        {% for year in summary %}
+        <tr>
+          <td><strong>{{ summary[year]["row_label"] }}</strong></td> 
+          <td>{{ summary[year]["total"] }}</td>
+          <td>{{ summary[year]["monthly_avg"] }}</td> 
+          <td>{{ summary[year]["daily_avg"] }}</td> 
+        </tr>
+        {% endfor %}
+      </table><br>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div id="co2-trend-chart">
+      <h3>Carbon Footprint per Month</h3>
+      <form action="/select-year">
+        <label for="year">Year</label>
         <select name="year", id="trend-year">
         {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
+          <option value="{{ year }}">{{ year }}</option>
         {% endfor %}
         </select>
-    </form>
-    <div class="small-graph-canvas">
-        <canvas id="lineGraph"></canvas>
+      </form>
+      <div class="small-graph-canvas">
+          <canvas id="lineGraph"></canvas>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Button trigger modal -->

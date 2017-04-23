@@ -30,6 +30,7 @@ def homepage():
     user_id = session.get("user_id")
 
     if user_id:
+        name = User.query.get(user_id).name
         years = set()
         years.update(TripLog.get_trip_years(user_id),
                      ElectricityLog.get_kwh_years(user_id),
@@ -53,7 +54,7 @@ def homepage():
                                years=sorted(years, reverse=True),
                                makes=makes, usercars=usercars,
                                co2_per_yr=co2_per_yr, this_year=this_year,
-                               trees=trees_to_offset)
+                               trees=trees_to_offset, name=name)
 
     else:
         return render_template("login-register.html")

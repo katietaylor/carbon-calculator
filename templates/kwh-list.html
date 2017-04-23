@@ -1,45 +1,58 @@
 {% extends 'base.html' %}
 
-{% block title %} Electricity Log {% endblock %}
+{% block title %} Electricity{% endblock %}
 
 {% block content %}
 
-<h1>Electricity Data</h1>
-
- {% if electricity_logs %}
- <table class="table-condensed">
-    <tr>
-        <th></th>
-        <th>CO2 Total</th> 
-        <th>CO2 Avg per Month</th>
-        <th>CO2 Avg per Day</th>
-    </tr>
-    {% for year in summary %}
-    <tr>
-        <td><strong>{{ summary[year]["row_label"] }}</strong></td> 
-        <td>{{ summary[year]["total"] }}</td>
-        <td>{{ summary[year]["monthly_avg"] }}</td> 
-        <td>{{ summary[year]["daily_avg"] }}</td> 
-    </tr>
-    {% endfor %}
- </table><br>
- {% endif %}
-
- <div id="co2-trend-chart">
-    <h3>Carbon footprint per month</h3>
-
-    <form action="/select-year">
-        <select name="year", id="trend-year">
-        {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
-        {% endfor %}
-        </select>
-    </form>
-    <div class="small-graph-canvas">
-        <canvas id="lineGraph"></canvas>
-    </div>
+<div class="container-fluid page-head">   
+  <div class="heading">
+    <h1>Electricity Data</h1>
+  </div>
 </div>
-<br><br>
+<br>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="summary">
+      {% if electricity_logs %}
+      <div><h3>Carbon Footprint Summary</h3></div><br>
+      <table class="table table-responsive summary-table">
+        <tr>
+          <th></th>
+          <th>CO2 Total</th> 
+          <th>CO2 Avg per Month</th>
+          <th>CO2 Avg per Day</th>
+        </tr>
+        {% for year in summary %}
+        <tr>
+          <td><strong>{{ summary[year]["row_label"] }}</strong></td> 
+          <td>{{ summary[year]["total"] }}</td>
+          <td>{{ summary[year]["monthly_avg"] }}</td> 
+          <td>{{ summary[year]["daily_avg"] }}</td> 
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div id="co2-trend-chart" class="trend-chart">
+      <div><h3>Carbon Footprint per Month</h3></div>
+
+      <form action="/select-year" class="year-dropdown">
+          <label for="year">Year</label>
+          <select name="year", id="trend-year">
+          {% for year in years %}
+              <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+          </select>
+      </form>
+      <div class="small-graph-canvas">
+        <canvas id="lineGraph"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
  <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addKwhModal">
@@ -49,29 +62,29 @@
 {% if electricity_logs %}
     <table class="table table-striped">
         <tr>
-            <th>Begin Date</th>
-            <th>End Date</th> 
-            <th>killowatt hours</th>
-            <th>Residence</th>
-            <th>Pounds of CO2</th>
-            <th></th>
+          <th>Begin Date</th>
+          <th>End Date</th> 
+          <th>killowatt hours</th>
+          <th>Residence</th>
+          <th>Pounds of CO2</th>
+          <th></th>
         </tr>
         {% for log in electricity_logs %}
         <tr>
-            <td>{{ log.start_date }}</td>
-            <td>{{ log.end_date }}</td>
-            <td>{{ log.kwh }}</td>
-            <td>{{ log.residence.name_or_address }}</td>
-            <td>{{ log.co2_calc() }}</td>
-            <td><button type="button" class="edit-kwh-log btn btn-secondary btn-sm"
-                data-toggle="modal"
-                data-target="#editKwhModal"
-                data-id="{{ log.elect_id }}"
-                data-start-date="{{ log.start_date }}"
-                data-end-date="{{ log.end_date }}"
-                data-kwh="{{ log.kwh }}"
-                data-residence="{{ log.residence.name_or_address }}">
-                Edit</button></td>
+          <td>{{ log.start_date }}</td>
+          <td>{{ log.end_date }}</td>
+          <td>{{ log.kwh }}</td>
+          <td>{{ log.residence.name_or_address }}</td>
+          <td>{{ log.co2_calc() }}</td>
+          <td><button type="button" class="edit-kwh-log btn btn-secondary btn-sm"
+              data-toggle="modal"
+              data-target="#editKwhModal"
+              data-id="{{ log.elect_id }}"
+              data-start-date="{{ log.start_date }}"
+              data-end-date="{{ log.end_date }}"
+              data-kwh="{{ log.kwh }}"
+              data-residence="{{ log.residence.name_or_address }}">
+              Edit</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -87,29 +100,38 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="addKwhModalLabel">Add Electricty Data</h4>
       </div>
-      
-      <form action="/add-kwh" method="POST">
       <!-- form for adding new kwh -->
-      <div class="modal-body">
-          Begin Date: <input type="date" name="start_date" required> <br>
-          End Date: <input type="date" name="end_date" required> <br>
-          kwh <input type="number" name="kwh" required> <br>
-
-          Residence <select name="residence">
-          {% for residence in residences %}
-              <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
-          {% endfor %}
-          </select><br>
-      </div>
-      <div class="modal-footer">
+      <form action="/add-kwh" method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="addStartDate">Begin Date</label>
+              <input type="date" name="start_date" id="addStartDate" required>
+          </div>
+          <div class="form-group">
+            <label for="addEndDate">End Date</label>
+            <input type="date" name="end_date" id="addEndDate" required>
+          </div>
+          <div class="form-group">
+            <label for="addKwh">Kilowatt Hours</label>
+            <input type="number" name="kwh" id="addKwh"required>
+          </div>
+          <div class="form-group">
+            <label for="addResidence">Residence</label>
+            <select name="residence" id="addResidence">
+              {% for residence in residences %}
+                <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary" value="Add kwh">Add</button>
-      </div>
+        </div>
       </form>
     </div>
   </div>
 </div>
-
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editKwhModal" tabindex="-1" role="dialog" aria-labelledby="editKwhModalLabel">
@@ -123,15 +145,27 @@
       <form action="/edit-kwh" id="edit-kwh" method="POST">
       <!-- form for editing new kwh -->
       <div class="modal-body">
-        <input type="text" name="elect_id" id="elect-id" value="" hidden> <br>
-        Begin Date: <input type="date" name="start_date" id="e-start-date" required> <br>
-        End Date: <input type="date" name="end_date" id="e-end-date" required> <br>
-        kwh <input type="number" name="kwh" id="kwh" required> <br>
-        Residence <select name="residence" id="e-residence">
-        {% for residence in residences %}
-            <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
-        {% endfor %}
-        </select><br>
+        <input type="text" name="elect_id" id="elect-id" value="" hidden>
+        <div class="form-group">
+          <label for="editStartDate">Begin Date</label>
+          <input type="date" name="start_date" id="editStartDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editEndDate">End Date</label>
+          <input type="date" name="end_date" id="editEndDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editKwh">Kilowatt Hours</label>
+          <input type="number" name="kwh" id="editKwh" required>
+        </div>
+        <div class="form-group">
+          <label for="editResidence">Residnece</label>
+          <select name="residence" id="editResidence">
+          {% for residence in residences %}
+              <option value="{{ residence.name_or_address }}">{{ residence.name_or_address }}</option>
+          {% endfor %}
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -156,10 +190,10 @@
       $("#edit-kwh").show();
 
       $("#elect-id").val(electId);
-      $("#e-start-date").val(currentStartDate);
-      $("#e-end-date").val(currentEndDate);
-      $("#kwh").val(currentKwh);
-      $("#e-residence").val(currentResidence);
+      $("#editStartDate").val(currentStartDate);
+      $("#editEndDate").val(currentEndDate);
+      $("#editKwh").val(currentKwh);
+      $("#editResidence").val(currentResidence);
   }
 
   $("#submit-kwh-edit").on("submit", function () {

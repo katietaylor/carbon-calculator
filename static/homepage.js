@@ -54,7 +54,6 @@ function updateYearCo2BarChart(response) {
 
 updateYearCo2BarChart();
 
-
 // Get Zipcode ################################################################
 
 $("#new-location-button").on("click", getZipcode);

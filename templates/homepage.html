@@ -4,9 +4,13 @@
 
 {% block content %}
 
-<h1>Katie's Carbon Footprint</h1>
+<div class="container-fluid page-head">   
+  <div class="heading">
+    <h1>{{ name }}'s Carbon Footprint </h1>
+  </div>
+</div>
 <br>
-<br>
+
 {% for message in get_flashed_messages() %}
     <div>{{ message }}</div>
 {% endfor %}

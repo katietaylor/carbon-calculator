@@ -5,3 +5,4 @@ env
 .DS_Store
 *pge*
 *sql-library*
+*seed-data/user*

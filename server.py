@@ -141,6 +141,14 @@ def view_profile():
         return redirect("/")
 
 
+@app.route("/cars/makes.json", methods=["GET"])
+def get_car_models():
+    """JSON route to get all car makes for typeahead field"""
+
+    makes = Car.get_unique_makes()
+    return jsonify(makes)
+
+
 @app.route("/add-residence", methods=["POST"])
 def add_residence():
     """Add a residence for a profile"""

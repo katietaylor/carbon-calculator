@@ -1,17 +1,23 @@
 
-var make = $("#make");
-var model = $("#model");
-var year = $("#car-year");
-var cylinders = $("#cylinders");
-var transmission = $("#transmission");
+var make = $("#addMake");
+var model = $("#addModel");
+var year = $("#addCarYear");
+var cylinders = $("#addCylinders");
+var transmission = $("#addTransmission");
 
+$(function() {
+    console.log('dom ready');
+    });
+    
 make.on("change", onMakeChange);
 model.on("change", onModelChange);
 year.on("change", onYearChange);
 cylinders.on("change", onCylindersChange);
 transmission.on("change", onTransmissionChange);
 
+
 function onMakeChange(evt) {
+    console.log('make changed');
     var data = {};
     data.make = make.val();
 
@@ -152,7 +158,7 @@ function onTransmissionChange(evt) {
 function populateModels(response) {
     var selectedModel = model.val();
     model.empty();
-    model.append("<option value=''>SELECT MODEL</option>");
+    model.append("<option value=''>Select Model</option>");
     var modelsFound = [];
 
     // create a list of unique models
@@ -175,7 +181,7 @@ function populateModels(response) {
 function populateYears(response) {
     var selectedYear = year.val();
     year.empty();
-    year.append("<option value=''>SELECT YEAR</option>");
+    year.append("<option value=''>Select Year</option>");
     var yearsFound = [];
 
     // create a list of unique years
@@ -198,7 +204,7 @@ function populateYears(response) {
 function populateCylinders(response) {
     var selectedCylinders = cylinders.val();
     cylinders.empty();
-    cylinders.append("<option value=''>SELECT CYLINDERS</option>");
+    cylinders.append("<option value=''>Select Cylinders</option>");
     var cylindersFound = [];
 
     // create a list of unique cylinders
@@ -222,7 +228,7 @@ function populateCylinders(response) {
 function populateTransmissions(response) {
     var selectedTransmission = transmission.val();
     transmission.empty();
-    transmission.append("<option value=''>SELECT TRANSMISSION</option>");
+    transmission.append("<option value=''>Select Transmission</option>");
     var transmissionsFound = [];
 
     // create a list of unique transmission

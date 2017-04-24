@@ -365,7 +365,7 @@ function compareLocations(evt) {
         url: "/co2-other-location.json",
         data: data,
         success: function(response) {
-            $("#location-comparison").show();
+            $("#locationComparisonRow").show();
             
             $("#current-yr-total").html(response.current_yearly_co2);
             $("#new-yr-total").html(response.new_yearly_co2);
@@ -389,7 +389,6 @@ function updateLocationBarChart(response) {
     if (locationBarChart) {
         locationBarChart.destroy();
     }
-    
     var data = {
         labels: ["January", "February", "March", "April", "May", "June",
                  "July", "August", "September", "October", "November",
@@ -463,7 +462,6 @@ function updateLocationBarChart(response) {
             }
         ]
     };
-    
     locationBarChart = new Chart(ctx_bar, {
         type: 'bar',
         data: data,
@@ -471,11 +469,9 @@ function updateLocationBarChart(response) {
             response: true
         }
     });
-        
 }
 
 // Compare Cars ###############################################################
-
 
 $("#new-car-button").on("click", compareCars);
 
@@ -490,11 +486,11 @@ function compareCars(evt) {
     evt.preventDefault();
 
     var tripYear = $("#trip-year");
-    var make = $("#make");
-    var model = $("#model");
-    var carYear = $("#car-year");
-    var cylinders = $("#cylinders");
-    var transmission = $("#transmission");
+    var make = $("#addMake");
+    var model = $("#addModel");
+    var carYear = $("#addCarYear");
+    var cylinders = $("#addCylinders");
+    var transmission = $("#addTransmission");
     var userCarId = $("#my-car");
 
     var data = {};
@@ -510,7 +506,7 @@ function compareCars(evt) {
         url: "/co2-other-car.json",
         data: data,
         success: function(response) {
-            $("#car-comparison").show();
+            $("#carComparisonRow").show();
 
             $("#currentCar-yr-total").html(response.current_yearly_co2);
             $("#newCar-yr-total").html(response.new_yearly_co2);

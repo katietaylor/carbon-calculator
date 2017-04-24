@@ -115,25 +115,30 @@
 
     <h3><div id="comparison-statement"></div></h3>
 
-    <table id="location-comparison" class = "table table-condensed" hidden>
+  <div class="row" id="locationComparisonRow" hidden>
+    <div class="col-sm-4">
+      <div class="carComparisonTitle"><h3>Location Comparison</h3></div><br>
+      <table id="location-comparison" class = "table table-condensed">
         <tr>
-            <th></th>
-            <th>Current Location</th> 
-            <th>New Location</th>
+          <th></th>
+          <th>Current Location</th> 
+          <th>New Location</th>
         </tr>
         <tr>
-            <td>Year Total</td>
-            <td id="current-yr-total"></td>
-            <td id="new-yr-total"></td>
+          <td>Year Total</td>
+          <td id="current-yr-total"></td>
+          <td id="new-yr-total"></td>
         </tr>
         <tr>
-            <td>Daily Rate</td>
-            <td id="current-dly-rate"></td>
-            <td id="new-dly-rate"></td>
+          <td>Daily Rate</td>
+          <td id="current-dly-rate"></td>
+          <td id="new-dly-rate"></td>
         </tr>
-    </table>
-
-    <div class="graph-canvas"><canvas id="locationBarChart"></canvas></div>
+      </table>
+    </div>
+    <div class="col-sm-8">
+      <div><canvas id="locationBarChart"></canvas></div>
+    </div>
 </div>
 
 
@@ -142,55 +147,102 @@
     <h4>Choose a car to see what your footprint would be drove a different car.</h4>
 
     <form action="/co2-other-car.json">
-        Look at data for year:
-        <select name="trip_year", id="trip-year">
-        {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
-        {% endfor %}
-        </select><br>
-        Compare against this car: <select name="car", id="my-car">
-        {% for usercar in usercars %}
-            <option value="{{ usercar.usercar_id }}">
-            {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
-        {% endfor %}
-        </select><br><br>
-        
-        <strong>Find a new car</strong><br>
-        Make: <select name="make", id="addMake" required>
-        <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
-        {% for make in makes %}
-            <option value="{{ make }}">{{ make }}</option>
-        {% endfor %}
-        </select><br>
-        Model: <select name="model", id="addModel" required disabled></select><br>
-        Year: <select name="car_year", id="addCarYear" required disabled></select><br>
-        Cylinders (optional): <select name="cylinders", id="addCylinders" disabled></select><br>
-        Transmission (optional): <select name="transmission", id="addTransmission" disabled></select><br>
-    
-        <input type="submit" id="new-car-button" value="See Comparison">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="trip_year">Choose Year</label>
+            <select name="trip_year", id="trip-year" class="form-control">
+              {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="make">Choose your car</label>
+            <select name="car", id="my-car" class="form-control">
+              {% for usercar in usercars %}
+                <option value="{{ usercar.usercar_id }}">
+                {{ usercar.make }} {{ usercar.model }} {{ usercar.year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <h4>Find a new car</h4><br>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="make">Make</label>
+            <select name="make", id="addMake" class="form-control" required>
+            <option selected="selected" disabled="disabled">Select Car Make</option>
+            {% for make in makes %}
+              <option value="{{ make }}">{{ make }}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="addModel">Model</label>
+            <select name="model", id="addModel" class="form-control" required disabled></select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="addCarYear">Year</label>
+            <select name="car_year", id="addCarYear" class="form-control" required disabled></select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="addTransmission">Transmission (optional)</label>
+            <select name="transmission", id="addTransmission" class="form-control" disabled></select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="addCylinders">Cylinders (optional)</label>
+            <select name="cylinders", id="addCylinders" class="form-control" disabled></select>
+          </div>
+        </div>
+      </div>
+      <input type="submit" id="new-car-button" class="btn" value="See Comparison">
     </form>
 
     <h3><div id="car-comparison-statement"></div></h3>
 
-    <table id="car-comparison" hidden>
+  <div class="row" id="carComparisonRow" hidden>
+    <div class="col-sm-4">
+      <div class="carComparisonTitle"><h3>Car Comparison</h3></div><br>
+      <table id="car-comparison" class="table">
         <tr>
-            <th></th>
-            <th>Current car</th> 
-            <th>New Car</th>
+          <th></th>
+          <th>Current car</th> 
+          <th>New Car</th>
         </tr>
         <tr>
-            <td>Year Total</td>
-            <td id="currentCar-yr-total"></td>
-            <td id="newCar-yr-total"></td>
+          <td>Year Total</td>
+          <td id="currentCar-yr-total"></td>
+          <td id="newCar-yr-total"></td>
         </tr>
         <tr>
-            <td>Daily Rate</td>
-            <td id="currentCar-dly-rate"></td>
-            <td id="newCar-dly-rate"></td>
+          <td>Daily Rate</td>
+          <td id="currentCar-dly-rate"></td>
+          <td id="newCar-dly-rate"></td>
         </tr>
-    </table>
+      </table>
+    </div>
+    <div class="col-sm-8">
+      <div><canvas id="carBarChart"></canvas></div>
+    </div>
+  </div>
 
-    <div class="graph-canvas"><canvas id="carBarChart"></canvas></div>
 </div>
 
 

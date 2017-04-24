@@ -18,8 +18,8 @@
 }
 
 .btn-primary {
-    background-color: #77AD78;
-    border: #77AD78;
+    background-color: rgba(5,69,10,1);
+    border: rgba(5,69,10,1);
 }
 
 .btn-primary:hover,
@@ -38,7 +38,7 @@
     padding-bottom: 25px;
     border-bottom: 0;
     color: white;
-    background-color: #77AD78;
+    background-color: rgba(24,50,0,1);
 }
 
 .heading {
@@ -56,6 +56,14 @@
 
 .locationComparisonButton {
     margin-top: 25px;
+}
+
+.tree-row {
+    background-size: cover;
+    background: url(/static/img/plane-1469825_1920_cropped2.jpg) no-repeat;
+    color: white;
+    padding-top: 120px;
+    padding-bottom: 120px;
 }
 
 

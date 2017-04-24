@@ -15,37 +15,43 @@
     <div>{{ message }}</div>
 {% endfor %}
 
-{% if co2_per_yr.get(this_year) %}
-    <h3>Your Carbon Footprint is {{ co2_per_yr[this_year]["yr_projected"] }} pounds per year.</h3>
+<div class="row tree-row">
+  {% if co2_per_yr.get(this_year) %}
+    <h1>Your Carbon Footprint is {{ co2_per_yr[this_year]["yr_projected"] }} pounds per year.</h1>
 
-    <h4>It takes {{ trees }} trees to offset that much CO<sub>2</sub></h4>
-    &#x1f333;
-{% endif %}
-<br>
-<br>
-
-
-<div id="co2-per-year">
-    <h3>Your Carbon Footprint per year</h3>
-    <div class="graph-canvas">
-        <canvas id="yearBarChart"></canvas>
-    </div>
+    <h1>It takes {{ trees }} trees to offset that much CO<sub>2</sub></h1>
+  {% endif %}
 </div>
+<br>
+<br>
 
-<div id="co2-by-source-chart"> 
-    <h3>How much does each CO<sub>2</sub> source contribute to your total footprint?</h3>
 
-    <form action="/select-year">
+<div class="row">
+  <div class="col-sm-6">
+    <div id="co2-per-year">
+      <h3>Your Carbon Footprint per year</h3>
+      <div>
+        <canvas id="yearBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div id="co2-by-source-chart"> 
+      <h3>Compare the contribution of each CO<sub>2</sub> source.</h3>
+      <form action="/select-year">
         <select name="year", id="donut-year">
         <option selected="selected">ALL YEARS</option>
         {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
+          <option value="{{ year }}">{{ year }}</option>
         {% endfor %}
         </select>
-    </form>
-
-    <canvas id="donutChart"></canvas>
+      </form>
+      <canvas id="donutChart"></canvas>
+    </div>
+  </div>
 </div>
+
+
 <br><br>
 
 
@@ -75,7 +81,7 @@
         </select>
     </form>
     <div class="graph-canvas"><canvas id="weekdayBarChart"></canvas></div>
-</div>
+</div><br><br>
 
 <div id="co2-by-location">
     <h3>Your Electricity Carbon Footprint varies by location.</h3>
@@ -142,6 +148,8 @@
 </div>
 
 
+<br><br><br><br><br><br><br>
+
 <div id="co2-by-car">
     <h3>Your Transportation Carbon Footprint varies by car type.</h3>
     <h4>Choose a car to see what your footprint would be drove a different car.</h4>
@@ -170,7 +178,7 @@
           </div>
         </div>
       </div>
-      <h4>Find a new car</h4><br>
+      <h4>Find a new car</h4>
       <div class="row">
         <div class="col-sm-4">
           <div class="form-group">
@@ -183,8 +191,6 @@
             </select>
           </div>
         </div>
-      </div>
-      <div class="row">
         <div class="col-sm-3">
           <div class="form-group">
             <label for="addModel">Model</label>
@@ -198,7 +204,8 @@
           </div>
         </div>
       </div>
-      <div class="row">
+    </div>
+      <!-- <div class="row">
         <div class="col-sm-3">
           <div class="form-group">
             <label for="addTransmission">Transmission (optional)</label>
@@ -211,7 +218,7 @@
             <select name="cylinders", id="addCylinders" class="form-control" disabled></select>
           </div>
         </div>
-      </div>
+      </div> -->
       <input type="submit" id="new-car-button" class="btn" value="See Comparison">
     </form>
 
@@ -245,7 +252,7 @@
 
 </div>
 
-
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 <script type="text/javascript" src="static/homepage.js"></script>
 <script type="text/javascript" src="static/car-dropdowns.js"></script>

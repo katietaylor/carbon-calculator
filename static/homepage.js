@@ -20,16 +20,16 @@ function updateYearCo2BarChart(response) {
                 {
                     label: "Total CO2",
                     backgroundColor: [
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)'
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)'
                     ],
                     borderColor: [
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)',
-                        'rgba(168,219,168, 1)',
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)',
+                        'rgba(19,57,0,1)',
                     ],
                     borderWidth: 1,
                     data: response,
@@ -54,30 +54,6 @@ function updateYearCo2BarChart(response) {
 
 updateYearCo2BarChart();
 
-// Get Zipcode ################################################################
-
-$("#new-location-button").on("click", getZipcode);
-    
-function getZipcode(evt) {
-    evt.preventDefault();
-
-    var city = $("#city");
-    var state = $("#state");
-
-    var data = {};
-        data.city = city.val();
-        data.state = state.val();
-
-    $.ajax({
-        url: "/get-zipcode",
-        data: data,
-        success: function(response) {
-            // change the distance in the dom to the response
-            $("#zipcode").val(response);
-            compareLocations();
-        }
-    });
-}
 
 // DONUT CHART ################################################################
 

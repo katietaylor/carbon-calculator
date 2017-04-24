@@ -6,7 +6,7 @@
 
 <div class="container-fluid page-head">   
   <div class="heading">
-    <h1>Electricity Data</h1>
+      <h1>Electricity Data</h1>
   </div>
 </div>
 <br>
@@ -39,7 +39,7 @@
     <div id="co2-trend-chart" class="trend-chart">
       <div><h3>Carbon Footprint per Month</h3></div>
 
-      <form action="/select-year" class="year-dropdown">
+      <form class="year-dropdown">
           <label for="year">Year</label>
           <select name="year", id="trend-year">
           {% for year in years %}
@@ -249,10 +249,17 @@
                 type: 'line',
                 data: data,
                 options: {
+                    legend: {
+                        position: "top"
+                    },
                     scales: {
                         yAxes: [{
                             ticks: {
                                 beginAtZero:true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: "CO2 lbs"
                             }
                         }]
                     }

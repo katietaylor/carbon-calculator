@@ -79,19 +79,38 @@
 
 <div id="co2-by-location">
     <h3>Your Electricity Carbon Footprint varies by location.</h3>
-    <h4>Change the location to see what your footprint would be if you moved.</h4>
+    <h4>Change the location to see what your footprint would be if you moved.</h4><br>
 
     <form action="/get-zipcode">
-        <select name="year", id="location-year">
-        {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
-        {% endfor %}
-        </select>
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="location-year">Choose Year</label>
+            <select name="year", id="location-year" class="form-control">
+            {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="city">New City</label>    
+            <input type="text" name="city" id="city" class="form-control" placeholder="City", required>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="state">State</label>
+            <input type="text" name="state" id="state" class="form-control" placeholder="State", maxlength="2" required>
+          </div>
+        </div>
+        <input type="text" name="zipcode" id="zipcode" hidden>
+        <div class="col-sm-2 locationComparisonButton">
+          <input type="submit" class="btn" id="new-location-button" value="See Comparison">
+      </div>
+      </div>
         
-        New City <input type="text" name="city" id="city"placeholder="City", required>
-        State <input type="text" name="state" id="state" placeholder="State", maxlength="2" required> <br>
-        <input type="text" name="zipcode" id="zipcode" hidden> <br>
-        <input type="submit" id="new-location-button" value="See Comparison">
     </form>
 
     <h3><div id="comparison-statement"></div></h3>
@@ -137,16 +156,16 @@
         </select><br><br>
         
         <strong>Find a new car</strong><br>
-        Make: <select name="make", id="make" required>
+        Make: <select name="make", id="addMake" required>
         <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
         {% for make in makes %}
             <option value="{{ make }}">{{ make }}</option>
         {% endfor %}
         </select><br>
-        Model: <select name="model", id="model" required disabled></select><br>
-        Year: <select name="car_year", id="car-year" required disabled></select><br>
-        Cylinders (optional): <select name="cylinders", id="cylinders" disabled></select><br>
-        Transmission (optional): <select name="transmission", id="transmission" disabled></select><br>
+        Model: <select name="model", id="addModel" required disabled></select><br>
+        Year: <select name="car_year", id="addCarYear" required disabled></select><br>
+        Cylinders (optional): <select name="cylinders", id="addCylinders" disabled></select><br>
+        Transmission (optional): <select name="transmission", id="addTransmission" disabled></select><br>
     
         <input type="submit" id="new-car-button" value="See Comparison">
     </form>

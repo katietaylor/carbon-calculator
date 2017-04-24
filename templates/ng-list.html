@@ -38,7 +38,7 @@
   <div class="col-md-6">
     <div id="co2-trend-chart">
       <h3>Carbon Footprint per Month</h3>
-      <form action="/select-year">
+      <form>
         <label for="year">Year</label>
         <select name="year", id="trend-year">
         {% for year in years %}
@@ -250,6 +250,10 @@
                         yAxes: [{
                             ticks: {
                                 beginAtZero:true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: "CO2 lbs"
                             }
                         }]
                     }

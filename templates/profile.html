@@ -10,49 +10,172 @@
   </div>
 </div>
 
-<!-- Residence ############################################################ -->
+<!-- Tables ############################################################### -->
 
-<h2>Residences</h2>
-{% if residences %}
-    <table class="table table-striped">
-        <tr>
+<div class="row">
+  <div class="col-sm-6">
+    <h2>Residences</h2>
+      {% if residences %}
+        <table class="table table-striped">
+          <tr>
             <th>House Name or Address</th>
             <th>Zipcode</th> 
             <th>Residents</th>
             <th>Default</th>
             <th></th>
-        </tr>
-        {% for residence in residences %}
-        <tr>
+          </tr>
+          {% for residence in residences %}
+          <tr>
             <td>{{ residence.name_or_address }}</td>
             <td>{{ residence.zipcode_id }}</td>
             <td>{{ residence.number_of_residents }}</td>
             <td>{{ residence.is_default }}</td>
             <td><button type="button" class="edit-residence btn btn-secondary btn-sm"
-                data-toggle="modal"
-                data-target="#editResidenceModal"
-                data-id="{{ residence.residence_id }}"
-                data-residence-name="{{ residence.name_or_address }}"
-                data-zipcode="{{ residence.zipcode_id }}"
-                data-residents="{{ residence.number_of_residents }}"
-                data-is-default="{{ residence.is_default }}">
-                Edit</button></td>
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <h2>No residences added</h2>
-{% endif %}
-<br>
+              data-toggle="modal"
+              data-target="#editResidenceModal"
+              data-id="{{ residence.residence_id }}"
+              data-residence-name="{{ residence.name_or_address }}"
+              data-zipcode="{{ residence.zipcode_id }}"
+              data-residents="{{ residence.number_of_residents }}"
+              data-is-default="{{ residence.is_default }}">
+              Edit</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <h2>No residences added</h2>
+      {% endif %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addResidenceModal">
+      Add New Residence
+    </button>
+  </div>
+  <div class="col-sm-6">
+    <h2>Cars</h2>
+      {% if usercars %}
+        <table class="table table-striped">
+          <tr>
+            <th>Make</th>
+            <th>Model</th> 
+            <th>Year</th>
+            <th>Cylinders</th>
+            <th>Transmission</th>
+            <th>Default</th>
+            <th></th>
+          </tr>
+          {% for usercar in usercars %}
+          <tr>
+            <td>{{ usercar.make }}</td>
+            <td>{{ usercar.model }}</td>
+            <td>{{ usercar.year }}</td>
+            <td>{{ usercar.cylinders }}</td>
+            <td>{{ usercar.transmission }}</td>
+            <td>{{ usercar.is_default }}</td>
+            <td><button type="button" class="edit-car btn btn-secondary btn-sm"
+              data-toggle="modal"
+              data-target="#editCarModal"
+              data-rmake="{{ usercar.make }}"
+              data-model="{{ usercar.model }}"
+              data-year="{{ usercar.year }}"
+              data-is-default="{{ usercar.is_default }}">
+              Edit</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <h2>No cars added</h2>
+      {% endif %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addCarModal">
+      Add New Car
+    </button>
+  </div>
+</div>
+
+<br><br><br>
+
+<div class="row">
+  <div class="col-sm-4">
+    <h3>Why do we need your zipcode?</h3>
+    <p>The U.S. Electric Grid is divided into regions. Each region has a different
+    carbon emission factor depending on the how power is generated within the region.
+    Regions with more coal power plants will have higher factors while regions
+    with more renewable energy will have smaller factors.</p>
+  </div>
+  <div class="col-sm-8">
+    <div class="egridMap">
+      <img src="/static/img/EGRIDSubregionmap.jpg" alt="EGRID Subregions" style="width:75%">
+    </div>
+  </div>
+</div>
 
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addResidenceModal">
-  Add New Residence
-</button>
 
-<img src="/static/img/EGRIDSubregionmap.jpg" alt="EGRID Subregions" style="width:600px;">
+<!-- Car Modals ########################################################### -->
+<!-- Add Modal -->
+<div class="modal fade" id="addCarModal" tabindex="-1" role="dialog" aria-labelledby="addCarModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addCarModalLabel">Add New Car</h4>
+      </div>
+      <!-- form for adding new Car -->
+      <form action="/add-car" id="add-car" method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="make">Make</label>
+          
+          <select name="make", id="addMake" class="form-control" required>
+          <option selected="selected" disabled="disabled">Select Car Make</option>
+          {% for make in makes %}
+              <option value="{{ make }}">{{ make }}</option>
+          {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="model">Model</label>
+              <select name="model", id="addModel" class="form-control" required disabled></select>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="car-year">Year</label>
+              <select name="year", id="addCarYear" class="form-control" required disabled></select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="cylinders">Cyliners (optional)</label>
+              <select name="cylinders", id="addCylinders" class="form-control" disabled></select>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="transmission">Transmission (optional)</label>
+              <select name="transmission", id="addTransmission" class="form-control" disabled></select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="addCarDefault">Set as Default?</label>  
+          <input type="checkbox" id="addCarDefault" name="default">
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" value="Add Car">Add</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
+<!-- Residence Modals ###################################################### -->
 <!-- Add Modal -->
 <div class="modal fade" id="addResidenceModal" tabindex="-1" role="dialog" aria-labelledby="addResidenceModalLabel">
   <div class="modal-dialog" role="document">
@@ -61,14 +184,33 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="addResidenceModalLabel">Add New Residence</h4>
       </div>
-      
       <form action="/add-residence" id="add-residence" method="POST">
       <!-- form for adding new Residence -->
       <div class="modal-body">
-        House Name or Address: <input type="text" name="residence_name"> <br>
-        zipcode: <input type="text" name="zipcode"> <br>
-        number of residents? <input type="text" name="residents"> <br>
-        set as default?: <input type="checkbox" name="default"> <br>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-8">
+              <label for="addName">House Name or Address</label>
+              <input type="text" name="residence_name" class="form-control" id="addName" placeholder="Enter Residence Name">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-4">
+              <label for="addZipcode">Zipcode</label>
+              <input type="text" name="zipcode" class="form-control" id="addZipcode" placeholder="Enter Zipcode">
+            </div>
+            <div class="col-sm-4">
+              <label for="addNumResidents">Number of Residents</label>
+              <input type="number" name="residents" class="form-control" id="addNumResidents" placeholder="Residents">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="addResDefault">Set as Default?</label>
+          <input type="checkbox" name="default" id="addResDefault">
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -90,11 +232,31 @@
       <form action="/edit-residence" id="edit-residence" method="POST">
       <!-- form for editing residence -->
       <div class="modal-body">
-        <input type="text" name="residence_id" id="residenceId" value="" hidden> <br>
-        House Name or Address: <input type="text" name="residence_name" id="residenceName"> <br>
-        zipcode: <input type="text" name="zipcode" id="zipcode"> <br>
-        number of residents? <input type="text" name="residents" id="residents"> <br>
-        set as default?: <input type="checkbox" name="default" id="isDefault"> <br>
+        <input type="text" name="residence_id" id="residenceId" value="" hidden>
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="form-group">  
+              <label for="editResName">House Name or Address</label>
+              <input type="text" name="residence_name" class="form-control" id="editResName" placeholder="Enter Residence Name">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-4">
+              <label for="editZipcode">Zipcode</label>
+              <input type="text" name="zipcode" class="form-control" id="editZipcode" placeholder="Enter Zipcode">
+            </div>
+            <div class="col-sm-4">
+              <label for="editNumResidents">Number of Residents</label>
+              <input type="number" name="residents" class="form-control" id="editNumResidents" placeholder="Residents">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editResDefault">Set as Default?</label>
+          <input type="checkbox" name="default" id="editResDefault">
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -106,7 +268,7 @@
 </div>
 
 <script type="text/javascript">
-    
+
     $(".edit-residence").on("click", editResidence);  
     
     function editResidence() {
@@ -119,13 +281,13 @@
         $("#edit-residence").show();
 
         $("#residenceId").val(residenceId);
-        $("#residenceName").val(currentResidenceName);
-        $("#zipcode").val(currentZipcode);
-        $("#residents").val(currentResidents);
+        $("#editResName").val(currentResidenceName);
+        $("#editZipcode").val(currentZipcode);
+        $("#editNumResidents").val(currentResidents);
         if (currentIsDefault === "True") {
-            $("#isDefault").prop("checked", true);
+            $("#editResDefault").prop("checked", true);
         } else {
-            $("#isDefault").prop("checked", false);
+            $("#editResDefault").prop("checked", false);
         }
     }
 
@@ -134,105 +296,6 @@
     })
 
 </script>
-
-<!-- Cars ################################################################# -->
-
-<h2>Cars</h2>
-{% if usercars %}
-    <table class="table table-striped">
-        <tr>
-            <th>Make</th>
-            <th>Model</th> 
-            <th>Year</th>
-            <th>Cylinders</th>
-            <th>Transmission</th>
-            <th>Default</th>
-            <th></th>
-        </tr>
-        {% for usercar in usercars %}
-        <tr>
-            <td>{{ usercar.make }}</td>
-            <td>{{ usercar.model }}</td>
-            <td>{{ usercar.year }}</td>
-            <td>{{ usercar.cylinders }}</td>
-            <td>{{ usercar.transmission }}</td>
-            <td>{{ usercar.is_default }}</td>
-            <td><button type="button" class="edit-car btn btn-secondary btn-sm"
-                data-toggle="modal"
-                data-target="#editCarModal"
-                data-rmake="{{ usercar.make }}"
-                data-model="{{ usercar.model }}"
-                data-year="{{ usercar.year }}"
-                data-is-default="{{ usercar.is_default }}">
-                Edit</button></td>
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <h2>No cars added</h2>
-{% endif %}
-<br>
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addCarModal">
-  Add New Car
-</button>
-
-<!-- Add Modal -->
-<div class="modal fade" id="addCarModal" tabindex="-1" role="dialog" aria-labelledby="addCarModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="addCarModalLabel">Add New Car</h4>
-      </div>
-      
-      <form action="/add-car" id="add-car" method="POST">
-      <!-- form for adding new Car -->
-      <div class="modal-body">
-        Make: <select name="make", id="make" required>
-        <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
-        {% for make in makes %}
-            <option value="{{ make }}">{{ make }}</option>
-        {% endfor %}
-        </select><br>
-    
-        Model: <select name="model", id="model" required disabled></select><br>
-        Year: <select name="year", id="car-year" required disabled></select><br>
-        Cylinders (optional): <select name="cylinders", id="cylinders" disabled></select><br>
-        Transmission (optional): <select name="transmission", id="transmission" disabled></select><br>
-        
-        Set as Default?: <input type="checkbox" name="default"> <br>
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" value="Add Car">Add</button>
-      </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- <form action="/add-car", id="add-car" method="POST">
-    Make: <select name="make", id="make" required>
-        <option selected="selected" disabled="disabled">SELECT CAR MAKE</option>
-        {% for make in makes %}
-            <option value="{{ make }}">{{ make }}</option>
-        {% endfor %}
-    </select><br>
-    
-    Model: <select name="model", id="model" required disabled></select><br>
-    Year: <select name="year", id="car-year" required disabled></select><br>
-    Cylinders (optional): <select name="cylinders", id="cylinders" disabled></select><br>
-    Transmission (optional): <select name="transmission", id="transmission" disabled></select><br>
-    
-    Set as Default?: <input type="checkbox" name="default"> <br>
-
-    <input type="submit" value="Add Car">
-</form> -->
-
 <script type="text/javascript" src="static/car-dropdowns.js"></script>
-
-
 
 {% endblock %}

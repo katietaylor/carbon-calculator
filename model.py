@@ -395,8 +395,8 @@ class TripLog(db.Model):
 
         for trip in trips:
             avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
-            co2_by_day_of_week[trip.date.weekday()] += trip.co2_calc(
-                avg_grams_co2_mile_factor)
+            co2_by_day_of_week[trip.date.weekday()] += round(trip.co2_calc(
+                avg_grams_co2_mile_factor), 0)
 
         return co2_by_day_of_week
 
@@ -655,7 +655,7 @@ class ElectricityLog(db.Model):
 
         for log in electricity_logs:
             co2_by_day_of_week[log.start_date.weekday()] = co2_by_day_of_week.get(
-                log.start_date.weekday()) + log.co2_calc()
+                log.start_date.weekday()) + round(log.co2_calc(), 0)
 
         return co2_by_day_of_week
 

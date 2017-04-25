@@ -336,13 +336,14 @@ def add_kwh():
 def edit_kwh():
     """Edit a kwh electricity log."""
 
+    user_id = session.get("user_id")
     elect_id = request.form.get("elect_id")
     start_date = request.form.get("start_date")
     end_date = request.form.get("end_date")
     kwh = request.form.get("kwh")
     name_or_address = request.form.get("residence")
     residence_id = Residence.query.filter_by(
-        name_or_address=name_or_address).one().residence_id
+        user_id=user_id, name_or_address=name_or_address).one().residence_id
 
     edited_kwh = ElectricityLog.query.get(elect_id)
 
@@ -420,13 +421,14 @@ def add_ng():
 def edit_ng():
     """Edit a natural gas log."""
 
+    user_id = session.get("user_id")
     ng_id = request.form.get("ng_id")
     start_date = request.form.get("start_date")
     end_date = request.form.get("end_date")
     therms = request.form.get("therms")
     name_or_address = request.form.get("residence")
     residence_id = Residence.query.filter_by(
-        name_or_address=name_or_address).one().residence_id
+        user_id=user_id, name_or_address=name_or_address).one().residence_id
 
     edited_ng = NGLog.query.get(ng_id)
 
@@ -468,7 +470,7 @@ def view_trip_log():
         trip_co2s = []
         for trip in trip_logs:
             avg_grams_co2_mile_factor = avg_grams_co2_mile_factors[trip.usercar_id]
-            co2 = trip.co2_calc(avg_grams_co2_mile_factor)
+            co2 = round(trip.co2_calc(avg_grams_co2_mile_factor), 2)
             trip_co2s.append(co2)
 
         # combine the trip objects with the co2 results for passing into jinja
@@ -706,11 +708,11 @@ def get_co2_other_location():
         if percent_change is None:
             statement = "There is no data for that year to compare."
         elif kwh_co2_per_year > kwh_co2_per_year_other_location:
-            statement = "This location %s your carbon footprint by %s percent" \
-                % ("decreases", percent_change)
+            statement = "This location {} your carbon footprint by {}%".format(
+                "decreases", percent_change)
         elif kwh_co2_per_year < kwh_co2_per_year_other_location:
-            statement = "This location %s your carbon footprint by %s percent" \
-                % ("increases", percent_change)
+            statement = "This location {} your carbon footprint by {}%".format(
+                "increases", percent_change)
         elif kwh_co2_per_year == kwh_co2_per_year_other_location:
             statement = "This location doesn't change the carbon footprint"
 
@@ -809,11 +811,11 @@ def get_co2_other_car():
         if percent_change is None:
             statement = "There is no data for that year to compare."
         elif trip_co2_per_year > trip_co2_per_year_other_car:
-            statement = "This car %s your carbon footprint by %s percent" \
-                % ("decreases", percent_change)
+            statement = "This car {} your carbon footprint by {}%".format(
+                "decreases", percent_change)
         elif trip_co2_per_year < trip_co2_per_year_other_car:
-            statement = "This car %s your carbon footprint by %s percent" \
-                % ("increases", percent_change)
+            statement = "This car {} your carbon footprint by {}%".format(
+                "increases", percent_change)
         elif trip_co2_per_year == trip_co2_per_year_other_car:
             statement = "This car doesn't change the carbon footprint"
 

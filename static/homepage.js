@@ -6,6 +6,7 @@ function updateYearCo2BarChart(response) {
 
     // Make bar of percent of different CO2 source types
     var ctx_bar = $("#yearBarChart");
+    ctx_bar.height(1000);
     var yearData = {};
 
     if (yearCo2BarChart) {

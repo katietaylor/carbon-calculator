@@ -22,22 +22,10 @@
     <h1>It takes {{ trees }} trees to offset that much CO<sub>2</sub></h1>
   {% endif %}
 </div>
-<br><br><br>
+<br><br>
 
 <div class="row">
-  <div class="col-sm-8">
-    <div id="co2-per-year">
-      <h3>Your Carbon Footprint per year</h3>
-      <div>
-        <canvas id="yearBarChart"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
-<br><br><br>
-
-<div class="row">
-  <div class="col-sm-8">
+  <div class="col-sm-6">
     <div id="co2-trend-chart">
       <h3>Carbon footprint per month</h3>
       <form action="/select-year">
@@ -52,11 +40,36 @@
       </div>
     </div>
   </div>
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-5">
+    <div id="co2-per-year">
+      <h3>Your Carbon Footprint per year</h3>
+      <br>
+      <div class="right-graph">
+        <canvas id="yearBarChart"></canvas>
+      </div>
+    </div>
+  </div>
 </div>
 <br><br><br>
 
+
 <div class="row">
-  <div class="col-sm-8">
+  <div class="col-sm-7">
+    <div id="co2-by-day-of-week">
+      <h3>What day of the week do you have the highest footprint?</h3>
+      <form action="/select-year">
+        <select name="year", id="weekday-year">
+          {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+          </select>
+      </form>
+      <div><canvas id="weekdayBarChart"></canvas></div>
+    </div>
+  </div>
+  <div class="col-sm-5">
     <div id="co2-by-source-chart"> 
       <h3>Compare the contribution of each CO<sub>2</sub> source.</h3>
       <form action="/select-year">
@@ -68,23 +81,6 @@
         </select>
       </form>
       <div><canvas id="donutChart"></canvas></div>
-    </div>
-  </div>
-</div>
-<br><br><br>
-
-<div class="row">
-  <div class="col-sm-8">
-    <div id="co2-by-day-of-week">
-      <h3>What day of the week do you have the highest footprint?</h3>
-      <form action="/select-year">
-        <select name="year", id="weekday-year">
-          {% for year in years %}
-            <option value="{{ year }}">{{ year }}</option>
-          {% endfor %}
-          </select>
-      </form>
-      <div><canvas id="weekdayBarChart"></canvas></div>
     </div>
   </div>
 </div>

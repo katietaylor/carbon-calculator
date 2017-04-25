@@ -21,10 +21,10 @@ function updateYearCo2BarChart(response) {
                 {
                     label: "Total CO2",
                     backgroundColor: [
-                        'rgba(47,102,144,1)',
-                        'rgba(47,102,144,1)',
-                        'rgba(47,102,144,1)',
-                        'rgba(47,102,144,1)'
+                        '#2B5D83',
+                        '#2B5D83',
+                        '#2B5D83',
+                        '#2B5D83'
                     ],
                     borderColor: [
                         'rgba(47,102,144,1)',
@@ -45,6 +45,10 @@ function updateYearCo2BarChart(response) {
                     yAxes: [{
                         ticks: {
                             beginAtZero:true
+                        },
+                        scaleLabel: {
+                                display: true,
+                                labelString: "CO2 lbs"
                         }
                     }],
                     xAxes: [{
@@ -201,7 +205,17 @@ function updateCo2LineGraph() {
             type: 'line',
             data: data,
             options: {
-                response: true
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        },
+                        scaleLabel: {
+                                display: true,
+                                labelString: "CO2 lbs"
+                        }
+                    }]
+                }
             }
         });
         
@@ -446,7 +460,17 @@ function updateLocationBarChart(response) {
         type: 'bar',
         data: data,
         options: {
-            response: true
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    },
+                    scaleLabel: {
+                            display: true,
+                            labelString: "CO2 lbs"
+                    }
+                }]
+            }
         }
     });
 }
@@ -589,7 +613,17 @@ function updateCarBarChart(response) {
         type: 'bar',
         data: data,
         options: {
-            response: true
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "CO2 lbs"
+                    }
+                }]
+            }
         }
     });
         

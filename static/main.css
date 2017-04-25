@@ -1,14 +1,6 @@
-.right-graph {
-    height: 100%
-}
 
-.small-graph-canvas {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.block-content {
-    margin: 25px;
+.right {
+    padding-left: 50px;
 }
 
 .year-dropdown {
@@ -24,14 +16,12 @@
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary:active:focus {
-  background-color: green;
-  border-color: green;
+  background-color: rgba(5,59,10,1);
+  border-color: rgba(24,59,0,1);
 }
 
 .page-head {
-    margin-top: -25px;
-    margin-left: -30px;
-    margin-right: -25px;
+    margin-top: -20px;
     padding-top: 25px;
     padding-bottom: 25px;
     border-bottom: 0;
@@ -44,10 +34,6 @@
     margin-top: -10px;
 }
 
-.yearDropdown {
-    margin-top: 25px;
-}
-
 .egridMap {
     margin-top: -15px;
 }
@@ -58,11 +44,14 @@
 
 .tree-row {
     background-size: cover;
-    background: url(/static/img/plane-1469825_1920_cropped2.jpg) no-repeat;
+    background: url(/static/img/plane-1469825_1920_cropped2.jpg);
     color: white;
     padding-top: 120px;
     padding-bottom: 120px;
+    margin-top: -20px;
 }
 
-
-
+.tree-header {
+    /*margin-left: 25px;*/
+    text-align: center;
+}

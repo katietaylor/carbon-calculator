@@ -21,16 +21,16 @@ function updateYearCo2BarChart(response) {
                 {
                     label: "Total CO2",
                     backgroundColor: [
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)'
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)'
                     ],
                     borderColor: [
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)',
-                        'rgba(19,57,0,1)',
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)',
+                        'rgba(47,102,144,1)',
                     ],
                     borderWidth: 1,
                     data: response,
@@ -46,6 +46,9 @@ function updateYearCo2BarChart(response) {
                         ticks: {
                             beginAtZero:true
                         }
+                    }],
+                    xAxes: [{
+                        barPercentage: 0.6
                     }]
                 }
             }
@@ -72,7 +75,7 @@ function updateCo2Donut() {
     $.get("/co2-per-datatype.json", yearData, function (response) {
         var data = {
             labels: [
-                "Trip",
+                "Trips",
                 "Electricity",
                 "Natural Gas"
             ],
@@ -229,38 +232,15 @@ function updateWeekdayCo2BarChart(response) {
                      "Saturday", "Sunday"],
             datasets: [
                 {
-                    label: "Electricity Footprint",
+                    label: "Trips",
                     backgroundColor: [
-                        electricitySecondary,
-                        electricitySecondary,
-                        electricitySecondary,
-                        electricitySecondary,
-                        electricitySecondary,
-                        electricitySecondary,
-                        electricitySecondary
-                    ],
-                    borderColor: [
-                        electricityPrimary,
-                        electricityPrimary,
-                        electricityPrimary,
-                        electricityPrimary,
-                        electricityPrimary,
-                        electricityPrimary,
-                        electricityPrimary
-                    ],
-                    borderWidth: 1,
-                    data: response.kwh,
-                },
-                {
-                    label: "Trip Footprint",
-                    backgroundColor: [
-                        tripSecondary,
-                        tripSecondary,
-                        tripSecondary,
-                        tripSecondary,
-                        tripSecondary,
-                        tripSecondary,
-                        tripSecondary
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary,
+                        tripPrimary
                     ],
                     borderColor: [
                         tripPrimary,
@@ -274,6 +254,29 @@ function updateWeekdayCo2BarChart(response) {
                     ],
                     borderWidth: 1,
                     data: response.trip,
+                },
+                {
+                    label: "Electricity",
+                    backgroundColor: [
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary
+                    ],
+                    borderColor: [
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary,
+                        electricityPrimary
+                    ],
+                    borderWidth: 1,
+                    data: response.kwh,
                 }
             ]
         };
@@ -374,18 +377,18 @@ function updateLocationBarChart(response) {
             {
                 label: "Current Location",
                 backgroundColor: [
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary,
-                    electricitySecondary
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary,
+                    electricityPrimary
                 ],
                 borderColor: [
                     electricityPrimary,
@@ -407,18 +410,18 @@ function updateLocationBarChart(response) {
             {
                 label: "New Location",
                 backgroundColor: [
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary
                 ],
                 borderColor: [
                     newPrimary,
@@ -516,18 +519,18 @@ function updateCarBarChart(response) {
             {
                 label: "Current Car",
                 backgroundColor: [
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary,
-                    tripSecondary
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary,
+                    tripPrimary
                 ],
                 borderColor: [
                     tripPrimary,
@@ -549,18 +552,18 @@ function updateCarBarChart(response) {
             {
                 label: "New Car",
                 backgroundColor: [
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary,
-                    newSecondary
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary,
+                    newPrimary
                 ],
                 borderColor: [
                     newPrimary,

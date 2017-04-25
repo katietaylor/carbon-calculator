@@ -4,30 +4,37 @@
 
 {% block content %}
 
-<div class="container-fluid page-head">   
+<!-- <div class="container-fluid page-head">   
   <div class="heading">
     <h1>{{ name }}'s Carbon Footprint </h1>
   </div>
 </div>
-<br>
+<br> -->
 
 {% for message in get_flashed_messages() %}
     <div>{{ message }}</div>
 {% endfor %}
 
-<div class="row tree-row">
-  {% if co2_per_yr.get(this_year) %}
-    <h1>Your Carbon Footprint is {{ co2_per_yr[this_year]["yr_projected"] }} pounds per year.</h1>
 
-    <h1>It takes {{ trees }} trees to offset that much CO<sub>2</sub></h1>
-  {% endif %}
+<div class="container-fluid">
+  <div class="row tree-row">
+    <div class="tree-header">
+      {% if co2_per_yr.get(this_year) %}
+        <h1>Your Carbon Footprint is {{ "{:,.0f}".format(co2_per_yr[this_year]["yr_projected"]) }} pounds per year.</h1>
+        <br>
+        <h1>It takes {{ trees }} trees to offset that much CO<sub>2</sub></h1>
+      {% endif %}
+    </div>
+  </div>
 </div>
-<br><br>
+
+<div class="container">
+<br><br><br>
 
 <div class="row">
   <div class="col-sm-6">
     <div id="co2-trend-chart">
-      <h3>Carbon footprint per month</h3>
+      <h3>Carbon Footprint per Month</h3>
       <form action="/select-year">
           <select name="year", id="trend-year">
           {% for year in years %}
@@ -40,11 +47,11 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-1">
-  </div>
-  <div class="col-sm-5">
+  <!-- <div class="col-sm-1">
+  </div> -->
+  <div class="col-sm-6 right">
     <div id="co2-per-year">
-      <h3>Your Carbon Footprint per year</h3>
+      <h3>Carbon Footprint per year</h3>
       <br>
       <div class="right-graph">
         <canvas id="yearBarChart"></canvas>
@@ -52,7 +59,7 @@
     </div>
   </div>
 </div>
-<br><br><br>
+<br><br><br><br><br>
 
 
 <div class="row">
@@ -69,9 +76,11 @@
       <div><canvas id="weekdayBarChart"></canvas></div>
     </div>
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-4">
     <div id="co2-by-source-chart"> 
-      <h3>Compare the contribution of each CO<sub>2</sub> source.</h3>
+      <h3>Compare each CO<sub>2</sub> source.</h3>
       <form action="/select-year">
         <select name="year", id="donut-year">
         <option selected="selected">ALL YEARS</option>
@@ -84,12 +93,13 @@
     </div>
   </div>
 </div>
-<br><br><br>
+<br><br><br><br><br>
 
 <div id="co2-by-location">
+  <div class="jumbotron">
     <h3>Your Electricity Carbon Footprint varies by location.</h3>
-    <h4>Change the location to see what your footprint would be if you moved.</h4><br>
-
+    <h4>Select a new location to see what your footprint would be if you moved.</h4>
+    <br>
     <form action="/get-zipcode">
       <div class="row">
         <div class="col-sm-2">
@@ -117,12 +127,12 @@
         <input type="text" name="zipcode" id="zipcode" hidden>
         <div class="col-sm-2 locationComparisonButton">
           <input type="submit" class="btn" id="new-location-button" value="See Comparison">
+        </div>
       </div>
-      </div>
-        
     </form>
+  </div>
 
-    <h3><div id="comparison-statement"></div></h3>
+  <h3><div id="comparison-statement"></div></h3>
 
   <div class="row" id="locationComparisonRow" hidden>
     <div class="col-sm-4">
@@ -148,15 +158,18 @@
     <div class="col-sm-8">
       <div><canvas id="locationBarChart"></canvas></div>
     </div>
+  </div>
 </div>
 
 
-<br><br><br><br><br><br><br>
+<br><br><br><br><br>
+
 
 <div id="co2-by-car">
+  <div class="jumbotron">
     <h3>Your Transportation Carbon Footprint varies by car type.</h3>
-    <h4>Choose a car to see what your footprint would be drove a different car.</h4>
-
+    <h4>Select a new car to see what your footprint would be drove a different car.</h4>
+    <br>
     <form action="/co2-other-car.json">
       <div class="row">
         <div class="col-sm-2">
@@ -206,24 +219,27 @@
             <select name="car_year", id="addCarYear" class="form-control" required disabled></select>
           </div>
         </div>
+        <div class="col-sm-2 locationComparisonButton">
+          <input type="submit" id="new-car-button" class="btn" value="See Comparison">
+        </div>
       </div>
-    </div>
-      <!-- <div class="row">
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="addTransmission">Transmission (optional)</label>
-            <select name="transmission", id="addTransmission" class="form-control" disabled></select>
+        <!-- <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="addTransmission">Transmission (optional)</label>
+              <select name="transmission", id="addTransmission" class="form-control" disabled></select>
+            </div>
           </div>
-        </div>
-        <div class="col-sm-2">
-          <div class="form-group">
-            <label for="addCylinders">Cylinders (optional)</label>
-            <select name="cylinders", id="addCylinders" class="form-control" disabled></select>
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label for="addCylinders">Cylinders (optional)</label>
+              <select name="cylinders", id="addCylinders" class="form-control" disabled></select>
+            </div>
           </div>
-        </div>
-      </div> -->
-      <input type="submit" id="new-car-button" class="btn" value="See Comparison">
-    </form>
+        </div> -->
+        
+      </form>
+  </div>
 
     <h3><div id="car-comparison-statement"></div></h3>
 
@@ -255,7 +271,7 @@
 
 </div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
 
 <script type="text/javascript" src="static/homepage.js"></script>
 <script type="text/javascript" src="static/car-dropdowns.js"></script>

@@ -11,6 +11,8 @@
 </div>
 <br>
 
+<div class="container">
+
 <div class="row">
   <div class="col-md-6">
     <div class="summary">
@@ -38,8 +40,8 @@
   <div class="col-md-6">
     <div id="co2-trend-chart">
           <h3>Carbon Footprint per Month</h3>
-          <form class="yearDropdown">
-            <label for="year">Choose Year</label>
+          <form>
+            <label for="year">Year</label>
             <select name="year", id="trend-year">
               {% for year in years %}
                 <option value="{{ year }}">{{ year }}</option>
@@ -219,6 +221,8 @@
   </div>
 </div>
 
+</div>
+
 <script type="text/javascript">
     "use strict";
 
@@ -305,7 +309,7 @@
                         label: "Trips",
                         fill: false,
                         lineTension: 0.1,
-                        backgroundColor: tripSecondary,
+                        backgroundColor: tripPrimary,
                         borderColor: tripPrimary,
                         borderCapStyle: 'butt',
                         borderDash: [],

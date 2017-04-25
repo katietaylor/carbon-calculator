@@ -11,6 +11,8 @@
 </div>
 <br>
 
+<div class="container">
+
 <div class="row">
   <div class="col-md-6">
     <div class="summary">
@@ -74,7 +76,7 @@
             <td>{{ log.end_date }}</td>
             <td>{{ log.therms }}</td>
             <td>{{ log.residence.name_or_address }}</td>
-            <td>{{ log.co2_calc() }}</td>
+            <td>{{ "{:,.2f}".format(log.co2_calc()) }}</td>
             <td><button type="button" class="edit-ng-log btn btn-secondary btn-sm"
                 data-toggle="modal"
                 data-target="#editNgModal" 
@@ -113,7 +115,7 @@
         </div>
         <div class="form-group">
           <label for="addTherms">Therms of NG</label>
-          <input type="number" name="therms" id="addTherms" required>
+          <input type="number" name="therms" id="addTherms" step="0.01" required>
         </div>
         <div class="form-group">
           <label for="addResidence">Residence</label>
@@ -156,7 +158,7 @@
         </div>
         <div class="form-group">
           <label for="editTherms">Therms of Natural Gas</label>
-          <input type="number" name="therms" id="editTherms" required>
+          <input type="number" name="therms" id="editTherms" step="0.01" required>
         </div>
         <div class="form-group">
           <label for="editResidence">Residence</label>
@@ -174,6 +176,8 @@
       </form>
     </div>
   </div>
+</div>
+
 </div>
 
 <script type="text/javascript">
@@ -222,7 +226,7 @@
                         label: "Natural Gas",
                         fill: false,
                         lineTension: 0.1,
-                        backgroundColor: ngSecondary,
+                        backgroundColor: ngPrimary,
                         borderColor: ngPrimary,
                         borderCapStyle: 'butt',
                         borderDash: [],

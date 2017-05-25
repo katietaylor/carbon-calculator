@@ -11,6 +11,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 import requests
 import os
+from passlib.hash import pbkdf2_sha256
 
 # source misc/secrets.sh in terminal before running server
 
@@ -70,7 +71,7 @@ def login_process():
     user = User.query.filter_by(email=email).first()
 
     # If user exists and password is correct, render homepage
-    if user and (user.password == password):
+    if user and pbkdf2_sha256.verify(password, user.password):
         # Add user_id to session cookie
         session["user_id"] = user.user_id
 
@@ -91,8 +92,10 @@ def register_process():
     password = request.form.get("password")
     name = request.form.get("name")
 
+    password_hash = pbkdf2_sha256.hash(password)
+
     if (User.query.filter_by(email=email).all()) == []:
-        new_user = User(email=email, password=password, name=name)
+        new_user = User(email=email, password=password_hash, name=name)
 
         db.session.add(new_user)
         db.session.commit()

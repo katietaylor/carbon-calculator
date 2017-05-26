@@ -3,30 +3,70 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
-
-<h1>Login</h1>
-
-<form action="/process-login" method="POST">
-    email:    <input type="text" name="email"> <br>
-    password: <input type="password" name="password"> <br>
-<input type="submit" value="Log In">
-</form>
-
-{% for message in get_flashed_messages() %}
-    <div>{{ message }}</div>
-{% endfor %}
+<div class="container-fluid page-head">   
+  <div class="headingLogIn">
+    <h1>Welcome to Calc CO<sub>2</sub></h1>
+  </div>
+</div>
+<br><br>
+<div class="container">
 
 
-<h1>Sign Up</h1>
+  <form action="/process-login" method="POST">
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text", name="email" id="email" class="form-control"></select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="text", name="password" id="password" class="form-control"></select>
+        </div>
+      </div>
+    </div>
+<br>
+  <button type="submit" class="btn btn-primary" value="Log In"> Log In</button>
+  </form>
 
-<form action="/process-signup" method="POST">
-    name:     <input type="text" name="name"> <br>
-    email:    <input type="text" name="email"> <br>
-    password: <input type="password" name="password"> <br>
+  {% for message in get_flashed_messages() %}
+      <div>{{ message }}</div>
+  {% endfor %}
+  <br>
 
-    <input type="submit" value="Sign Up">
-</form>
+  <div><h4>New to calCO2?</h4></div>
+  <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#createAccountModal">
+        Create Account
+  </button>
 
+
+  <div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="createAccountModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="createAccountModalLabel">Create Account</h4>
+        </div>
+        <!-- form for adding creating account -->
+        <form action="/process-signup" id="create-account" method="POST">
+        <div class="modal-body">
+          name:     <input type="text" name="name"> <br>
+          email:    <input type="text" name="email"> <br>
+          password: <input type="password" name="password"> <br>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" value="Signup">Signup</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 

@@ -411,6 +411,8 @@ class TripLog(db.Model):
 
         days = (end_date - first_entry_date[0]).days
         months = days / 30
+        if months == 0:
+            months = 1
 
         days_in_current_year = days_btw_today_and_jan1()
         months_in_current_year = days_in_current_year / 30
@@ -670,7 +672,10 @@ class ElectricityLog(db.Model):
         end_date = date.today()
 
         days = (end_date - first_entry_date[0]).days
+
         months = days / 30
+        if months == 0:
+            months = 1
 
         days_in_current_year = days_btw_today_and_jan1()
         months_in_current_year = days_in_current_year / 30
@@ -810,6 +815,8 @@ class NGLog(db.Model):
 
         days = (end_date - first_entry_date[0]).days
         months = days / 30
+        if months == 0:
+            months = 1
 
         days_in_current_year = days_btw_today_and_jan1()
         months_in_current_year = days_in_current_year / 30
